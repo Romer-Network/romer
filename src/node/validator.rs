@@ -122,7 +122,7 @@ impl Node {
             self.tokenomics_config.clone(),
         );
 
-        automaton.run().await?;
+        automaton.run(address, bootstrap).await?;
 
         Ok(())
     }

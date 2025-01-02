@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
-use std::fs;
 use std::env;
+use std::fs;
+use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Error type for genesis configuration operations
@@ -73,6 +73,8 @@ pub struct ConsensusConfig {
 pub struct NetworkingConfig {
     pub max_peers: u32,
     pub max_message_size: usize,
+    pub max_message_backlog: usize,
+    pub compression_level: u8,
     pub connection_timeout_ms: u32,
     pub peer_discovery_interval: u32,
 }
@@ -91,11 +93,13 @@ pub mod defaults {
     pub const DEFAULT_MIN_VALIDATORS: u32 = 1;
     pub const DEFAULT_MAX_VALIDATORS: u32 = 100;
     pub const DEFAULT_MAX_PEERS: u32 = 50;
-    pub const DEFAULT_MAX_MESSAGE_SIZE: usize = 1024 * 1024;  // 1MB
+    pub const DEFAULT_MAX_MESSAGE_BACKLOG: usize = 128;
+    pub const DEFAULT_COMPRESSION_LEVEL: u8 = 3;
+    pub const DEFAULT_MAX_MESSAGE_SIZE: usize = 1024 * 1024; // 1MB
     pub const DEFAULT_CONNECTION_TIMEOUT_MS: u32 = 5000;
     pub const DEFAULT_PEER_DISCOVERY_INTERVAL: u32 = 30;
-    pub const DEFAULT_MAX_BLOCK_SIZE: u32 = 1024 * 1024;    // 1MB
-    pub const DEFAULT_MAX_TX_SIZE: u32 = 64 * 1024;         // 64KB
+    pub const DEFAULT_MAX_BLOCK_SIZE: u32 = 1024 * 1024; // 1MB
+    pub const DEFAULT_MAX_TX_SIZE: u32 = 64 * 1024; // 64KB
 }
 
 impl GenesisConfig {
@@ -122,7 +126,7 @@ impl GenesisConfig {
 
         // Then check in the config directory relative to the project root
         let config_dir = PathBuf::from("config");
-        
+
         // Check for environment-specific config first
         let env = env::var("ROMER_ENV").unwrap_or_else(|_| "development".to_string());
         let env_specific_path = config_dir.join(format!("genesis.{}.toml", env));
@@ -137,7 +141,7 @@ impl GenesisConfig {
         }
 
         Err(ConfigError::ValidationError(
-            "Could not find configuration file".to_string()
+            "Could not find configuration file".to_string(),
         ))
     }
 
@@ -161,6 +165,8 @@ impl GenesisConfig {
             networking: NetworkingConfig {
                 max_peers: defaults::DEFAULT_MAX_PEERS,
                 max_message_size: defaults::DEFAULT_MAX_MESSAGE_SIZE,
+                max_message_backlog: defaults::DEFAULT_MAX_MESSAGE_BACKLOG,
+                compression_level: defaults::DEFAULT_COMPRESSION_LEVEL,
                 connection_timeout_ms: defaults::DEFAULT_CONNECTION_TIMEOUT_MS,
                 peer_discovery_interval: defaults::DEFAULT_PEER_DISCOVERY_INTERVAL,
             },
@@ -176,52 +182,52 @@ impl GenesisConfig {
         // Validate network configuration
         if self.network.chain_id.is_empty() {
             return Err(ConfigError::ValidationError(
-                "Chain ID cannot be empty".to_string()
+                "Chain ID cannot be empty".to_string(),
             ));
         }
 
         if self.network.version.is_empty() {
             return Err(ConfigError::ValidationError(
-                "Version cannot be empty".to_string()
+                "Version cannot be empty".to_string(),
             ));
         }
 
         // Validate consensus configuration
         if self.consensus.block_time_ms < 100 || self.consensus.block_time_ms > 10_000 {
             return Err(ConfigError::ValidationError(
-                "Block time must be between 100ms and 10 seconds".to_string()
+                "Block time must be between 100ms and 10 seconds".to_string(),
             ));
         }
 
         if self.consensus.epoch_length < 10 {
             return Err(ConfigError::ValidationError(
-                "Epoch length must be at least 10 blocks".to_string()
+                "Epoch length must be at least 10 blocks".to_string(),
             ));
         }
 
         if self.consensus.max_validators < self.consensus.min_validators {
             return Err(ConfigError::ValidationError(
-                "Maximum validators must be greater than minimum validators".to_string()
+                "Maximum validators must be greater than minimum validators".to_string(),
             ));
         }
 
         // Validate networking configuration
         if self.networking.max_message_size > 10 * 1024 * 1024 {
             return Err(ConfigError::ValidationError(
-                "Maximum message size cannot exceed 10MB".to_string()
+                "Maximum message size cannot exceed 10MB".to_string(),
             ));
         }
 
         if self.networking.connection_timeout_ms < 1000 {
             return Err(ConfigError::ValidationError(
-                "Connection timeout must be at least 1000ms".to_string()
+                "Connection timeout must be at least 1000ms".to_string(),
             ));
         }
 
         // Validate technical configuration
         if self.technical.max_block_size <= self.technical.max_tx_size {
             return Err(ConfigError::ValidationError(
-                "Maximum block size must be greater than maximum transaction size".to_string()
+                "Maximum block size must be greater than maximum transaction size".to_string(),
             ));
         }
 
@@ -276,10 +282,19 @@ mod tests {
         let config = GenesisConfig::development();
         let serialized = toml::to_string(&config).unwrap();
         let deserialized: GenesisConfig = toml::from_str(&serialized).unwrap();
-        
+
         assert_eq!(config.network.chain_id, deserialized.network.chain_id);
-        assert_eq!(config.consensus.block_time_ms, deserialized.consensus.block_time_ms);
-        assert_eq!(config.networking.max_peers, deserialized.networking.max_peers);
-        assert_eq!(config.technical.max_block_size, deserialized.technical.max_block_size);
+        assert_eq!(
+            config.consensus.block_time_ms,
+            deserialized.consensus.block_time_ms
+        );
+        assert_eq!(
+            config.networking.max_peers,
+            deserialized.networking.max_peers
+        );
+        assert_eq!(
+            config.technical.max_block_size,
+            deserialized.technical.max_block_size
+        );
     }
 }

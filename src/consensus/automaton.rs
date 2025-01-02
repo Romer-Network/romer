@@ -2,11 +2,18 @@ use bytes::{BufMut, Bytes, BytesMut};
 use commonware_consensus::{simplex::Context, Automaton};
 use commonware_consensus::{Committer, Relay, Supervisor};
 use commonware_cryptography::{Ed25519, PublicKey, Scheme};
+use commonware_p2p::authenticated::{self, Config as P2PConfig, Network};
 use commonware_p2p::{Recipients, Sender};
 use commonware_runtime::deterministic::Context as RuntimeContext;
-use commonware_runtime::Clock;
-use commonware_utils::hex;
+use commonware_runtime::{Clock, Spawner};
+use commonware_storage::journal::{Config as JournalConfig, Journal};
 use futures::channel::oneshot;
+use governor::Quota;
+use prometheus_client::registry::Registry;
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+use std::num::NonZeroU32;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, SystemTime};
 use tracing::{info, warn};
 
@@ -17,6 +24,11 @@ use crate::config::tokenomics::TokenomicsConfig;
 use crate::consensus::supervisor::BlockchainSupervisor;
 use crate::utils::utils::BlockHasher;
 
+#[derive(Debug, Serialize, Deserialize)]
+enum GenesisBlockError {
+    SerializationError(String),
+    OtherError(String),
+}
 /// Core blockchain automaton responsible for block creation, validation, and network interactions
 #[derive(Clone)]
 pub struct BlockchainAutomaton {
@@ -50,53 +62,129 @@ impl BlockchainAutomaton {
         }
     }
 
-    pub async fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        info!("Storage config paths: {:?}", self.storage_config.paths);
-        // Construct the full path to the genesis data directory
-        let genesis_path = self
-            .storage_config
-            .paths
-            .data_dir
-            .join(&self.storage_config.paths.journal_dir)
-            .join(&self.storage_config.journal.partitions.genesis);
+    pub async fn run(
+        &mut self,
+        address: SocketAddr,
+        bootstrap: Option<SocketAddr>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        // Log the start of node initialization
+        info!("Starting Rømer Chain Node at {}", address);
 
-        info!("Attempting to access genesis path: {:?}", genesis_path);
-        std::fs::create_dir_all(&genesis_path.parent().unwrap())?;
+        let runtime = self.runtime.clone();
+        let signer = self.signer.clone();
+        let genesis_config = self.genesis_config.clone();
+        let storage_config = self.storage_config.clone();
+        let tokenomics_config = self.tokenomics_config.clone();
 
-        // Check if the directory exists
-        match std::fs::read_dir(&genesis_path) {
-            Ok(mut entries) => {
-                // Check if the directory is empty
-                let is_empty = entries.next().is_none();
+        // Validate and initialize storage directories
+        self.storage_config
+            .initialize_directories()
+            .map_err(|e| format!("Storage directory initialization failed: {}", e))?;
 
-                if is_empty {
-                    info!("Genesis data directory exists but is empty. Creating genesis block.");
-                    // Pass the genesis time from config
-                    let genesis_block = self
-                        .create_genesis_block(self.genesis_config.network.genesis_time)
-                        .await;
-                } else {
-                    info!("Genesis data already exists. Skipping genesis block creation.");
-                }
-            }
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-                // Directory doesn't exist, create it and the genesis block
-                info!("Genesis data directory not found. Creating directory and genesis block.");
-                std::fs::create_dir_all(&genesis_path)?;
+        // Create the Journal configuration for genesis
+        let journal_cfg = JournalConfig {
+            registry: Arc::new(Mutex::new(Registry::default())),
+            partition: self.storage_config.journal.partitions.genesis.clone(),
+        };
 
-                // Pass the genesis time from config
-                let genesis_block = self
-                    .create_genesis_block(self.genesis_config.network.genesis_time)
-                    .await;
+        // Initialize the Journal for genesis data
+        let mut journal = Journal::init(self.runtime.clone(), journal_cfg)
+            .await
+            .map_err(|e| format!("Journal initialization failed: {}", e))?;
 
-                // TODO: Add code to store the genesis block
-            }
-            Err(e) => {
-                // Some other error occurred
-                return Err(Box::new(e));
-            }
+        // Create the genesis block
+        let genesis_block = self
+            .create_genesis_block(self.genesis_config.network.genesis_time)
+            .await
+            .map_err(|e| format!("Genesis block creation failed: {:?}", e))?;
+
+        // Serialize and persist the genesis block
+        let serialized_block = bincode::serialize(&genesis_block)
+            .map_err(|e| format!("Genesis block serialization failed: {}", e))?;
+
+        // Append genesis block to journal
+        journal
+            .append(0, Bytes::from(serialized_block))
+            .await
+            .map_err(|e| format!("Failed to append genesis block: {}", e))?;
+
+        // Close the journal to ensure persistence
+        journal
+            .close()
+            .await
+            .map_err(|e| format!("Journal close failed: {}", e))?;
+
+        // Initialize P2P network configuration
+        let p2p_cfg = authenticated::Config::aggressive(
+            self.signer.clone(),
+            b"romer-network", // Unique namespace to prevent replay attacks
+            Arc::new(Mutex::new(Registry::default())),
+            address,
+            bootstrap.map_or(vec![], |addr| vec![(self.signer.public_key(), addr)]),
+            self.genesis_config.networking.max_message_size,
+        );
+
+        // Start the network
+        let (mut network, mut oracle) = Network::new(self.runtime.clone(), p2p_cfg);
+
+        // Register the initial validator set
+        oracle.register(0, vec![self.signer.public_key()]);
+
+        // Register network channels
+        let (sender, receiver) = network.register(
+            0,
+            Quota::per_second(NonZeroU32::new(1).unwrap()),
+            self.genesis_config.networking.max_message_backlog,
+            Some(self.genesis_config.networking.compression_level),
+        );
+
+        // Set the P2P sender in the automaton
+        self.set_sender(sender);
+
+        // Spawn network handler
+        let network_handler = self.runtime.spawn("network", network.run());
+
+        // Prepare for consensus
+        let consensus_handler = self.runtime.spawn("consensus", async move {
+            // Create a new instance for consensus to avoid borrowing issues
+            let mut consensus_automaton = BlockchainAutomaton::new(
+                runtime.clone(),
+                signer.clone(),
+                genesis_config.clone(),
+                storage_config.clone(),
+                tokenomics_config.clone(),
+            );
+
+            // Start the Simplex consensus engine
+            consensus_automaton
+                .run_consensus(address, bootstrap)
+                .await
+                .expect("Consensus engine failed");
+        });
+
+        // Wait for network and consensus to complete
+        tokio::select! {
+            _ = network_handler => {},
+            _ = consensus_handler => {},
         }
 
+        Ok(())
+    }
+
+    // A method specifically for consensus initialization
+    async fn run_consensus(
+        &mut self,
+        address: SocketAddr,
+        bootstrap: Option<SocketAddr>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        // Specific consensus initialization logic
+        info!("Starting consensus with address: {}", address);
+        if let Some(bootstrap_addr) = bootstrap {
+            info!("Using bootstrap address: {}", bootstrap_addr);
+        }
+
+        // Your existing consensus engine startup logic
+        // This might involve calling .run() on your consensus implementation
         Ok(())
     }
 
@@ -105,7 +193,10 @@ impl BlockchainAutomaton {
         self.p2p_sender = Some(sender);
     }
 
-    async fn create_genesis_block(&mut self, genesis_time: u64) -> Block {
+    async fn create_genesis_block(
+        &mut self,
+        genesis_time: u64,
+    ) -> Result<Block, GenesisBlockError> {
         let mut block_hasher = BlockHasher::new();
 
         // Convert treasury address to Vec<u8> first
@@ -209,7 +300,32 @@ impl BlockchainAutomaton {
 
         info!("=== End Genesis Block ===\n");
 
-        block
+        Ok(block)
+    }
+
+    async fn persist_genesis_block(
+        &mut self,
+        block: &Block,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        // Serialization logic
+        let serialized_block = bincode::serialize(block).map_err(|e| Box::new(e))?;
+
+        // Journal configuration
+        let journal_cfg = JournalConfig {
+            registry: Arc::new(Mutex::new(Registry::default())),
+            partition: self.storage_config.journal.partitions.genesis.clone(),
+        };
+
+        // Initialize Journal
+        let mut journal = Journal::init(self.runtime.clone(), journal_cfg).await?;
+
+        // Append to journal
+        journal.append(0, Bytes::from(serialized_block)).await?;
+
+        // Close journal
+        journal.close().await?;
+
+        Ok(())
     }
 }
 
@@ -218,18 +334,16 @@ impl Automaton for BlockchainAutomaton {
     type Context = Context;
 
     async fn genesis(&mut self) -> Bytes {
+        // Use .await and .expect() or proper error handling
         let genesis_block = self
             .create_genesis_block(self.genesis_config.network.genesis_time)
-            .await;
+            .await
+            .expect("Failed to create genesis block"); // This will panic if block creation fails
 
         let mut buffer = BytesMut::new();
-
-        // Serialize each field directly - no need to convert timestamp
         buffer.put_u32(genesis_block.header.view);
         buffer.put_u64(genesis_block.header.height);
-        buffer.put_u64(genesis_block.header.timestamp); // Already a u64, no conversion needed
-
-        // Add the remaining fields
+        buffer.put_u64(genesis_block.header.timestamp);
         buffer.put_slice(&genesis_block.header.previous_hash);
         buffer.put_slice(&genesis_block.header.transactions_root);
         buffer.put_slice(&genesis_block.header.state_root);

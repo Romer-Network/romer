@@ -22,6 +22,10 @@ max_validators = 100
 max_peers = 50
 # Maximum size of any network message (1MB)
 max_message_size = 1048576
+# Maximum number of messages to queue in the backlog
+max_message_backlog = 128
+# Compression level for network messages (0-9, where 0 is no compression, 9 is maximum)
+compression_level = 3
 # How long to wait when connecting to peers (milliseconds)
 connection_timeout_ms = 5000
 # How often to look for new peers (seconds)
