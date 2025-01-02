@@ -12,8 +12,14 @@ website:
   site-url: http://romer.network
   repo-url: https://github.com/hariseldon23/Romer
   
-  # Navigation bar configuration
   navbar:
+    right:  
+      - icon: github
+        href: https://github.com/Romer-Network/romer
+        aria-label: GitHub
+      - icon: twitter 
+        href: https://x.com/romerchain
+        aria-label: Twitter
     left:
       - text: Home
         href: index.qmd
