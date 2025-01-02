@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Justin Trollip">
+<meta name="dcterms.date" content="2024-12-31">
+<meta name="description" content="A personal journey from MEV research to building a physically decentralized blockchain">
 
-<title>index – Rømer Chain</title>
+<title>Why We Chose Commonware for Rømer Chain – Rømer Chain</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,22 +26,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07c16812f08c4a1591d6ec4fc46327fa.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-bebea915e746d702e8312f8ca858bea9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-07c16812f08c4a1591d6ec4fc46327fa.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-bebea915e746d702e8312f8ca858bea9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,7 +74,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&amp;display=swap" rel="stylesheet">
 
 
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -81,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Rømer Chain</span>
     </a>
   </div>
@@ -92,11 +95,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../pitch/index.html"> 
+    <a class="nav-link" href="../../../pitch/index.html"> 
 <span class="menu-text">Deck</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -105,23 +108,23 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-tokenomics">    
         <li>
-    <a class="dropdown-item" href="../economics/index.html">
+    <a class="dropdown-item" href="../../../economics/index.html">
  <span class="dropdown-text">Overview</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../economics/model.html">
+    <a class="dropdown-item" href="../../../economics/model.html">
  <span class="dropdown-text">Economic Model</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../economics/distribution.html">
+    <a class="dropdown-item" href="../../../economics/distribution.html">
  <span class="dropdown-text">Token Distribution</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../economics/market.html">
+    <a class="dropdown-item" href="../../../economics/market.html">
  <span class="dropdown-text">Market Dynamics</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../economics/validators.html">
+    <a class="dropdown-item" href="../../../economics/validators.html">
  <span class="dropdown-text">Validator Economics</span></a>
   </li>  
     </ul>
@@ -132,29 +135,29 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-technical-design">    
         <li>
-    <a class="dropdown-item" href="../technical/index.html">
+    <a class="dropdown-item" href="../../../technical/index.html">
  <span class="dropdown-text">Architecture Overview</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../technical/pop.html">
+    <a class="dropdown-item" href="../../../technical/pop.html">
  <span class="dropdown-text">Proof of Physics</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../technical/network.html">
+    <a class="dropdown-item" href="../../../technical/network.html">
  <span class="dropdown-text">Network Design</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../technical/devnet.html">
+    <a class="dropdown-item" href="../../../technical/devnet.html">
  <span class="dropdown-text">Development Roadmap</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../technical/validators.html">
+    <a class="dropdown-item" href="../../../technical/validators.html">
  <span class="dropdown-text">Validator Requirements</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -173,126 +176,145 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#rømer-chain-architecture-addressing-fundamental-blockchain-challenges" id="toc-rømer-chain-architecture-addressing-fundamental-blockchain-challenges" class="nav-link active" data-scroll-target="#rømer-chain-architecture-addressing-fundamental-blockchain-challenges">RØMER Chain Architecture: Addressing Fundamental Blockchain Challenges 🔍</a>
+  <li><a href="#the-journey-to-proof-of-physics" id="toc-the-journey-to-proof-of-physics" class="nav-link active" data-scroll-target="#the-journey-to-proof-of-physics">The Journey to Proof of Physics</a></li>
+  <li><a href="#why-not-existing-frameworks" id="toc-why-not-existing-frameworks" class="nav-link" data-scroll-target="#why-not-existing-frameworks">Why Not Existing Frameworks?</a>
   <ul class="collapse">
-  <li><a href="#beyond-surface-level-solutions" id="toc-beyond-surface-level-solutions" class="nav-link" data-scroll-target="#beyond-surface-level-solutions">Beyond Surface-Level Solutions</a></li>
-  <li><a href="#the-five-critical-challenges" id="toc-the-five-critical-challenges" class="nav-link" data-scroll-target="#the-five-critical-challenges">The Five Critical Challenges</a>
+  <li><a href="#the-ethereum-layer-2-challenge" id="toc-the-ethereum-layer-2-challenge" class="nav-link" data-scroll-target="#the-ethereum-layer-2-challenge">The Ethereum Layer 2 Challenge</a></li>
+  <li><a href="#limitations-of-avalanche-l1s" id="toc-limitations-of-avalanche-l1s" class="nav-link" data-scroll-target="#limitations-of-avalanche-l1s">Limitations of Avalanche L1s</a></li>
+  <li><a href="#the-cosmos-sdk-consideration" id="toc-the-cosmos-sdk-consideration" class="nav-link" data-scroll-target="#the-cosmos-sdk-consideration">The Cosmos SDK Consideration</a></li>
+  <li><a href="#the-challenge-with-substrate" id="toc-the-challenge-with-substrate" class="nav-link" data-scroll-target="#the-challenge-with-substrate">The Challenge with Substrate</a></li>
+  </ul></li>
+  <li><a href="#the-commonware-advantage" id="toc-the-commonware-advantage" class="nav-link" data-scroll-target="#the-commonware-advantage">The Commonware Advantage</a>
   <ul class="collapse">
-  <li><a href="#market-cycle-vulnerability" id="toc-market-cycle-vulnerability" class="nav-link" data-scroll-target="#market-cycle-vulnerability">1. Market Cycle Vulnerability</a></li>
-  <li><a href="#geographic-centralization" id="toc-geographic-centralization" class="nav-link" data-scroll-target="#geographic-centralization">2. Geographic Centralization</a></li>
-  <li><a href="#high-validator-barriers" id="toc-high-validator-barriers" class="nav-link" data-scroll-target="#high-validator-barriers">3. High Validator Barriers</a></li>
-  <li><a href="#unstable-computation-costs" id="toc-unstable-computation-costs" class="nav-link" data-scroll-target="#unstable-computation-costs">4. Unstable Computation Costs</a></li>
-  <li><a href="#mev-market-distortion" id="toc-mev-market-distortion" class="nav-link" data-scroll-target="#mev-market-distortion">5. MEV Market Distortion</a></li>
+  <li><a href="#core-infrastructure-handled-for-us" id="toc-core-infrastructure-handled-for-us" class="nav-link" data-scroll-target="#core-infrastructure-handled-for-us">Core Infrastructure Handled For Us</a></li>
+  <li><a href="#complete-freedom-for-innovation" id="toc-complete-freedom-for-innovation" class="nav-link" data-scroll-target="#complete-freedom-for-innovation">Complete Freedom for Innovation</a></li>
+  <li><a href="#the-power-of-primitives" id="toc-the-power-of-primitives" class="nav-link" data-scroll-target="#the-power-of-primitives">The Power of Primitives</a></li>
   </ul></li>
-  <li><a href="#architectural-solutions-where-theory-meets-practice" id="toc-architectural-solutions-where-theory-meets-practice" class="nav-link" data-scroll-target="#architectural-solutions-where-theory-meets-practice">Architectural Solutions: Where Theory Meets Practice</a>
-  <ul class="collapse">
-  <li><a href="#commonware-foundation" id="toc-commonware-foundation" class="nav-link" data-scroll-target="#commonware-foundation">Commonware Foundation</a></li>
-  <li><a href="#proof-of-physics-true-censorship-resistance" id="toc-proof-of-physics-true-censorship-resistance" class="nav-link" data-scroll-target="#proof-of-physics-true-censorship-resistance">Proof of Physics: True Censorship Resistance</a></li>
-  <li><a href="#sui-move-vm-integration-predictable-computation" id="toc-sui-move-vm-integration-predictable-computation" class="nav-link" data-scroll-target="#sui-move-vm-integration-predictable-computation">Sui Move VM Integration: Predictable Computation</a></li>
-  </ul></li>
-  <li><a href="#economic-design-meets-technical-architecture" id="toc-economic-design-meets-technical-architecture" class="nav-link" data-scroll-target="#economic-design-meets-technical-architecture">Economic Design Meets Technical Architecture</a></li>
-  <li><a href="#looking-forward-the-path-to-sustainable-adoption" id="toc-looking-forward-the-path-to-sustainable-adoption" class="nav-link" data-scroll-target="#looking-forward-the-path-to-sustainable-adoption">Looking Forward: The Path to Sustainable Adoption</a></li>
-  </ul></li>
+  <li><a href="#looking-forward" id="toc-looking-forward" class="nav-link" data-scroll-target="#looking-forward">Looking Forward</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Why We Chose Commonware for Rømer Chain</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">technical</div>
+    <div class="quarto-category">architecture</div>
+    <div class="quarto-category">mev</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A personal journey from MEV research to building a physically decentralized blockchain
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Justin Trollip </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 31, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
-<section id="rømer-chain-architecture-addressing-fundamental-blockchain-challenges" class="level1">
-<h1>RØMER Chain Architecture: Addressing Fundamental Blockchain Challenges 🔍</h1>
-<section id="beyond-surface-level-solutions" class="level2">
-<h2 class="anchored" data-anchor-id="beyond-surface-level-solutions">Beyond Surface-Level Solutions</h2>
-<p>The blockchain industry faces five critical problems that limit mainstream adoption and real-world utility. Rather than adding to the pile of theoretical solutions, RØMER Chain’s architecture directly addresses these fundamental challenges through pragmatic engineering and economic design.</p>
+</header>
+
+
+<section id="the-journey-to-proof-of-physics" class="level1">
+<h1>The Journey to Proof of Physics</h1>
+<p>After spending two years exploring the world of Maximal Extractable Value (MEV), I’ve come to share the growing consensus among researchers and builders: MEV represents one of the most crucial challenges in cryptocurrency today. It’s not just about trading profits or transaction ordering—it’s about the fundamental fairness and decentralization of blockchain networks.</p>
+<p>My journey took an unexpected turn when I read <a href="https://x.com/phildaian">Phil Daian’s</a> thought-provoking post on <a href="https://collective.flashbots.net/t/decentralized-crypto-needs-you-to-be-a-geographical-decentralization-maxi/1385/7">geographical decentralization</a>. As the founder of Flashbots, Phil’s insights into MEV and network topology carry particular weight. His vision of true geographic decentralization resonated deeply with me.</p>
+<p>Around the same time, <a href="https://x.com/_patrickogrady">Patrick O’Grady</a> launched <a href="https://commonware.xyz/">Commonware</a>. I’d been following Patrick’s work for nearly three years, and his approach to blockchain primitives immediately caught my attention. Despite not being a Rust developer by background, I found myself drawn to explore what could be built with these low-level primitives. It was different from my previous experiences with frameworks like Substrate and Cosmos SDK—this was about building from fundamental components rather than working within a predefined structure.</p>
+<p>What started as a curiosity-driven experiment—building a basic blockchain with Commonware—evolved into something more significant. As I worked with the primitives, I began to see how their flexibility could enable something entirely new: <a href="../../../technical/pop.html">Proof of Physics</a>, a consensus mechanism that would validate nodes based on their physical network characteristics and geographic distribution, directly addressing the centralization concerns Phil had highlighted.</p>
 </section>
-<section id="the-five-critical-challenges" class="level2">
-<h2 class="anchored" data-anchor-id="the-five-critical-challenges">The Five Critical Challenges</h2>
-<section id="market-cycle-vulnerability" class="level3">
-<h3 class="anchored" data-anchor-id="market-cycle-vulnerability">1. Market Cycle Vulnerability</h3>
-<p>Bear markets consistently devastate blockchain security and development. When token prices crash, network security plummets and development teams dissolve. This boom-bust cycle has plagued the industry since its inception, making long-term planning nearly impossible.</p>
+<section id="why-not-existing-frameworks" class="level1">
+<h1>Why Not Existing Frameworks?</h1>
+<p>The journey from concept to implementation required a critical decision: which platform would best support this novel consensus mechanism? Let me walk you through why common approaches proved impractical for implementing Proof of Physics.</p>
+<section id="the-ethereum-layer-2-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-ethereum-layer-2-challenge">The Ethereum Layer 2 Challenge</h2>
+<p>Building as an Ethereum Layer 2 would fundamentally undermine the core premise of Proof of Physics. While Layer 2s offer impressive scalability, they ultimately rely on Ethereum’s base layer for security. This means they inherit not just Ethereum’s security assumptions but also its network topology—precisely what we’re trying to rethink with Proof of Physics.</p>
 </section>
-<section id="geographic-centralization" class="level3">
-<h3 class="anchored" data-anchor-id="geographic-centralization">2. Geographic Centralization</h3>
-<p>Despite claims of decentralization, most blockchain nodes cluster in a handful of cloud providers subject to the US CLOUD Act. This creates a massive vulnerability - one regulatory action could effectively shut down or compromise most “decentralized” networks.</p>
+<section id="limitations-of-avalanche-l1s" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-of-avalanche-l1s">Limitations of Avalanche L1s</h2>
+<p>Avalanche’s custom L1 platform initially seemed promising. However, several fundamental challenges emerged:</p>
+<p>First, Avalanche’s networking stack is intimately tied to its Snow* protocols. These aren’t just implementation details—they’re core assumptions baked into how nodes communicate. Implementing Proof of Physics would require rebuilding much of the networking layer, essentially fighting against the framework rather than working with it.</p>
+<p>Second, while Avalanche allows customization of validator selection, its abstractions assume a stake-based system. Our need to validate physical network characteristics and geographic distribution would require deep modifications to core framework components.</p>
 </section>
-<section id="high-validator-barriers" class="level3">
-<h3 class="anchored" data-anchor-id="high-validator-barriers">3. High Validator Barriers</h3>
-<p>Current networks demand either massive capital stakes or specialized mining hardware, creating artificial barriers to participation. This concentrates power in the hands of those with existing capital, undermining the promise of decentralization.</p>
+<section id="the-cosmos-sdk-consideration" class="level2">
+<h2 class="anchored" data-anchor-id="the-cosmos-sdk-consideration">The Cosmos SDK Consideration</h2>
+<p>The Cosmos SDK offers significant flexibility, but it too presents fundamental obstacles for Proof of Physics:</p>
+<p>The SDK’s networking layer is optimized for Tendermint’s communication patterns. While you can customize validator selection, implementing precise latency measurements and topology validation would require bypassing many of the SDK’s abstractions. We would spend more time working around the framework than building our core functionality.</p>
+<p>Additionally, the SDK’s extensive features for inter-chain communication and governance, while valuable for many projects, represent unnecessary complexity for our focused goal of implementing physical network validation.</p>
 </section>
-<section id="unstable-computation-costs" class="level3">
-<h3 class="anchored" data-anchor-id="unstable-computation-costs">4. Unstable Computation Costs</h3>
-<p>Variable gas fees and unpredictable pricing make enterprise adoption impractical. No business can build on a platform where transaction costs might increase 100x without warning.</p>
-</section>
-<section id="mev-market-distortion" class="level3">
-<h3 class="anchored" data-anchor-id="mev-market-distortion">5. MEV Market Distortion</h3>
-<p>Front-running and MEV extraction have become a cancer in the blockchain ecosystem, undermining market integrity and trust. This isn’t a minor issue - it’s a fundamental threat to the technology’s adoption.</p>
+<section id="the-challenge-with-substrate" class="level2">
+<h2 class="anchored" data-anchor-id="the-challenge-with-substrate">The Challenge with Substrate</h2>
+<p>While Substrate offers impressive modularity, it faces similar limitations to other frameworks when it comes to implementing Proof of Physics. Its networking layer and consensus interfaces, while flexible, are designed with traditional consensus mechanisms in mind. Implementing our physical validation approach would require significant modifications to core framework components.</p>
 </section>
 </section>
-<section id="architectural-solutions-where-theory-meets-practice" class="level2">
-<h2 class="anchored" data-anchor-id="architectural-solutions-where-theory-meets-practice">Architectural Solutions: Where Theory Meets Practice</h2>
-<section id="commonware-foundation" class="level3">
-<h3 class="anchored" data-anchor-id="commonware-foundation">Commonware Foundation</h3>
-<p>Our choice of Commonware isn’t arbitrary - it provides the robust primitives needed to build solutions to these core challenges:</p>
+<section id="the-commonware-advantage" class="level1">
+<h1>The Commonware Advantage</h1>
+<p>What sets Commonware apart is its elegant approach to blockchain primitives. Rather than providing a rigid framework with opinionated defaults, Commonware gives us fundamental building blocks that handle the complex infrastructure requirements while leaving complete freedom for custom implementation. This approach is transformative for building novel blockchain architectures.</p>
+<p>Let’s break down how Commonware’s primitives enable our vision:</p>
+<section id="core-infrastructure-handled-for-us" class="level2">
+<h2 class="anchored" data-anchor-id="core-infrastructure-handled-for-us">Core Infrastructure Handled For Us</h2>
+<p>Commonware provides essential infrastructure through well-designed traits and implementations:</p>
 <ol type="1">
-<li><p><strong>Network Layer (Commonware P2P)</strong>: Enables true geographic distribution by understanding and working with physical network topology. This isn’t just about message passing - it’s about creating a network that naturally resists geographic centralization.</p></li>
-<li><p><strong>Storage Layer (Commonware Storage)</strong>:</p></li>
-</ol>
-<ul>
-<li>Journal: Provides immutable historical record keeping</li>
-<li>Archive: Enables efficient data retrieval without compromising decentralization</li>
-<li>Metadata: Manages critical state with minimal overhead</li>
-</ul>
-<ol start="3" type="1">
-<li><strong>Runtime Environment</strong>: Focuses on predictable, reliable execution - exactly what’s needed for stable computation costs.</li>
+<li><p>The Supervisor trait handles the complex mechanics of leader election and validator set management. We simply implement our custom selection logic on top of this robust foundation.</p></li>
+<li><p>The Automaton trait manages all consensus messaging and state transitions between nodes. We don’t have to worry about message delivery, retry logic, or network failures—we just define our custom validation rules.</p></li>
+<li><p>The Storage primitives handle the intricate details of persisting blockchain data. Block storage, journal management, and state synchronization are all provided out of the box.</p></li>
+<li><p>The Runtime offers a production-grade async execution environment with proper error handling and resource management.</p></li>
 </ol>
 </section>
-<section id="proof-of-physics-true-censorship-resistance" class="level3">
-<h3 class="anchored" data-anchor-id="proof-of-physics-true-censorship-resistance">Proof of Physics: True Censorship Resistance</h3>
-<p>Proof of Physics isn’t just another consensus mechanism - it’s a fundamental rethinking of blockchain security. By requiring validators to operate physical hardware across different regulatory jurisdictions, we create:</p>
-<ul>
-<li>Natural resistance to geographic centralization</li>
-<li>Lower barriers to participation (no massive stakes required)</li>
-<li>Protection against regulatory capture through jurisdictional diversity</li>
-<li>Reduced MEV opportunities through physical network topology</li>
-</ul>
-</section>
-<section id="sui-move-vm-integration-predictable-computation" class="level3">
-<h3 class="anchored" data-anchor-id="sui-move-vm-integration-predictable-computation">Sui Move VM Integration: Predictable Computation</h3>
-<p>Our choice of the Sui Move VM directly addresses computation cost stability and MEV:</p>
-<ul>
-<li>Accurate, predictable computation costing</li>
-<li>No priority fees or gas price auctions</li>
-<li>Resource-oriented programming model that naturally limits MEV opportunities</li>
-</ul>
-</section>
-</section>
-<section id="economic-design-meets-technical-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="economic-design-meets-technical-architecture">Economic Design Meets Technical Architecture</h2>
-<p>The architecture’s technical decisions are inseparable from their economic implications:</p>
+<section id="complete-freedom-for-innovation" class="level2">
+<h2 class="anchored" data-anchor-id="complete-freedom-for-innovation">Complete Freedom for Innovation</h2>
+<p>With these core capabilities handled, we’re free to focus on implementing our unique requirements:</p>
 <ol type="1">
-<li><strong>Dynamic Supply</strong>: Directly addresses market cycle vulnerability by adapting to market conditions</li>
-<li><strong>Physical Hardware Requirements</strong>: Lowers financial barriers while ensuring geographic distribution</li>
-<li><strong>Fixed Computation Costs</strong>: Makes enterprise adoption practical</li>
-<li><strong>Geographic Distribution</strong>: Creates natural MEV resistance through network topology</li>
+<li><p><strong>Custom Validator Requirements</strong>: We can implement our physical hardware verification system using zero-knowledge proofs without having to modify any core networking or consensus code. Commonware’s trait-based design means we can plug in our custom validation logic seamlessly.</p></li>
+<li><p><strong>Novel Leader Election</strong>: While Commonware handles the mechanics of leader rotation, we have complete freedom to implement our geographic-aware leader selection algorithm. The Supervisor trait provides the interface—we provide the logic.</p></li>
+<li><p><strong>Dynamic Token Economics</strong>: We can implement our unique tokenomics model and supply adjustment mechanisms without having to worry about how state changes are propagated through the network. Commonware’s storage primitives handle the heavy lifting of state management.</p></li>
+<li><p><strong>Flexible Execution</strong>: Need to connect to an external VM or implement custom smart contract execution? Commonware’s modular design means we can plug in any execution environment without modifying core consensus or networking code.</p></li>
 </ol>
 </section>
-<section id="looking-forward-the-path-to-sustainable-adoption" class="level2">
-<h2 class="anchored" data-anchor-id="looking-forward-the-path-to-sustainable-adoption">Looking Forward: The Path to Sustainable Adoption</h2>
-<p>RØMER Chain’s architecture represents a systematic response to blockchain’s core challenges. Instead of adding complexity, we’ve focused on fundamental solutions:</p>
+<section id="the-power-of-primitives" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-primitives">The Power of Primitives</h2>
+<p>The beauty of this approach is that we get the best of both worlds: rock-solid infrastructure components built by world-class distributed systems engineers, combined with complete freedom to innovate on our unique features. We’re not fighting against framework assumptions or trying to modify someone else’s opinion about how blockchains should work.</p>
+<p>The only alternative would have been building everything from scratch—implementing our own networking stack, consensus messaging, storage layer, and runtime environment. Instead, Commonware gives us these capabilities as composable primitives, letting us focus our engineering efforts on the novel aspects of our design.</p>
+<p>Consider our Proof of Physics implementation: we can focus entirely on building the geographic validation and physical hardware verification systems because we’re not worrying about:</p>
 <ul>
-<li>True geographic decentralization through physical requirements</li>
-<li>Sustainable security through market cycle independence</li>
-<li>Accessible validation through reduced financial barriers</li>
-<li>Predictable costs through smart VM choice</li>
-<li>Natural MEV resistance through network design</li>
+<li>How blocks are stored and retrieved</li>
+<li>How messages are delivered between nodes</li>
+<li>How leader election state is maintained</li>
+<li>How async operations are scheduled</li>
+<li>How network connections are managed</li>
 </ul>
-<p>This isn’t about revolutionary technology - it’s about solving real problems that have held back blockchain adoption. Each architectural decision traces directly back to one of these fundamental challenges.</p>
-
-
+<p>This is what makes Commonware unique in the blockchain space. Other platforms force you to accept their opinions about these core components. Commonware just gives you the building blocks and lets you assemble them however you need.</p>
 </section>
+</section>
+<section id="looking-forward" class="level1">
+<h1>Looking Forward</h1>
+<p>Choosing Commonware means more direct implementation work compared to using a full-featured framework. However, this investment in foundational architecture allows us to implement Proof of Physics exactly as envisioned, without compromising on its core principles of physical decentralization.</p>
+<p>The goal isn’t just to build another blockchain—it’s to demonstrate that we can build networks that are truly decentralized in their physical reality, not just in their token distribution. By starting with primitives rather than frameworks, we have the flexibility to implement this vision without fighting against existing assumptions about how blockchains should work.</p>
+<p>As we continue development, we’ll be sharing more detailed insights into how we’re using Commonware’s primitives to build a blockchain that considers physical reality as a first-class concern. Stay tuned for deep dives into our implementation of network measurements, geographic validation, and hardware attestation.</p>
+
+
 </section>
 
 </main> <!-- /main -->

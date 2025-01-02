@@ -2,6 +2,8 @@
 project:
   type: website
   output-dir: ../docs  # Output directory for built site
+  resources:
+    - "!blog/drafts/"  # Excludes drafts from publication
 
 # Website configuration
 website:

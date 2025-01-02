@@ -10,7 +10,7 @@
   </url>
   <url>
     <loc>http://romer.network/technical/index.html</loc>
-    <lastmod>2024-12-29T22:47:55.203Z</lastmod>
+    <lastmod>2025-01-02T21:31:35.526Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/regions.html</loc>
@@ -29,20 +29,24 @@
     <lastmod>2024-12-29T22:32:10.847Z</lastmod>
   </url>
   <url>
-    <loc>http://romer.network/blog/posts/2024-12-31-why-commonware/index.html</loc>
+    <loc>http://romer.network/blog/posts/2025-01-03-why-commonware/index.html</loc>
     <lastmod>2024-12-31T01:02:06.663Z</lastmod>
   </url>
   <url>
-    <loc>http://romer.network/blog/index.html</loc>
-    <lastmod>2024-12-31T00:23:00.225Z</lastmod>
+    <loc>http://romer.network/blog/drafts/2025-01-01-devnet/index.html</loc>
+    <lastmod>2025-01-02T20:42:08.380Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/about.html</loc>
     <lastmod>2024-12-26T23:24:27.544Z</lastmod>
   </url>
   <url>
-    <loc>http://romer.network/blog/posts/2024-12-31-mev/index.html</loc>
+    <loc>http://romer.network/blog/drafts/2024-12-31-mev/index.html</loc>
     <lastmod>2024-12-31T05:07:52.311Z</lastmod>
+  </url>
+  <url>
+    <loc>http://romer.network/blog/index.html</loc>
+    <lastmod>2024-12-31T00:23:00.225Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/economics/distribution.html</loc>
