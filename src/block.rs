@@ -1,42 +1,44 @@
-use commonware_cryptography::{PublicKey, Signature};
-use std::time::SystemTime;
+use serde::{Deserialize, Serialize}; 
+use bytes::Bytes;
 
-/// Represents the header portion of a block, containing metadata and cryptographic links
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlockHeader {
-    pub view: u32,                     // Consensus view number when block was created
-    pub height: u64,                   // Block height in the chain
-    pub timestamp: SystemTime,         // Block creation time
-    pub previous_hash: [u8; 32],       // Hash of the previous block
-    pub transactions_root: [u8; 32],   // Merkle root of transactions
-    pub state_root: [u8; 32],          // Root hash of the state trie
-    pub validator_public_key: PublicKey,// Public key of the block producer
-    pub utilization: f64,              // Current utilization vs base threshold
+    pub view: u32,
+    pub height: u64,
+    pub timestamp: u64,
+    pub previous_hash: [u8; 32],
+    pub transactions_root: [u8; 32],
+    pub state_root: [u8; 32],
+    pub validator_public_key: [u8; 32]
 }
 
-/// A complete block containing a header and a list of transactions
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block {
     pub header: BlockHeader,
     pub transactions: Vec<Transaction>,
 }
 
-
-/// A transaction that can be included in a block
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transaction {
     pub transaction_type: TransactionType,
-    pub from: String,              // Base58 encoded address
-    pub nonce: u64,                // Transaction sequence number
-    pub gas_amount: u64,           // Computed gas requirement
-    pub signature: Signature,      // Transaction signature
+    pub from: [u8; 32],
+    pub nonce: u64,
+    pub gas_amount: u64,
+    pub signature: [u8 ; 32],
 }
 
-/// The different types of transactions supported by the system
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TransactionType {
     TokenTransfer {
-        to: String,                // Base58 encoded recipient
-        amount: u64,               // Amount in smallest unit (8 decimals)
+        to: [u8; 32],
+        amount: u64,
+        transfer_type: TransferType,
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum TransferType {
+    Normal,
+    Mint, 
+    Burn,
 }

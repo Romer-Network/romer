@@ -81,6 +81,9 @@ fn main() {
                     NodeError::Storage(e) => {
                         error!("Storage configuration error: {}", e);
                     }
+                    NodeError::Tokenomics(e) => {
+                        error!("Tokenomics configuration error: {}", e);
+                    }
                     NodeError::Initialization(e) => {
                         error!("Node initialization error: {}", e);
                     }

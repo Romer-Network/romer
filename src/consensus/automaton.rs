@@ -5,14 +5,17 @@ use commonware_cryptography::{Ed25519, PublicKey, Scheme};
 use commonware_p2p::{Recipients, Sender};
 use commonware_runtime::deterministic::Context as RuntimeContext;
 use commonware_runtime::Clock;
+use commonware_utils::hex;
 use futures::channel::oneshot;
 use std::time::{Duration, SystemTime};
 use tracing::{info, warn};
 
-use crate::block::{Block, BlockHeader};
+use crate::block::{Block, BlockHeader, Transaction, TransactionType, TransferType};
 use crate::config::genesis::GenesisConfig;
 use crate::config::storage::StorageConfig;
+use crate::config::tokenomics::TokenomicsConfig;
 use crate::consensus::supervisor::BlockchainSupervisor;
+use crate::utils::utils::BlockHasher;
 
 /// Core blockchain automaton responsible for block creation, validation, and network interactions
 #[derive(Clone)]
@@ -22,6 +25,7 @@ pub struct BlockchainAutomaton {
     pub signer: Ed25519,
     genesis_config: GenesisConfig,
     storage_config: StorageConfig,
+    tokenomics_config: TokenomicsConfig,
     pub supervisor: BlockchainSupervisor,
 }
 
@@ -31,8 +35,8 @@ impl BlockchainAutomaton {
         signer: Ed25519,
         genesis_config: GenesisConfig,
         storage_config: StorageConfig,
+        tokenomics_config: TokenomicsConfig,
     ) -> Self {
-        // Clone the signer to create the supervisor
         let supervisor_signer = signer.clone();
 
         Self {
@@ -41,11 +45,13 @@ impl BlockchainAutomaton {
             signer,
             genesis_config,
             storage_config,
+            tokenomics_config,
             supervisor: BlockchainSupervisor::new(supervisor_signer.public_key()),
         }
     }
 
-    pub async fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        info!("Storage config paths: {:?}", self.storage_config.paths);
         // Construct the full path to the genesis data directory
         let genesis_path = self
             .storage_config
@@ -53,6 +59,9 @@ impl BlockchainAutomaton {
             .data_dir
             .join(&self.storage_config.paths.journal_dir)
             .join(&self.storage_config.journal.partitions.genesis);
+
+        info!("Attempting to access genesis path: {:?}", genesis_path);
+        std::fs::create_dir_all(&genesis_path.parent().unwrap())?;
 
         // Check if the directory exists
         match std::fs::read_dir(&genesis_path) {
@@ -66,7 +75,6 @@ impl BlockchainAutomaton {
                     let genesis_block = self
                         .create_genesis_block(self.genesis_config.network.genesis_time)
                         .await;
-
                 } else {
                     info!("Genesis data already exists. Skipping genesis block creation.");
                 }
@@ -97,21 +105,111 @@ impl BlockchainAutomaton {
         self.p2p_sender = Some(sender);
     }
 
-    /// Create the initial genesis block for the blockchain
-    async fn create_genesis_block(&self, genesis_time: u64) -> Block {
-        Block {
+    async fn create_genesis_block(&mut self, genesis_time: u64) -> Block {
+        let mut block_hasher = BlockHasher::new();
+
+        // Convert treasury address to Vec<u8> first
+        let treasury_vec =
+            block_hasher.address_to_bytes(&self.tokenomics_config.addresses.treasury);
+
+        // Convert the Vec<u8> to fixed-size array for the transaction
+        let mut treasury_bytes = [0u8; 32];
+        // If the vector is shorter than 32 bytes, this will pad with zeros
+        // If longer, it will take the first 32 bytes
+        treasury_bytes[..treasury_vec.len().min(32)]
+            .copy_from_slice(&treasury_vec[..treasury_vec.len().min(32)]);
+
+        let mint_transaction = Transaction {
+            transaction_type: TransactionType::TokenTransfer {
+                to: treasury_bytes, // Now using fixed-size array
+                amount: self.tokenomics_config.supply.initial_supply,
+                transfer_type: TransferType::Mint,
+            },
+            from: [0u8; 32],
+            nonce: 0,
+            gas_amount: 0,
+            signature: [0u8; 32],
+        };
+
+        let transactions_root =
+            block_hasher.calculate_transactions_root(&[mint_transaction.clone()]);
+
+        // For state root calculation, we can use the original Vec<u8>
+        let initial_state = vec![(
+            treasury_vec, // Using the vector directly here
+            self.tokenomics_config.supply.initial_supply,
+        )];
+
+        let state_root = block_hasher.calculate_state_root(&initial_state);
+
+        let public_key_bytes = self.signer.public_key();
+        let mut validator_key = [0u8; 32];
+        validator_key.copy_from_slice(&public_key_bytes);
+
+        let block = Block {
             header: BlockHeader {
                 view: 0,
                 height: 0,
-                timestamp: SystemTime::UNIX_EPOCH + Duration::from_secs(genesis_time),
-                previous_hash: [0; 32],
-                transactions_root: [0; 32],
-                state_root: [0; 32],
-                validator_public_key: self.signer.public_key(),
-                utilization: 0.0,
+                timestamp: genesis_time,
+                previous_hash: [0u8; 32],
+                transactions_root,
+                state_root,
+                validator_public_key: validator_key,
             },
-            transactions: vec![],
+            transactions: vec![mint_transaction],
+        };
+
+        // Print detailed genesis block information
+        info!("\n=== Genesis Block Created ===");
+        info!("Block Header:");
+        info!("  View: {}", block.header.view);
+        info!("  Height: {}", block.header.height);
+        info!("  Timestamp: {}", block.header.timestamp);
+        info!(
+            "  Previous Hash: 0x{}",
+            hex::encode(block.header.previous_hash)
+        );
+        info!(
+            "  Transactions Root: 0x{}",
+            hex::encode(block.header.transactions_root)
+        );
+        info!("  State Root: 0x{}", hex::encode(block.header.state_root));
+        info!(
+            "  Validator Public Key: 0x{}",
+            hex::encode(block.header.validator_public_key)
+        );
+
+        info!("\nTransactions:");
+        for (i, tx) in block.transactions.iter().enumerate() {
+            info!("Transaction {}:", i + 1);
+            match &tx.transaction_type {
+                TransactionType::TokenTransfer {
+                    to,
+                    amount,
+                    transfer_type,
+                } => {
+                    info!("  Type: Token Transfer");
+                    info!("  To: 0x{}", hex::encode(to));
+                    info!("  Amount: {} Ole", amount); // Ole is the smallest unit of RØMER
+                    info!("  Transfer Type: {:?}", transfer_type);
+                }
+            }
+            info!("  From: 0x{}", hex::encode(tx.from));
+            info!("  Nonce: {}", tx.nonce);
+            info!("  Gas Amount: {}", tx.gas_amount);
+            info!("  Signature: 0x{}", hex::encode(tx.signature));
         }
+
+        info!("\nInitial State:");
+        info!(
+            "  Treasury Balance: {} Ole",
+            self.tokenomics_config.supply.initial_supply
+        );
+        info!("  Treasury Address: 0x{}", hex::encode(treasury_bytes));
+
+        info!("=== End Genesis Block ===\n");
+
+        block
     }
 }
 
@@ -120,31 +218,22 @@ impl Automaton for BlockchainAutomaton {
     type Context = Context;
 
     async fn genesis(&mut self) -> Bytes {
-        // Create genesis block using the time from our config
         let genesis_block = self
             .create_genesis_block(self.genesis_config.network.genesis_time)
             .await;
 
         let mut buffer = BytesMut::new();
 
-        // Serialize the block data
+        // Serialize each field directly - no need to convert timestamp
         buffer.put_u32(genesis_block.header.view);
         buffer.put_u64(genesis_block.header.height);
+        buffer.put_u64(genesis_block.header.timestamp); // Already a u64, no conversion needed
 
-        // Convert SystemTime to u64 timestamp
-        let timestamp = genesis_block
-            .header
-            .timestamp
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
-        buffer.put_u64(timestamp);
-
+        // Add the remaining fields
         buffer.put_slice(&genesis_block.header.previous_hash);
         buffer.put_slice(&genesis_block.header.transactions_root);
         buffer.put_slice(&genesis_block.header.state_root);
         buffer.put_slice(&genesis_block.header.validator_public_key);
-        buffer.put_f64(genesis_block.header.utilization);
 
         buffer.freeze()
     }
