@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.2">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>index – Rømer Chain</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07c16812f08c4a1591d6ec4fc46327fa.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-bebea915e746d702e8312f8ca858bea9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&amp;display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Rømer Chain</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pitch/index.html"> 
+<span class="menu-text">Deck</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tokenomics" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tokenomics</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tokenomics">    
+        <li>
+    <a class="dropdown-item" href="../economics/index.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../economics/model.html">
+ <span class="dropdown-text">Economic Model</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../economics/distribution.html">
+ <span class="dropdown-text">Token Distribution</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../economics/market.html">
+ <span class="dropdown-text">Market Dynamics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../economics/validators.html">
+ <span class="dropdown-text">Validator Economics</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-technical-design" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Technical Design</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-technical-design">    
+        <li>
+    <a class="dropdown-item" href="../technical/index.html">
+ <span class="dropdown-text">Architecture Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../technical/pop.html">
+ <span class="dropdown-text">Proof of Physics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../technical/network.html">
+ <span class="dropdown-text">Network Design</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../technical/devnet.html">
+ <span class="dropdown-text">Development Roadmap</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../technical/validators.html">
+ <span class="dropdown-text">Validator Requirements</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#rømer-chain-architecture-overview" id="toc-rømer-chain-architecture-overview" class="nav-link active" data-scroll-target="#rømer-chain-architecture-overview">RØMER Chain Architecture Overview</a>
+  <ul class="collapse">
+  <li><a href="#system-architecture-overview" id="toc-system-architecture-overview" class="nav-link" data-scroll-target="#system-architecture-overview">System Architecture Overview</a></li>
+  <li><a href="#commonware-integration-layer" id="toc-commonware-integration-layer" class="nav-link" data-scroll-target="#commonware-integration-layer">Commonware Integration Layer</a>
+  <ul class="collapse">
+  <li><a href="#network-communication-commonware-p2p" id="toc-network-communication-commonware-p2p" class="nav-link" data-scroll-target="#network-communication-commonware-p2p">Network Communication (Commonware P2P)</a></li>
+  <li><a href="#state-management-commonware-storage" id="toc-state-management-commonware-storage" class="nav-link" data-scroll-target="#state-management-commonware-storage">State Management (Commonware Storage)</a></li>
+  <li><a href="#execution-environment-commonware-runtime" id="toc-execution-environment-commonware-runtime" class="nav-link" data-scroll-target="#execution-environment-commonware-runtime">Execution Environment (Commonware Runtime)</a></li>
+  <li><a href="#consensus-integration-simplex-consensus" id="toc-consensus-integration-simplex-consensus" class="nav-link" data-scroll-target="#consensus-integration-simplex-consensus">Consensus Integration (Simplex Consensus)</a></li>
+  </ul></li>
+  <li><a href="#proof-of-physics-layer" id="toc-proof-of-physics-layer" class="nav-link" data-scroll-target="#proof-of-physics-layer">Proof of Physics Layer</a>
+  <ul class="collapse">
+  <li><a href="#hardware-verification-system" id="toc-hardware-verification-system" class="nav-link" data-scroll-target="#hardware-verification-system">Hardware Verification System</a></li>
+  <li><a href="#geographic-validation-protocol" id="toc-geographic-validation-protocol" class="nav-link" data-scroll-target="#geographic-validation-protocol">Geographic Validation Protocol</a></li>
+  </ul></li>
+  <li><a href="#sui-move-virtual-machine-integration" id="toc-sui-move-virtual-machine-integration" class="nav-link" data-scroll-target="#sui-move-virtual-machine-integration">Sui Move Virtual Machine Integration</a>
+  <ul class="collapse">
+  <li><a href="#resource-management" id="toc-resource-management" class="nav-link" data-scroll-target="#resource-management">Resource Management</a></li>
+  <li><a href="#transaction-processing" id="toc-transaction-processing" class="nav-link" data-scroll-target="#transaction-processing">Transaction Processing</a></li>
+  </ul></li>
+  <li><a href="#cross-layer-integration" id="toc-cross-layer-integration" class="nav-link" data-scroll-target="#cross-layer-integration">Cross-Layer Integration</a>
+  <ul class="collapse">
+  <li><a href="#security-framework" id="toc-security-framework" class="nav-link" data-scroll-target="#security-framework">Security Framework</a></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">Performance Optimization</a></li>
+  </ul></li>
+  <li><a href="#implementation-details" id="toc-implementation-details" class="nav-link" data-scroll-target="#implementation-details">Implementation Details</a>
+  <ul class="collapse">
+  <li><a href="#network-protocol-specifications" id="toc-network-protocol-specifications" class="nav-link" data-scroll-target="#network-protocol-specifications">Network Protocol Specifications</a></li>
+  <li><a href="#state-management-implementation" id="toc-state-management-implementation" class="nav-link" data-scroll-target="#state-management-implementation">State Management Implementation</a></li>
+  </ul></li>
+  <li><a href="#networking-architecture" id="toc-networking-architecture" class="nav-link" data-scroll-target="#networking-architecture">Networking Architecture</a>
+  <ul class="collapse">
+  <li><a href="#geographic-network-topology" id="toc-geographic-network-topology" class="nav-link" data-scroll-target="#geographic-network-topology">Geographic Network Topology</a></li>
+  <li><a href="#message-propagation" id="toc-message-propagation" class="nav-link" data-scroll-target="#message-propagation">Message Propagation</a></li>
+  </ul></li>
+  <li><a href="#future-architectural-considerations" id="toc-future-architectural-considerations" class="nav-link" data-scroll-target="#future-architectural-considerations">Future Architectural Considerations</a>
+  <ul class="collapse">
+  <li><a href="#scalability-enhancements" id="toc-scalability-enhancements" class="nav-link" data-scroll-target="#scalability-enhancements">Scalability Enhancements</a></li>
+  <li><a href="#network-evolution" id="toc-network-evolution" class="nav-link" data-scroll-target="#network-evolution">Network Evolution</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="rømer-chain-architecture-overview" class="level1">
+<h1>RØMER Chain Architecture Overview</h1>
+<section id="system-architecture-overview" class="level2">
+<h2 class="anchored" data-anchor-id="system-architecture-overview">System Architecture Overview</h2>
+<p>RØMER Chain implements a novel blockchain architecture that combines physical infrastructure requirements with advanced cryptography to create a truly decentralized computation platform. Our system is built on three core architectural components: the Commonware primitive layer, the Proof of Physics consensus mechanism, and the Sui Move virtual machine. Each component serves specific purposes while working together to create a cohesive system.</p>
+</section>
+<section id="commonware-integration-layer" class="level2">
+<h2 class="anchored" data-anchor-id="commonware-integration-layer">Commonware Integration Layer</h2>
+<p>At the foundation of RØMER’s architecture lies the Commonware primitive layer, which provides essential blockchain functionality through four key components:</p>
+<section id="network-communication-commonware-p2p" class="level3">
+<h3 class="anchored" data-anchor-id="network-communication-commonware-p2p">Network Communication (Commonware P2P)</h3>
+<p>The P2P layer handles all network communication between nodes using a custom protocol designed for geographic validation. This component implements:</p>
+<ol type="1">
+<li>Network Performance Measurement
+<ul>
+<li>Continuous latency monitoring between nodes</li>
+<li>Bandwidth measurement and tracking</li>
+<li>Path diversity verification</li>
+<li>Geographic distance calculation</li>
+</ul></li>
+<li>Message Propagation
+<ul>
+<li>Optimized gossip protocol for geographic distribution</li>
+<li>Priority-based message routing</li>
+<li>Network topology-aware broadcast</li>
+<li>Regional relay optimization</li>
+</ul></li>
+</ol>
+</section>
+<section id="state-management-commonware-storage" class="level3">
+<h3 class="anchored" data-anchor-id="state-management-commonware-storage">State Management (Commonware Storage)</h3>
+<p>The storage layer implements a sophisticated state management system designed for distributed operation:</p>
+<ol type="1">
+<li>State Organization
+<ul>
+<li>Merkle-Patricia trie for state storage</li>
+<li>Regional state sharding</li>
+<li>Geographic replication management</li>
+<li>State synchronization protocols</li>
+</ul></li>
+<li>Data Persistence
+<ul>
+<li>Zero-knowledge storage proofs</li>
+<li>Geographic redundancy</li>
+<li>State compression</li>
+<li>Efficient state updates</li>
+</ul></li>
+</ol>
+</section>
+<section id="execution-environment-commonware-runtime" class="level3">
+<h3 class="anchored" data-anchor-id="execution-environment-commonware-runtime">Execution Environment (Commonware Runtime)</h3>
+<p>The runtime environment coordinates transaction execution across the distributed network:</p>
+<ol type="1">
+<li>Transaction Processing
+<ul>
+<li>Parallel execution engine</li>
+<li>Geographic load balancing</li>
+<li>Resource usage tracking</li>
+<li>State transition validation</li>
+</ul></li>
+<li>Resource Management
+<ul>
+<li>CPU utilization monitoring</li>
+<li>Memory allocation tracking</li>
+<li>Storage space management</li>
+<li>Network bandwidth control</li>
+</ul></li>
+</ol>
+</section>
+<section id="consensus-integration-simplex-consensus" class="level3">
+<h3 class="anchored" data-anchor-id="consensus-integration-simplex-consensus">Consensus Integration (Simplex Consensus)</h3>
+<p>RØMER enhances Simplex Consensus with geographic validation:</p>
+<ol type="1">
+<li>Leader Selection
+<ul>
+<li>Geographic rotation requirements</li>
+<li>Performance-based eligibility</li>
+<li>Regional representation</li>
+<li>Network health metrics</li>
+</ul></li>
+<li>Block Production
+<ul>
+<li>Geographic timestamp verification</li>
+<li>Regional block propagation</li>
+<li>Cross-region validation</li>
+<li>Latency-aware finalization</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="proof-of-physics-layer" class="level2">
+<h2 class="anchored" data-anchor-id="proof-of-physics-layer">Proof of Physics Layer</h2>
+<p>The Proof of Physics layer implements our novel consensus mechanism that validates geographic distribution and physical infrastructure:</p>
+<section id="hardware-verification-system" class="level3">
+<h3 class="anchored" data-anchor-id="hardware-verification-system">Hardware Verification System</h3>
+<ol type="1">
+<li>Physical Infrastructure Validation
+<ul>
+<li>Zero-knowledge proofs of hardware ownership</li>
+<li>CPU architecture verification</li>
+<li>Memory capacity validation</li>
+<li>Storage requirements checking</li>
+</ul></li>
+<li>Network Connection Validation
+<ul>
+<li>Bandwidth measurement</li>
+<li>Latency verification</li>
+<li>Path diversity checking</li>
+<li>Geographic distance confirmation</li>
+</ul></li>
+</ol>
+</section>
+<section id="geographic-validation-protocol" class="level3">
+<h3 class="anchored" data-anchor-id="geographic-validation-protocol">Geographic Validation Protocol</h3>
+<ol type="1">
+<li>Location Verification
+<ul>
+<li>Network topology analysis</li>
+<li>Path latency measurement</li>
+<li>Regional connectivity verification</li>
+<li>Infrastructure ownership validation</li>
+</ul></li>
+<li>Performance Monitoring
+<ul>
+<li>Continuous uptime tracking</li>
+<li>Network quality measurement</li>
+<li>Resource utilization monitoring</li>
+<li>Geographic distribution verification</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="sui-move-virtual-machine-integration" class="level2">
+<h2 class="anchored" data-anchor-id="sui-move-virtual-machine-integration">Sui Move Virtual Machine Integration</h2>
+<p>RØMER leverages Sui’s Move VM for secure and efficient computation:</p>
+<section id="resource-management" class="level3">
+<h3 class="anchored" data-anchor-id="resource-management">Resource Management</h3>
+<ol type="1">
+<li>Computation Tracking
+<ul>
+<li>Granular resource monitoring</li>
+<li>Fixed cost calculation</li>
+<li>Usage optimization</li>
+<li>State transition tracking</li>
+</ul></li>
+<li>Memory Management
+<ul>
+<li>Linear type system</li>
+<li>Resource ownership tracking</li>
+<li>Memory safety guarantees</li>
+<li>Efficient garbage collection</li>
+</ul></li>
+</ol>
+</section>
+<section id="transaction-processing" class="level3">
+<h3 class="anchored" data-anchor-id="transaction-processing">Transaction Processing</h3>
+<ol type="1">
+<li>Execution Pipeline
+<ul>
+<li>Deterministic processing</li>
+<li>Parallel execution</li>
+<li>State isolation</li>
+<li>Resource tracking</li>
+</ul></li>
+<li>State Management
+<ul>
+<li>Object-capability model</li>
+<li>Resource-oriented programming</li>
+<li>State transition verification</li>
+<li>Access control enforcement</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="cross-layer-integration" class="level2">
+<h2 class="anchored" data-anchor-id="cross-layer-integration">Cross-Layer Integration</h2>
+<p>The architecture implements several cross-cutting concerns that span multiple layers:</p>
+<section id="security-framework" class="level3">
+<h3 class="anchored" data-anchor-id="security-framework">Security Framework</h3>
+<ol type="1">
+<li>Cryptographic Security
+<ul>
+<li>Zero-knowledge proof systems</li>
+<li>Hardware attestation</li>
+<li>Network path verification</li>
+<li>State transition validation</li>
+</ul></li>
+<li>Network Security
+<ul>
+<li>Geographic distribution requirements</li>
+<li>Path diversity enforcement</li>
+<li>DDoS resistance through topology</li>
+<li>MEV prevention through latency</li>
+</ul></li>
+</ol>
+</section>
+<section id="performance-optimization" class="level3">
+<h3 class="anchored" data-anchor-id="performance-optimization">Performance Optimization</h3>
+<ol type="1">
+<li>Geographic Optimization
+<ul>
+<li>Regional state sharding</li>
+<li>Local execution priority</li>
+<li>Path-aware routing</li>
+<li>Latency minimization</li>
+</ul></li>
+<li>Resource Management
+<ul>
+<li>Dynamic load balancing</li>
+<li>Geographic resource distribution</li>
+<li>Efficient state propagation</li>
+<li>Parallel processing optimization</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="implementation-details" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-details">Implementation Details</h2>
+<section id="network-protocol-specifications" class="level3">
+<h3 class="anchored" data-anchor-id="network-protocol-specifications">Network Protocol Specifications</h3>
+<p>The system implements custom network protocols for geographic validation:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Geographic Validation Protocol</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeoValidation:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> validate_connection(<span class="va">self</span>, peer_info):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Verify physical distance through network paths</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        paths <span class="op">=</span> measure_network_paths(peer_info)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> verify_path_diversity(paths):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check latency corresponds to geographic distance</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        latency <span class="op">=</span> measure_min_latency(peer_info)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> verify_physical_latency(latency, peer_info.location):</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Validate infrastructure ownership</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> verify_infrastructure_proof(peer_info.proof):</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="state-management-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="state-management-implementation">State Management Implementation</h3>
+<p>The state management system uses a modified Merkle-Patricia trie optimized for geographic distribution:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Geographic State Management</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeoState:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_state(<span class="va">self</span>, key, value, location):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate geographic shard</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        shard <span class="op">=</span> <span class="va">self</span>.get_geographic_shard(location)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update state with location metadata</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        state_update <span class="op">=</span> {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">'value'</span>: value,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">'location'</span>: location,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: get_network_time(),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">'validators'</span>: get_regional_validators(location)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update state tree with geographic indexing</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.state_tree.update(key, state_update, shard)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="networking-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="networking-architecture">Networking Architecture</h2>
+<section id="geographic-network-topology" class="level3">
+<h3 class="anchored" data-anchor-id="geographic-network-topology">Geographic Network Topology</h3>
+<p>The network implements a sophisticated topology aware of physical infrastructure:</p>
+<ol type="1">
+<li>Regional Organization
+<ul>
+<li>Network divided into geographic regions</li>
+<li>Inter-region connection requirements</li>
+<li>Path diversity enforcement</li>
+<li>Latency-based organization</li>
+</ul></li>
+<li>Connection Management
+<ul>
+<li>Minimum peer requirements per region</li>
+<li>Geographic distance verification</li>
+<li>Path quality monitoring</li>
+<li>Dynamic peer selection</li>
+</ul></li>
+</ol>
+</section>
+<section id="message-propagation" class="level3">
+<h3 class="anchored" data-anchor-id="message-propagation">Message Propagation</h3>
+<p>Message propagation is optimized for geographic distribution:</p>
+<ol type="1">
+<li>Regional Propagation
+<ul>
+<li>Local-first broadcasting</li>
+<li>Geographic routing optimization</li>
+<li>Path redundancy</li>
+<li>Latency minimization</li>
+</ul></li>
+<li>Cross-Region Communication
+<ul>
+<li>Optimal path selection</li>
+<li>Geographic relay points</li>
+<li>Bandwidth optimization</li>
+<li>Congestion management</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="future-architectural-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="future-architectural-considerations">Future Architectural Considerations</h2>
+<section id="scalability-enhancements" class="level3">
+<h3 class="anchored" data-anchor-id="scalability-enhancements">Scalability Enhancements</h3>
+<p>The architecture is designed to support future scaling improvements:</p>
+<ol type="1">
+<li>Geographic Sharding
+<ul>
+<li>Regional state partitioning</li>
+<li>Cross-shard transaction processing</li>
+<li>Dynamic load balancing</li>
+<li>State synchronization optimization</li>
+</ul></li>
+<li>Performance Optimization
+<ul>
+<li>Hardware requirement evolution</li>
+<li>Network protocol improvements</li>
+<li>Execution engine enhancements</li>
+<li>State management optimization</li>
+</ul></li>
+</ol>
+</section>
+<section id="network-evolution" class="level3">
+<h3 class="anchored" data-anchor-id="network-evolution">Network Evolution</h3>
+<p>The system supports natural network growth:</p>
+<ol type="1">
+<li>Geographic Expansion
+<ul>
+<li>New region integration</li>
+<li>Path diversity improvement</li>
+<li>Infrastructure requirements adjustment</li>
+<li>Performance scaling</li>
+</ul></li>
+<li>Protocol Updates
+<ul>
+<li>Governance-driven evolution</li>
+<li>Backward compatibility</li>
+<li>Security enhancement</li>
+<li>Feature addition</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>RØMER’s architecture represents a novel approach to blockchain design that prioritizes physical decentralization and sustainable operation. By combining Commonware primitives, Proof of Physics consensus, and the Sui Move VM, we create a system that achieves both security and performance through geographic distribution.</p>
+<p>The architecture’s emphasis on physical infrastructure and network topology creates natural barriers to centralization while enabling efficient operation. This unique combination of features positions RØMER to support the next generation of decentralized applications while maintaining true decentralization and censorship resistance.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("http:\/\/romer\.network");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,42 @@
+# Rømer Chain: Building the First Physically Decentralized Layer 1
+
+Rømer Chain represents a fundamental reimagining of blockchain infrastructure, combining physical decentralization with Austrian economics to create a network that grows stronger in challenging market conditions.
+
+## For Investors
+
+Are you interested in supporting the next evolution in blockchain infrastructure? Rømer Chain introduces novel solutions to critical industry challenges:
+
+[View Our Investment Pitch →](./pitch/index.qmd)
+
+- Geographic decentralization preventing network capture
+- Counter-cyclical economics that strengthen in bear markets  
+- Natural MEV resistance through physical topology
+- Dramatically lower barriers to network participation
+
+## For Engineers & Developers 
+
+Want to understand how we're building a blockchain that validates physical reality? Dive into our technical architecture:
+
+[Explore Technical Design →](./technical/index.qmd)
+
+- Proof of Physics consensus mechanism
+- Integration with Sui Move VM
+- Zero-knowledge hardware attestation
+- Simplex consensus implementation
+
+## For Economic Researchers
+
+Curious about our Austrian approach to blockchain economics? Examine our novel tokenomics model:
+
+[Study Economic Model →](./economics/index.qmd)
+
+- Fixed computation costs with dynamic supply
+- Counter-cyclical validator incentives
+- Market-driven price discovery
+- Sustainable treasury mechanics
+
+## Join the Evolution
+
+Rømer Chain demonstrates how proper system design can solve fundamental blockchain challenges through physical decentralization, economic stability, and technical innovation. Whether you're an investor, engineer, or researcher, we invite you to explore how we're building the foundation for truly sustainable blockchain infrastructure.
+
+[Read Our Latest Development Updates →](./blog/index.qmd)

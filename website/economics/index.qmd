@@ -1,0 +1,88 @@
+# RØMER Chain: An Austrian Economic Framework for Sustainable Blockchain Infrastructure
+
+RØMER Chain represents a fundamental reimagining of blockchain economics, grounded in Austrian economic principles and designed to create sustainable, market-driven infrastructure. Our economic model addresses the core challenges that have historically plagued blockchain networks: volatile computation costs, unstable validator economics, and misaligned incentives during market downturns.
+
+## Core Economic Principles
+
+RØMER's economic model rests on three foundational pillars that work in concert to create a self-sustaining system:
+
+### Market-Driven Supply Dynamics
+
+At the heart of RØMER's economic model lies a sophisticated supply adjustment mechanism that responds organically to market conditions. Unlike traditional blockchain networks that rely on rigid emission schedules, RØMER's supply both expands and contracts based on actual network usage. This bidirectional flexibility ensures that token supply accurately reflects genuine market demand for computation resources.
+
+When network usage falls below the base threshold, the system automatically burns more tokens than it emits, creating natural supply contraction that helps maintain real economic value. Conversely, during periods of high demand, new supply enters the market only in response to genuine demand for computation that exceeds the network's base capacity.
+
+### Fixed Computation Costs
+
+RØMER maintains stable, predictable costs for network computation across all market conditions. This stability is achieved through our dynamic supply adjustment mechanism rather than through artificial price controls. By allowing supply to respond to demand while keeping computation costs fixed in nominal terms, we create an environment where businesses can plan and budget effectively regardless of market conditions.
+
+### Counter-Cyclical Validator Economics
+
+Traditional blockchain networks often struggle during market downturns as declining token prices reduce validator rewards in real terms. RØMER's economic model turns this challenge into a strength through a unique counter-cyclical design. During periods of reduced network activity, the proportional increase in token burning reduces total supply, helping maintain the real value of validator rewards even as nominal network activity declines.
+
+## Comprehensive Documentation
+
+Our economic documentation is organized into several key sections that detail different aspects of the system:
+
+### Economic Model
+The [Economic Model](model.qmd) section provides a detailed examination of RØMER's core economic mechanisms, including:
+
+- Supply adjustment formulas
+- Base computation threshold calculations
+- Market equilibrium mechanics
+- Fee burning dynamics
+
+### Token Distribution
+The [Token Distribution](distribution.qmd) documentation covers:
+
+- Initial token allocation
+- Treasury management
+- Burn reserve mechanics
+
+### Market Dynamics
+Our [Market Dynamics](market.qmd) section explores:
+
+- Price discovery mechanisms
+- Supply and demand interactions
+- Market cycle responses
+- MEV economics
+
+### Validator Economics
+The [Validator Economics](validators.qmd) documentation details:
+
+- Reward structures
+- Economic incentives
+- Operational considerations
+- Long-term sustainability
+
+## Austrian Economic Foundations
+
+RØMER's economic design draws heavily from Austrian economic principles, particularly:
+
+1. Natural Price Discovery: All prices in the system emerge from genuine market activity rather than central planning or arbitrary formulas.
+
+2. Sound Money Principles: Token supply adjusts bidirectionally based on real market demand, creating natural monetary properties.
+
+3. Time Preference: The model acknowledges and accounts for varying time preferences among market participants.
+
+4. Economic Calculation: Fixed nominal costs enable proper economic calculation for businesses and developers.
+
+## Market-Driven Evolution
+
+While RØMER's economic principles remain constant, the specific parameters that govern network operation can evolve through community governance. This evolution follows strict Austrian principles:
+
+- Parameter adjustments require clear market signals
+- Changes must emerge from community consensus
+- Modifications follow predetermined governance processes
+- Evolution maintains core economic principles
+
+## Getting Started
+
+To understand RØMER's economics in detail, we recommend following this reading order:
+
+1. Start with the [Economic Model](model.qmd) to understand core mechanisms
+2. Review the [Token Distribution](distribution.qmd) to learn about supply management
+3. Explore [Market Dynamics](market.qmd) to understand price discovery
+4. Study [Validator Economics](validators.qmd) for operational implications
+
+Each section builds on previous concepts while maintaining RØMER's commitment to Austrian economic principles and sustainable blockchain infrastructure.

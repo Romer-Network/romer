@@ -1,0 +1,34 @@
+# Rømer Chain Genesis Configuration 
+
+[network]
+# A unique identifier for this blockchain network instance
+chain_id = "rømer-devnet-1"
+# Software version for compatibility checking
+version = "0.1.0"
+# The timestamp when this network starts (Unix timestamp)
+genesis_time = 1703433600  # December 24, 2024 UTC
+
+[consensus]
+# How often we create new blocks (in milliseconds)
+block_time_ms = 1000
+# How many blocks make up an epoch - used for scheduling changes in validator sets
+epoch_length = 1000
+# For our proof of concept, we'll start with minimal restrictions
+min_validators = 1
+max_validators = 100
+
+[networking]
+# Basic networking parameters for the P2P network
+max_peers = 50
+# Maximum size of any network message (1MB)
+max_message_size = 1048576
+# How long to wait when connecting to peers (milliseconds)
+connection_timeout_ms = 5000
+# How often to look for new peers (seconds)
+peer_discovery_interval = 30
+
+[technical]
+# Maximum size of a block in bytes (1MB)
+max_block_size = 1048576
+# Maximum size of a single transaction (64KB)
+max_tx_size = 65536

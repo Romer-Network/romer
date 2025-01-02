@@ -1,0 +1,306 @@
+---
+title: "Rømer Chain"
+subtitle: "Building the First Physically Decentralized Layer 1"
+format:
+  revealjs:
+    theme: simple
+    include-in-header:
+      - text: |
+          <style>
+            .back-button {
+              position: fixed;
+              top: 20px;
+              left: 20px;
+              padding: 10px 20px;
+              background-color: rgba(255, 255, 255, 0.9);
+              border: 2px solid #666;
+              border-radius: 6px;
+              color: #333;
+              text-decoration: none;
+              font-family: 'Source Sans Pro', sans-serif;
+              font-size: 16px;
+              transition: all 0.3s ease;
+              z-index: 1000;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .back-button:hover {
+              background-color: #666;
+              color: white;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+              text-decoration: none;
+            }
+          </style>
+          <a href="http://romer.network/" class="back-button">← Back to Website</a>
+    controls: true
+    slide-number: true
+    width: 1600
+    height: 900
+    footer: "Rømer Chain - 2024"
+    incremental: true
+---
+
+## Vision: The Future of Blockchain Infrastructure
+
+Rømer Chain represents a fundamental reimagining of blockchain architecture. By combining Austrian economics, physical decentralization, and innovative consensus mechanisms, we're creating the first blockchain explicitly designed to thrive during bear markets - precisely when other chains are most vulnerable.
+
+::: {.incremental}
+- First blockchain built on physical reality rather than virtual consensus
+- True geographic decentralization across 80+ strategic network locations
+- Austrian economic principles that naturally strengthen the network during market downturns
+- Fixed computation costs enabling enterprise-grade stability
+:::
+
+---
+
+## Market Opportunity
+
+The blockchain industry faces critical challenges that create an opening for innovation:
+
+::: {.incremental}
+- $100B+ lost in 2022 bear market due to unstable tokenomics
+- 90% of Ethereum nodes run on just 3 cloud providers
+- Average validator costs exceed $50,000 on major chains
+- Computation costs vary by 1000%+ during market cycles
+:::
+
+These systemic weaknesses create an opportunity for a fundamentally new approach.
+
+---
+
+## The Problem
+
+Current blockchain architectures face five fundamental challenges:
+
+::: {.incremental}
+- **Market Cycle Vulnerability**: Bear markets devastate development and security
+- **Geographic Centralization**: Most nodes run in the same data centers
+- **High Validator Barriers**: Massive financial requirements limit participation
+- **Unstable Computation Costs**: Unpredictable pricing blocks enterprise adoption
+- **MEV as Market Distortion**: Front-running undermines market integrity
+:::
+
+---
+
+## The Rømer Solution
+
+Four core innovations solve these fundamental challenges:
+
+:::: {.columns}
+
+::: {.column width="25%"}
+**Counter-Cyclical Economics**
+
+- Supply contracts in bear markets
+- Token value naturally rises
+- Development continues unimpeded
+:::
+
+::: {.column width="25%"}
+**Geographic Distribution**
+
+- Physical infrastructure requirements
+- Multi-jurisdictional resilience
+- Natural DDoS protection
+:::
+
+::: {.column width="25%"}
+**Proof of Physics**
+
+- Performance-based validation
+- Minimal financial barriers
+- True decentralization
+:::
+
+::: {.column width="25%"}
+**Sui Move VM**
+
+- Upfront compute costs
+- No gas refunds for reverts
+- Prevents MEV spam attacks
+- Granular resource tracking
+:::
+
+::::
+
+---
+
+## Our Competitive Edge
+
+Why Rømer Chain represents a step-function improvement:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Traditional Chains**
+
+- Vulnerable to bear markets
+- Centralized in data centers
+- High financial barriers
+- Volatile compute costs
+- MEV extraction issues
+:::
+
+::: {.column width="50%"}
+**Rømer Chain**
+
+- Thrives in bear markets
+- True physical distribution
+- Minimal financial barriers
+- Fixed compute costs
+- Natural MEV protection
+:::
+
+::::
+
+---
+
+## Technical Innovation
+
+Our architecture leverages three major components:
+
+::: {.incremental}
+- **Commonware Primitives**: Sub-second finality through Simplex consensus
+- **Proof of Physics**: Geographic validation through network performance
+- **Sui Integration**: Precise computation cost tracking via Move
+:::
+
+Each component reinforces our core advantages while maintaining simplicity.
+
+---
+
+## Development Roadmap
+
+:::: {.columns}
+
+::: {.column width="25%"}
+**Phase 1: Q2-Q3 2025**
+
+- Core network bootstrap
+- Economic engine implementation
+- Initial devnet deployment
+:::
+
+::: {.column width="25%"}
+**Phase 2: Q3-Q4 2025**
+
+- Network coordination system
+- Performance measurement
+- Geographic proof prototype
+:::
+
+::: {.column width="25%"}
+**Phase 3: Q4 2025 - Q1 2026**
+
+- Multi-validator expansion
+- Geographic distribution
+- Production infrastructure
+:::
+
+::: {.column width="25%"}
+**Phase 4: Q2 2026**
+
+- Sui integration completion
+- Mainnet preparation
+- Security audits & testing
+:::
+
+::::
+
+---
+
+## Current Status & Next Steps
+
+Development Progress:
+
+::: {.incremental}
+- Core consensus mechanism implementation underway
+- Economic model fully specified
+- Geographic distribution system designed
+:::
+
+Immediate Focus:
+
+::: {.incremental}
+- Commonware integration development
+- Angel investment outreach
+- Community building initiation
+:::
+
+---
+
+## Leadership
+
+**Founder & CEO**
+
+Experienced blockchain founder and technical leader:
+
+- Successfully scaled Pangolin DEX to nearly $500M TVL
+- Managed over $18B in total trading volume
+- Expanded operations across 4 blockchain networks
+- Previous successful exit from Microsoft Dynamics payroll solution
+- Economics degree providing foundation for tokenomics design
+
+---
+
+## Investment Opportunity
+
+Seeking angel investment to:
+
+::: {.incremental}
+- Accelerate core development
+- Build strategic partnerships
+- Expand technical team
+- Launch initial testnet
+:::
+
+Perfect timing to:
+
+::: {.incremental}
+- Capitalize on bear market building opportunity
+- Position for next market cycle
+- Establish first-mover advantage in physical blockchain infrastructure
+:::
+
+---
+
+## Why Now?
+
+The market desperately needs a blockchain that:
+
+::: {.incremental}
+- Provides genuine geographic decentralization
+- Implements sound Austrian economics
+- Offers predictable computation costs
+- Eliminates financial barriers to validation
+- Creates natural resistance to centralization
+:::
+
+The time is perfect to build the infrastructure for the next generation of blockchain adoption.
+
+---
+
+## Long-Term Vision
+
+Building the foundation for truly sustainable blockchain infrastructure:
+
+::: {.incremental}
+- **Network Sustainability**
+
+  - Geographic resilience
+  - Economic stability
+  - Permissionless validation
+
+- **Technical Innovation**
+
+  - Advanced privacy features
+  - MEV protection systems
+  - Continued geographic expansion
+
+- **Market Impact**
+
+  - Enterprise-grade stability
+  - True decentralization
+  - Sound money principles
+:::
+
+Let's build the future of blockchain infrastructure together.

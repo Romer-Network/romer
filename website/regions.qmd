@@ -1,0 +1,103 @@
+| City        | Category                           | Jurisdiction                 |
+|-------------|------------------------------------|-----------------------------|
+| Frankfurt   | Major Internet Exchange (DE-CIX)   | European Union/Germany      |
+| Amsterdam   | Major Internet Exchange (AMS-IX)   | European Union/Netherlands  |
+| London      | Major Internet Exchange (LINX)     | United Kingdom              |
+| Ashburn VA  | Major Internet Exchange (Equinix)  | United States/Federal       |
+| New York/NJ | Major Internet Exchange (NYIIX)    | United States/Federal       |
+| Tokyo       | Major Internet Exchange (JPNAP)    | Japan                       |
+| Singapore   | Major Internet Exchange (SGIX)     | Singapore                   |
+| Hong Kong   | Major Internet Exchange (HKIX)     | Hong Kong SAR               |
+| Sydney      | Major Internet Exchange (IX Australia) | Australia               |
+| São Paulo   | Major Internet Exchange (IX.br)    | Brazil                      |
+| Marseille   | Submarine Cable Landing            | European Union/France       |
+| Los Angeles | Submarine Cable Landing            | United States/California    |
+| Seattle     | Submarine Cable Landing            | United States/Washington    |
+| Miami       | Submarine Cable Landing            | United States/Florida       |
+| Toronto     | Submarine Cable Landing            | Canada/Ontario              |
+| Dubai       | Submarine Cable Landing            | UAE                         |
+| Mumbai      | Submarine Cable Landing            | India                       |
+| Chennai     | Submarine Cable Landing            | India                       |
+| Fortaleza   | Submarine Cable Landing            | Brazil                      |
+| Manila      | Submarine Cable Landing            | Philippines                 |
+| Stockholm   | Strategic Terrestrial Crossing     | European Union/Sweden       |
+| Warsaw      | Strategic Terrestrial Crossing     | European Union/Poland       |
+| Istanbul    | Strategic Terrestrial Crossing     | Turkey                      |
+| Cairo       | Strategic Terrestrial Crossing     | Egypt                       |
+| Moscow      | Strategic Terrestrial Crossing     | Russia                      |
+| Beijing     | Strategic Terrestrial Crossing     | China                       |
+| Seoul       | Strategic Terrestrial Crossing     | South Korea                 |
+| Taipei      | Strategic Terrestrial Crossing     | Taiwan                      |
+| Jakarta     | Strategic Terrestrial Crossing     | Indonesia                   |
+| Auckland    | Strategic Terrestrial Crossing     | New Zealand                 |
+| Paris       | Regional Internet Exchange (France-IX) | European Union/France   |
+| Madrid      | Regional Internet Exchange (ESPANIX) | European Union/Spain      |
+| Milan       | Regional Internet Exchange (MIX)   | European Union/Italy        |
+| Vienna      | Regional Internet Exchange (VIX)   | European Union/Austria      |
+| Prague      | Regional Internet Exchange (NIX.CZ) | European Union/Czech Republic |
+| Copenhagen  | Regional Internet Exchange (Netnod) | European Union/Denmark     |
+| Helsinki    | Regional Internet Exchange (FICIX) | European Union/Finland      |
+| Tel Aviv    | Regional Internet Exchange (IIX)   | Israel                      |
+| Johannesburg | Regional Internet Exchange (NAPAfrica) | South Africa           |
+| Lagos       | Regional Internet Exchange (IXPN)  | Nigeria                     |
+| Nairobi     | Emerging Strategic Point           | Kenya                       |
+| Cape Town   | Emerging Strategic Point           | South Africa                |
+| Panama City | Emerging Strategic Point           | Panama                      |
+| Santiago    | Emerging Strategic Point           | Chile                       |
+| Vancouver   | Emerging Strategic Point           | Canada/British Columbia     |
+| Perth       | Emerging Strategic Point           | Australia                   |
+| Kuala Lumpur | Emerging Strategic Point          | Malaysia                    |
+| Muscat      | Emerging Strategic Point           | Oman                        |
+| Dublin      | Emerging Strategic Point           | European Union/Ireland      |
+| Montreal    | Emerging Strategic Point           | Canada/Quebec               |
+| Buenos Aires | Regional Internet Exchange (CABASE) | Argentina                 |
+| Rio de Janeiro | Regional Internet Exchange (IX.br) | Brazil                   |
+| Bogotá      | Regional Internet Exchange (NAP Colombia) | Colombia            |
+| Mexico City | Regional Internet Exchange (IXSY)  | Mexico                      |
+| Lima        | Regional Internet Exchange (NAP Peru) | Peru                     |
+| Quito       | Regional Internet Exchange (NAP.EC) | Ecuador                    |
+| Caracas     | Regional Internet Exchange (IXP Venezuela) | Venezuela           |
+| San Juan    | Regional Internet Exchange (Puerto Rico Bridge Initiative) | Puerto Rico |
+| Washington D.C. | Major Internet Exchange (Equinix) | United States/Federal    |
+| Chicago     | Major Internet Exchange (CHI-X)    | United States/Illinois      |
+| Atlanta     | Major Internet Exchange (Equinix)  | United States/Georgia       |
+| Dallas      | Major Internet Exchange (Equinix)  | United States/Texas         |
+| Denver      | Major Internet Exchange (Any2)     | United States/Colorado      |
+| Phoenix     | Major Internet Exchange (Phoenix-IX) | United States/Arizona     |
+| San Jose    | Major Internet Exchange (Equinix)  | United States/California    |
+| Boston      | Major Internet Exchange (MASS-IX)  | United States/Massachusetts |
+| Osaka       | Major Internet Exchange (JPIX)     | Japan                       |
+| Nagoya      | Major Internet Exchange (JPNAP)    | Japan                       |
+| Fukuoka     | Major Internet Exchange (BBIX)     | Japan                       |
+| Sapporo     | Major Internet Exchange (BBIX)     | Japan                       |
+| Shanghai    | Major Internet Exchange (CHN-IX)   | China                       |
+| Guangzhou   | Major Internet Exchange (CHN-IX)   | China                       |
+| Shenzhen    | Major Internet Exchange (CHN-IX)   | China                       |
+| Taipei      | Major Internet Exchange (TPIX)     | Taiwan                      |
+| Kaohsiung   | Major Internet Exchange (TPIX)     | Taiwan                      |
+| Bangkok     | Major Internet Exchange (BKNIX)    | Thailand                    |
+| Ho Chi Minh City | Major Internet Exchange (VNIX) | Vietnam                   |
+| Hanoi       | Major Internet Exchange (VNIX)     | Vietnam                     |
+| Kuala Lumpur | Major Internet Exchange (MyIX)   | Malaysia                    |
+| Cyberjaya   | Major Internet Exchange (JBIX)     | Malaysia                    |
+| Quezon City | Major Internet Exchange (PHOpenIX) | Philippines               |
+| Cebu City   | Major Internet Exchange (PHOpenIX) | Philippines                 |
+| Mumbai      | Major Internet Exchange (NIXI)     | India                       |
+| Delhi       | Major Internet Exchange (NIXI)     | India                       |
+| Bangalore   | Major Internet Exchange (NIXI)     | India                       |
+| Hyderabad   | Major Internet Exchange (NIXI)     | India                       |
+| Chennai     | Major Internet Exchange (NIXI)     | India                       |
+| Kolkata     | Major Internet Exchange (NIXI)     | India                       |
+| Pune        | Major Internet Exchange (NIXI)     | India                       |
+| Riyadh      | Major Internet Exchange (SAIX)     | Saudi Arabia                |
+| Jeddah      | Major Internet Exchange (SAIX)     | Saudi Arabia                |
+| Dubai       | Major Internet Exchange (UAE-IX)   | UAE                         |
+| Abu Dhabi   | Major Internet Exchange (UAE-IX)   | UAE                         |
+| Doha        | Major Internet Exchange (QIXP)     | Qatar                       |
+| Kuwait City | Major Internet Exchange (IX.kw)    | Kuwait                      |
+| Manama      | Major Internet Exchange (BIXP)     | Bahrain                     |
+| Johannesburg | Major Internet Exchange (JINX)   | South Africa                |
+| Cape Town   | Major Internet Exchange (CINX)     | South Africa                |
+| Durban      | Major Internet Exchange (DINX)     | South Africa                |
+| Nairobi     | Major Internet Exchange (KIXP)     | Kenya                       |
+| Mombasa     | Major Internet Exchange (KIXP)     | Kenya                       |

@@ -1,0 +1,14 @@
+So first thing we're going to do is get you a public private key pair for your validator node. We'll store that locally for you so everytime you start up your node it will use the same key.
+
+We need proof of location. We can't rely on people to self report. So currently there are two approaches under consideration:
+
+* Physical hardware proof and then matching IP address to GeoLite https://www.maxmind.com/en/geolite-free-ip-geolocation-data
+* Seeing if commonware::p2p will allow BGP paths
+
+So leaving this out of scope for now until after I've done some more research. Regardless of the approach though we do need to prove that the Node is using Physical hardware. 
+
+
+So we want to understand the Border Gateway Protocol routings
+
+Then we load up the config for Genesis, Storage and Validator. Then we run the Node.
+

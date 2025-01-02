@@ -1,0 +1,48 @@
+# storage.toml
+
+[metadata]
+# Base partition names for different data types
+validator_partition = "validators"
+region_partition = "regions"
+network_partition = "network_state"
+
+# Performance and reliability settings
+sync_interval_ms = 5000  # How often to auto-sync changes
+max_batch_size = 1000    # Maximum items in a batch update
+
+[journal]
+# Each section will contain this many blocks
+blocks_per_section = 10000
+
+# Sections for different types of blockchain data
+[journal.partitions]
+genesis = "genesis_data"
+blocks = "block_data"
+transactions = "tx_data"
+receipts = "receipt_data"
+
+# Section retention policies
+[journal.retention]
+# How many sections to keep before allowing pruning
+minimum_sections = 100  # Keeps at least 100k blocks with blocks_per_section=1000
+# Maximum age of sections to keep (in days)
+max_age_days = 30
+
+# Performance tuning
+[journal.performance]
+replay_concurrency = 4
+pending_writes = 10
+compression_level = 3
+
+[paths]
+# Root directory for all persisted data
+data_dir = "data"
+# Subdirectories for different storage types
+metadata_dir = "metadata"
+journal_dir = "journal"
+archive_dir = "archive"
+
+[backup]
+enabled = true
+interval_hours = 24
+retention_days = 7

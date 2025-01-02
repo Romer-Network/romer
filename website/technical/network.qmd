@@ -1,0 +1,187 @@
+# Network Design: System Lifecycles
+
+Understanding Rømer Chain's network design is best approached through the lifecycles of its key components. Each lifecycle illustrates how different parts of the system evolve and interact over time, creating a network that maintains physical decentralization while delivering high performance.
+
+## Lifecycle of a Block
+
+A block's journey through Rømer Chain follows several distinct phases, each designed to maintain both speed and physical decentralization:
+
+### 1. Leader Preparation
+The designated leader begins by collecting transactions from their regional mempool. Because leaders operate from distinct geographic regions, this initial transaction gathering naturally creates regional price discovery and reduces global front-running opportunities.
+
+### 2. Block Construction
+The leader constructs their block proposal considering several factors:
+
+- Available transactions in their regional mempool
+- Current network computational load
+- Geographic distribution of recent block validators
+- Physical network performance metrics
+
+### 3. Network Distribution
+Block distribution leverages Rømer's geographic topology:
+
+- The leader first broadcasts to their regional peers
+- Regional validators verify and relay to adjacent regions
+- Cross-region propagation follows natural network paths
+- Speed-of-light latency creates predictable propagation patterns
+
+### 4. Validation and Consensus
+Block validation occurs in geographic waves:
+
+- Regional validators perform immediate verification
+- Cross-region validation follows physical network topology
+- Consensus considers geographic distribution of validating nodes
+- Finality achieved through multi-region confirmation
+
+### 5. Finalization
+Once consensus is reached:
+
+- Block is marked as finalized
+- State updates are committed
+- New leader selection process begins
+- Network performance metrics are updated
+
+## Lifecycle of Leader Election
+
+Leader election in Rømer Chain differs from traditional blockchain networks by explicitly considering physical network characteristics and geographic distribution.
+
+### 1. Regional Qualification
+Before each election cycle:
+
+- Validators report their network performance metrics
+- Geographic distribution is evaluated
+- Regional validator rankings are updated
+- Performance thresholds are checked
+
+### 2. Selection Process
+Leader selection considers multiple factors:
+
+- Regional rotation requirements
+- Validator performance history
+- Network latency measurements
+- Geographic diversity goals
+
+### 3. Leader Operation
+During their leadership period:
+
+- Leader performance is continuously measured
+- Network latencies are monitored
+- Geographic distribution is maintained
+- Regional transaction flow is optimized
+
+### 4. Transition
+Leader transition includes:
+
+- Performance metric updates
+- Regional ranking adjustments
+- Network path optimization
+- Preparation for next leader cycle
+
+## Lifecycle of a Validator
+
+The validator lifecycle illustrates how Rømer Chain maintains competition and performance while ensuring geographic distribution. We'll examine three key scenarios:
+
+### First Validator in a Region
+
+When a validator becomes the first in their region, they go through several phases:
+
+#### Initial Setup
+
+- Prove physical hardware through zero-knowledge proofs
+- Demonstrate geographic location
+- Establish network connections to adjacent regions
+- Begin performance metric tracking
+
+#### Regional Establishment
+
+- Build regional transaction mempool
+- Develop optimal network paths
+- Create regional price discovery mechanisms
+- Establish cross-region relationships
+
+#### Performance Building
+
+- Optimize network connections
+- Build transaction processing efficiency
+- Develop regional market presence
+- Create effective cross-region paths
+
+### Competing with an Incumbent
+
+When a new validator enters a region with an existing validator, competition drives network improvement:
+
+#### Entry Requirements
+
+- Must exceed regional performance minimums
+- Prove physical separation from incumbent
+- Demonstrate network path diversity
+- Show computational capability
+
+#### Performance Competition
+
+- Continuous latency measurements
+- Transaction processing efficiency
+- Network path optimization
+- Regional service quality
+
+#### Market Development
+
+- Build regional transaction flow
+- Optimize cross-region connections
+- Develop market making capability
+- Enhance network resilience
+
+### Maintaining Regional Leadership
+
+Incumbent validators must continuously improve to maintain their position:
+
+#### Performance Optimization
+
+- Monitor competitor metrics
+- Upgrade network infrastructure
+- Optimize transaction processing
+- Enhance regional services
+
+#### Regional Development
+
+- Strengthen network paths
+- Improve transaction flow
+- Enhance market efficiency
+- Build regional resilience
+
+#### Competitive Response
+
+- Adapt to new entrants
+- Optimize network paths
+- Improve service quality
+- Maintain performance edge
+
+## Network Evolution
+
+These lifecycles create a dynamic system that naturally evolves toward greater decentralization and performance:
+
+### Performance Improvement
+Validator competition drives continuous enhancement of:
+
+- Network latency
+- Transaction processing
+- Regional coverage
+- Market efficiency
+
+### Geographic Distribution
+The system maintains decentralization through:
+
+- Regional competition
+- Performance requirements
+- Physical validation
+- Network diversity
+
+### Market Development
+Regional competition leads to:
+
+- Efficient price discovery
+- Reduced MEV
+- Better service quality
+- Enhanced resilience
+
+Through these interlinked lifecycles, Rømer Chain creates a network that combines high performance with true physical decentralization, setting a new standard for blockchain infrastructure.

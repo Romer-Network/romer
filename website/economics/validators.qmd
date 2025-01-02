@@ -1,0 +1,300 @@
+# RØMER Transaction Costs and Resource Model
+
+RØMER Chain implements a comprehensive resource management system that ensures sustainable network operation through careful economic design. Our approach combines computational fees for immediate resource usage with a storage deposit system for long-term state management. This dual system creates predictable costs for users while ensuring validator sustainability.
+
+## Node Requirements
+
+Every validator in the RØMER network must maintain specific hardware capabilities to ensure consistent network performance. These requirements establish the baseline for our resource calculations.
+
+### Hardware Requirements
+
+- RAM: 32GB DDR4 or better
+- CPU: 8 cores (modern x86-64 processor)
+- Storage: 4TB NVMe SSD
+- Network: 1 Gbps dedicated connection
+
+### Network Requirements
+
+- Static IP address
+- Geographic distribution compliance
+- Consistent uptime monitoring
+- Performance metric reporting
+
+## Computational Fee Model
+
+Transaction fees reflect the immediate computational costs of processing operations on the network. Our model divides these costs between CPU and RAM usage, with each resource weighted according to its operational impact.
+
+### CPU Resources (0.6 RØMER per block)
+CPU represents our highest-weighted computational resource due to its significant impact on node operations. Each block allows for 400 compute units, representing 50% of the total CPU capacity of our minimum node specification. This target utilization ensures consistent performance while maintaining headroom for demand spikes.
+
+Base Fees:
+
+- Available Units: 400 compute units per block
+- Cost Per Unit: 0.0015 RØMER
+- Total CPU Capacity: 0.6 RØMER per block
+
+### RAM Resources (0.4 RØMER per block)
+RAM usage forms our second computational cost component. While RAM has lower operational costs than CPU, it remains crucial for transaction processing and state management. We target 50% utilization of total RAM capacity, providing 16,384 MB per block.
+
+Base Fees:
+
+- Available Memory: 16,384 MB per block
+- Cost Per MB: 0.0000244140625 RØMER
+- Total RAM Capacity: 0.4 RØMER per block
+
+### Computational Fee Formula
+The total computational fee for a transaction combines its CPU and RAM usage:
+
+```python
+transaction_fee = (
+    # CPU Cost (0.6 RØMER base)
+    (cpu_units × 0.0015) +
+    
+    # RAM Cost (0.4 RØMER base)
+    (ram_mb × 0.0000244140625)
+) RØMER
+```
+
+## Storage Model
+
+RØMER implements a storage deposit system that ensures sustainable state growth while providing incentives for efficient storage usage. Our model bases storage costs on the network's 4TB minimum storage requirement, with target utilization of 50% (2TB) for active state.
+
+### Storage Deposits
+When creating new objects on the blockchain, users must provide a storage deposit that remains locked until the object is deleted. This deposit is calculated based on node storage requirements and operational factors:
+
+```python
+storage_deposit = (
+    # Header cost (10x multiplier for indexing overhead)
+    (object_header_bytes × base_byte_cost × 10) +
+    
+    # Content cost (base rate)
+    (content_bytes × base_byte_cost) +
+    
+    # Reference cost (5x multiplier for relationship maintenance)
+    (reference_count × reference_bytes × base_byte_cost × 5)
+) RØMER
+```
+
+The `base_byte_cost` reflects:
+
+- 4TB minimum storage requirement
+- 50% target utilization (2TB)
+- Hardware lifetime (estimated 1 year)
+- Replication factor (3x for redundancy)
+- Maintenance overhead (1.5x multiplier)
+
+### Storage Rebates
+When objects are deleted from the blockchain, 90% of the original storage deposit is returned to the user who originally paid for storage. The remaining 10% is awarded to the validator who processes the deletion, creating an incentive for timely cleanup of unused state.
+
+## Example Operation Costs
+
+Let's examine the total costs for common operations on the RØMER network.
+
+### Simple Token Transfer
+Computational Resources:
+
+- RAM: 10MB (0.000244 RØMER)
+- CPU: 2 compute units (0.003 RØMER)
+
+Computation Fee: 0.003244 RØMER
+
+Storage Impact: None (modifies existing state)
+Total Cost: 0.003244 RØMER
+
+### NFT Mint Operation
+Computational Resources:
+
+- RAM: 500MB (0.012207 RØMER)
+- CPU: 15 compute units (0.0225 RØMER)
+
+Computation Fee: 0.034707 RØMER
+
+Storage Resources:
+
+- Object Header: 32 bytes
+- Content: 1000 bytes
+- References: 2
+
+Storage Deposit: [calculated based on base_byte_cost]
+Total Cost: Computation Fee + Storage Deposit
+
+### Smart Contract Deployment
+Computational Resources:
+
+- RAM: 1,000MB (0.024414 RØMER)
+- CPU: 100 compute units (0.15 RØMER)
+
+Computation Fee: 0.174414 RØMER
+
+Storage Resources:
+
+- Object Header: 32 bytes
+- Content: ~10,000 bytes (typical contract)
+- References: 5
+
+Storage Deposit: [calculated based on base_byte_cost]
+Total Cost: Computation Fee + Storage Deposit
+
+## Network Load Management
+
+RØMER manages high demand through block scheduling rather than variable fees. This approach ensures predictable costs while maintaining network stability.
+
+### Block Space Management
+
+- Target utilization: 50% of resources
+- Maximum utilization: 80% of resources
+- Excess transactions queue for future blocks
+- No fee increases during high demand
+
+### Transaction Scheduling
+The network prioritizes transactions based on:
+
+- Time in mempool
+- Resource availability
+- Dependencies
+- Storage operation balance
+
+## Economic Benefits
+
+Our resource model creates several key advantages for network participants:
+
+For Users:
+
+- Predictable transaction costs
+- Recoverable storage deposits
+- Fair resource pricing
+- No fee market volatility
+
+For Developers:
+
+- Clear cost estimation
+- Predictable application economics
+- Resource optimization incentives
+- Sustainable state management
+
+For Validators:
+
+- Sustainable node economics
+- Multiple revenue streams
+- Clear capacity planning
+- Predictable resource usage
+
+## Network Evolution Through Node Voting
+
+RØMER implements a democratic mechanism for adjusting minimum node requirements through validator voting. This process allows the network to naturally evolve with technological advancement while maintaining decentralized governance.
+
+### Voting Mechanism
+
+Node operators can propose and vote on adjustments to minimum requirements in any of these dimensions:
+
+- RAM capacity
+- CPU cores and speed
+- Storage capacity
+- Network bandwidth
+- Geographic distribution parameters
+
+The voting process follows these principles:
+
+1. Proposal Threshold
+A proposal to adjust minimum requirements must be supported by at least 5% of active validators to enter the voting phase.
+
+2. Voting Period
+Each proposal has a voting period of 10,000 blocks (approximately 3.5 days with 30-second blocks), giving all validators time to participate.
+
+3. Gradual Implementation
+Approved changes take effect after a 30-day grace period, allowing operators to upgrade their hardware if necessary.
+
+4. Vote Weighting
+Each validator gets one vote, regardless of their hardware specifications. This ensures that larger operators cannot dominate the governance process.
+
+5. Passage Requirements
+A proposal must meet these criteria to pass:
+- Over 67% participation from active validators
+- Over 75% approval from voting validators
+- No more than 30% increase in any single requirement
+
+### Adjustment Constraints
+
+To maintain network stability, several constraints apply to requirement adjustments:
+
+1. Timing Restrictions
+- Minimum 90 days between successful requirement changes
+- Maximum one active proposal per resource type
+- Grace period cannot be shortened
+
+2. Size Limitations
+- Maximum 30% increase per vote
+- No more than 100% total increase per year
+- Cannot decrease requirements
+
+3. Technical Validations
+- RAM must be standard sizes (e.g., 32GB, 64GB)
+- Storage must be practical configurations
+- CPU requirements must align with available hardware
+
+### Example Voting Scenario
+
+Consider a proposal to increase minimum RAM from 32GB to 64GB:
+
+1. Initial Phase
+- Validators running 64GB+ RAM notice increased state size
+- Proposal created with support from 5% of validators
+- Voting period begins
+
+2. Voting Process
+- Validators evaluate impact on their operations
+- Community discusses hardware availability and costs
+- Real-time voting progress visible to all participants
+
+3. Implementation
+If approved:
+- 30-day grace period begins
+- Operators prepare hardware upgrades
+- Network clients update requirement checks
+- New requirements take effect at specified block height
+
+### Impact on Resource Model
+
+When minimum requirements change, the fee model automatically adjusts because all resource costs are calculated as fractions of total capacity. For example, if RAM requirements double:
+
+1. Block Capacity
+- New target RAM per block: 32GB (50% of 64GB)
+- Computational units scale proportionally
+- Storage capacity adjusts with new minimums
+
+2. Fee Adjustments
+- Per-unit costs adjust automatically
+- Overall economic model remains stable
+- User costs effectively decrease as capacity increases
+
+3. Network Benefits
+- Increased transaction throughput
+- Better state management capability
+- Improved performance for complex operations
+- Future-proofing for network growth
+
+## Future Considerations
+
+This governance model ensures RØMER can evolve while maintaining its core principles:
+
+1. Technological Evolution
+- Requirements track hardware advancement
+- Network capacity grows organically
+- Performance improves systematically
+- Costs optimize naturally
+
+2. Economic Stability
+- Resource pricing remains predictable
+- Node operations stay sustainable
+- User costs scale with technology
+- Market forces guide growth
+
+3. Decentralized Control
+- Community-driven evolution
+- Democratic decision making
+- Protected minority interests
+- Stable upgrade path
+
+## Conclusion
+
+RØMER's resource model creates a sustainable economic framework that aligns the interests of all network participants. By combining fixed computational fees with a storage deposit system, we ensure both efficient immediate resource usage and responsible long-term state growth. This approach provides the predictability users need while maintaining the economic incentives required for network sustainability.

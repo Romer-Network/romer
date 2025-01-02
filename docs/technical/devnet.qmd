@@ -1,0 +1,118 @@
+# Rømer Chain Development Milestones
+
+## Phase 1: Core Network Bootstrap
+
+### Milestone 1.1: Genesis and Block Production
+The network must first demonstrate basic operation with a single node producing empty blocks. This establishes the foundation for all future development.
+
+Primary Goals:
+
+- Fix Commonware storage integration for genesis block
+- Implement basic block production with timestamps
+- Create basic network startup sequence
+- Validate block sequence integrity
+
+### Milestone 1.2: Economic Engine Core
+Implementing a simplified ledger-based token system allows testing of economic principles without requiring full transaction support.
+
+Primary Goals:
+
+- Implement internal token ledger system
+- Create genesis supply tracking
+- Build supply adjustment algorithms
+- Implement basic treasury record-keeping
+- Maintain mint and burn history
+
+## Phase 2: Network Coordination
+
+### Milestone 2.1: Leader Election
+Even with a single validator, the network must implement proper leader election mechanics to prepare for future expansion.
+
+Primary Goals:
+
+- Implement leader election protocol
+- Create validator scoring system
+- Build election state management
+- Test single-validator scenarios
+- Prepare for multi-validator support
+
+### Milestone 2.2: Network Performance Infrastructure
+Before expanding to multiple validators, the system needs infrastructure to measure and validate network performance.
+
+Primary Goals:
+
+- Build network performance measurement
+- Create latency tracking systems
+- Implement regional performance benchmarks
+- Develop network topology mapping
+- Set up performance data storage
+
+## Phase 3: Validator Network Expansion
+
+### Milestone 3.1: Basic ZK Proof System
+Validators must prove their physical presence before joining the network.
+
+Primary Goals:
+
+- Implement basic hardware verification proofs
+- Create proof submission system
+- Build verification infrastructure
+- Set up validator identity management
+- Test proof validation process
+
+### Milestone 3.2: Validator Onboarding
+The network must support multiple validators joining and participating in consensus.
+
+Primary Goals:
+
+- Create validator registration process
+- Implement multi-validator coordination
+- Build validator state synchronization
+- Deploy test validators across regions
+- Validate network performance metrics
+
+## Phase 4: Transaction Integration
+
+### Milestone 4.1: Sui Integration
+Connecting to the Sui ecosystem represents a major expansion of network capabilities.
+
+Primary Goals:
+
+- Set up Sui node integration
+- Implement mempool monitoring
+- Create transaction validation system
+- Build state management interface
+- Migrate from ledger to full token system
+
+### Milestone 4.2: Full Network Operation
+The final phase brings all components together into a complete, operational network.
+
+Primary Goals:
+
+- Implement full transaction processing
+- Create block execution pipeline
+- Build SDK integration
+- Deploy monitoring systems
+- Complete system documentation
+
+## Testing Requirements
+
+Each milestone requires:
+
+- Functional testing of new components
+- Integration testing with existing systems
+- Performance validation
+- Security review
+- Documentation updates
+
+## Success Metrics
+
+Milestone completion requires:
+
+- Working software deployment
+- Meeting performance targets
+- Passing security requirements
+- Documentation completion
+- Operational validation
+
+This roadmap prioritizes building a working network first, then gradually adding complexity. Each phase builds directly on previous work, maintaining a functional system throughout development.

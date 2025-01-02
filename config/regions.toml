@@ -1,0 +1,230 @@
+# Asia-Pacific Region
+[regions.city.gold-coast]
+city = "Gold Coast"
+jurisdiction_country = "Australia" 
+jurisdiction_state = "Queensland"
+flag = "🇦🇺"
+region_code = "AU"
+internet_exchange = "IX Australia QLD"
+
+[regions.city.singapore]
+city = "Singapore"
+jurisdiction_country = "Singapore"
+jurisdiction_state = "Singapore"
+flag = "🇸🇬"
+region_code = "SG"
+internet_exchange = "SGIX"
+
+[regions.city.tokyo]
+city = "Tokyo"
+jurisdiction_country = "Japan"
+jurisdiction_state = "Tokyo"
+flag = "🇯🇵"
+region_code = "JP"
+internet_exchange = "JPNAP Tokyo"
+
+# Americas Region
+[regions.city.ashburn]
+city = "Ashburn"
+jurisdiction_country = "United States"
+jurisdiction_state = "Virginia"
+flag = "🇺🇸"
+region_code = "US-VA"
+internet_exchange = "Equinix Ashburn"
+
+[regions.city.sao-paulo]
+city = "São Paulo"
+jurisdiction_country = "Brazil"
+jurisdiction_state = "São Paulo"
+flag = "🇧🇷"
+region_code = "BR"
+internet_exchange = "IX.br São Paulo"
+
+# European Region
+[regions.city.amsterdam]
+city = "Amsterdam"
+jurisdiction_country = "Netherlands"
+jurisdiction_state = "North Holland"
+flag = "🇳🇱"
+region_code = "NL"
+internet_exchange = "AMS-IX"
+
+[regions.city.frankfurt]
+city = "Frankfurt"
+jurisdiction_country = "Germany"
+jurisdiction_state = "Hesse"
+flag = "🇩🇪"
+region_code = "DE"
+internet_exchange = "DE-CIX Frankfurt"
+
+[regions.city.london]
+city = "London"
+jurisdiction_country = "United Kingdom"
+jurisdiction_state = "England"
+flag = "🇬🇧"
+region_code = "GB"
+internet_exchange = "LINX"
+
+# Africa and Middle East
+[regions.city.cape-town]
+city = "Cape Town"
+jurisdiction_country = "South Africa"
+jurisdiction_state = "Western Cape"
+flag = "🇿🇦"
+region_code = "ZA"
+internet_exchange = "NAPAfrica Cape Town"
+
+[regions.city.dubai]
+city = "Dubai"
+jurisdiction_country = "United Arab Emirates"
+jurisdiction_state = "Dubai"
+flag = "🇦🇪"
+region_code = "AE"
+internet_exchange = "UAE-IX"
+
+# Existing Regions: Asia-Pacific, Americas, European, Africa and Middle East
+
+# Expanded Asia-Pacific Region
+[regions.city.mumbai]
+city = "Mumbai"
+jurisdiction_country = "India"
+jurisdiction_state = "Maharashtra"
+flag = "🇮🇳"
+region_code = "IN"
+internet_exchange = "NIXI Mumbai"
+
+[regions.city.seoul]
+city = "Seoul"
+jurisdiction_country = "South Korea"
+jurisdiction_state = "Seoul Capital Area"
+flag = "🇰🇷"
+region_code = "KR"
+internet_exchange = "KINX"
+
+[regions.city.sydney]
+city = "Sydney"
+jurisdiction_country = "Australia"
+jurisdiction_state = "New South Wales"
+flag = "🇦🇺"
+region_code = "AU-NSW"
+internet_exchange = "IX Australia NSW"
+
+[regions.city.hong-kong]
+city = "Hong Kong"
+jurisdiction_country = "Hong Kong"
+jurisdiction_state = "Hong Kong SAR"
+flag = "🇭🇰"
+region_code = "HK"
+internet_exchange = "HKIX"
+
+# Expanded Americas Region
+[regions.city.toronto]
+city = "Toronto"
+jurisdiction_country = "Canada"
+jurisdiction_state = "Ontario"
+flag = "🇨🇦"
+region_code = "CA"
+internet_exchange = "TorontoIX"
+
+[regions.city.mexico-city]
+city = "Mexico City"
+jurisdiction_country = "Mexico"
+jurisdiction_state = "Mexico City"
+flag = "🇲🇽"
+region_code = "MX"
+internet_exchange = "MX-IX"
+
+[regions.city.santiago]
+city = "Santiago"
+jurisdiction_country = "Chile"
+jurisdiction_state = "Santiago Metropolitan Region"
+flag = "🇨🇱"
+region_code = "CL"
+internet_exchange = "CLLIX"
+
+# Expanded European Region
+[regions.city.paris]
+city = "Paris"
+jurisdiction_country = "France"
+jurisdiction_state = "Île-de-France"
+flag = "🇫🇷"
+region_code = "FR"
+internet_exchange = "France-IX Paris"
+
+[regions.city.stockholm]
+city = "Stockholm"
+jurisdiction_country = "Sweden"
+jurisdiction_state = "Stockholm County"
+flag = "🇸🇪"
+region_code = "SE"
+internet_exchange = "SEIXP"
+
+[regions.city.warsaw]
+city = "Warsaw"
+jurisdiction_country = "Poland"
+jurisdiction_state = "Masovian Voivodeship"
+flag = "🇵🇱"
+region_code = "PL"
+internet_exchange = "PLIX"
+
+# Expanded Africa and Middle East Region
+[regions.city.nairobi]
+city = "Nairobi"
+jurisdiction_country = "Kenya"
+jurisdiction_state = "Nairobi City"
+flag = "🇰🇪"
+region_code = "KE"
+internet_exchange = "KIXP"
+
+[regions.city.lagos]
+city = "Lagos"
+jurisdiction_country = "Nigeria"
+jurisdiction_state = "Lagos State"
+flag = "🇳🇬"
+region_code = "NG"
+internet_exchange = "NIXP"
+
+[regions.city.riyadh]
+city = "Riyadh"
+jurisdiction_country = "Saudi Arabia"
+jurisdiction_state = "Riyadh Province"
+flag = "🇸🇦"
+region_code = "SA"
+internet_exchange = "SAIX"
+
+# Additional Regions
+
+# Oceania Region
+[regions.city.auckland]
+city = "Auckland"
+jurisdiction_country = "New Zealand"
+jurisdiction_state = "Auckland Region"
+flag = "🇳🇿"
+region_code = "NZ"
+internet_exchange = "NZIX"
+
+# Caribbean Region
+[regions.city.miami]
+city = "Miami"
+jurisdiction_country = "United States"
+jurisdiction_state = "Florida"
+flag = "🇺🇸"
+region_code = "US-FL"
+internet_exchange = "NOTA IX"
+
+[regions.city.san-juan]
+city = "San Juan"
+jurisdiction_country = "Puerto Rico"
+jurisdiction_state = "San Juan Municipality"
+flag = "🇵🇷"
+region_code = "PR"
+internet_exchange = "Caribbean IX"
+
+# Central Asia
+[regions.city.almaty]
+city = "Almaty"
+jurisdiction_country = "Kazakhstan"
+jurisdiction_state = "Almaty City"
+flag = "🇰🇿"
+region_code = "KZ"
+internet_exchange = "KZIX"

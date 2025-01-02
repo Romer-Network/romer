@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Rømer Chain</title>
+<link>http://romer.network/blog/</link>
+<atom:link href="http://romer.network/blog/index.xml" rel="self" type="application/rss+xml"/>
+<description>A First Principles Approach to Blockchain Design</description>
+<generator>quarto-1.7.2</generator>
+<lastBuildDate>Mon, 30 Dec 2024 14:00:00 GMT</lastBuildDate>
+<item>
+  <title>Why We Chose Commonware for Rømer Chain</title>
+  <dc:creator>Justin Trollip</dc:creator>
+  <link>http://romer.network/blog/posts/2024-12-31-why-commonware/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="the-journey-to-proof-of-physics" class="level1">
+<h1>The Journey to Proof of Physics</h1>
+<p>After spending two years exploring the world of Maximal Extractable Value (MEV), I’ve come to share the growing consensus among researchers and builders: MEV represents one of the most crucial challenges in cryptocurrency today. It’s not just about trading profits or transaction ordering—it’s about the fundamental fairness and decentralization of blockchain networks.</p>
+<p>My journey took an unexpected turn when I read <a href="https://x.com/phildaian">Phil Daian’s</a> thought-provoking post on <a href="https://collective.flashbots.net/t/decentralized-crypto-needs-you-to-be-a-geographical-decentralization-maxi/1385/7">geographical decentralization</a>. As the founder of Flashbots, Phil’s insights into MEV and network topology carry particular weight. His vision of true geographic decentralization resonated deeply with me.</p>
+<p>Around the same time, <a href="https://x.com/_patrickogrady">Patrick O’Grady</a> launched <a href="https://commonware.xyz/">Commonware</a>. I’d been following Patrick’s work for nearly three years, and his approach to blockchain primitives immediately caught my attention. Despite not being a Rust developer by background, I found myself drawn to explore what could be built with these low-level primitives. It was different from my previous experiences with frameworks like Substrate and Cosmos SDK—this was about building from fundamental components rather than working within a predefined structure.</p>
+<p>What started as a curiosity-driven experiment—building a basic blockchain with Commonware—evolved into something more significant. As I worked with the primitives, I began to see how their flexibility could enable something entirely new: <a href="../../../technical/pop.html">Proof of Physics</a>, a consensus mechanism that would validate nodes based on their physical network characteristics and geographic distribution, directly addressing the centralization concerns Phil had highlighted.</p>
+</section>
+<section id="why-not-existing-frameworks" class="level1">
+<h1>Why Not Existing Frameworks?</h1>
+<p>The journey from concept to implementation required a critical decision: which platform would best support this novel consensus mechanism? Let me walk you through why common approaches proved impractical for implementing Proof of Physics.</p>
+<section id="the-ethereum-layer-2-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-ethereum-layer-2-challenge">The Ethereum Layer 2 Challenge</h2>
+<p>Building as an Ethereum Layer 2 would fundamentally undermine the core premise of Proof of Physics. While Layer 2s offer impressive scalability, they ultimately rely on Ethereum’s base layer for security. This means they inherit not just Ethereum’s security assumptions but also its network topology—precisely what we’re trying to rethink with Proof of Physics.</p>
+</section>
+<section id="limitations-of-avalanche-l1s" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-of-avalanche-l1s">Limitations of Avalanche L1s</h2>
+<p>Avalanche’s custom L1 platform initially seemed promising. However, several fundamental challenges emerged:</p>
+<p>First, Avalanche’s networking stack is intimately tied to its Snow* protocols. These aren’t just implementation details—they’re core assumptions baked into how nodes communicate. Implementing Proof of Physics would require rebuilding much of the networking layer, essentially fighting against the framework rather than working with it.</p>
+<p>Second, while Avalanche allows customization of validator selection, its abstractions assume a stake-based system. Our need to validate physical network characteristics and geographic distribution would require deep modifications to core framework components.</p>
+</section>
+<section id="the-cosmos-sdk-consideration" class="level2">
+<h2 class="anchored" data-anchor-id="the-cosmos-sdk-consideration">The Cosmos SDK Consideration</h2>
+<p>The Cosmos SDK offers significant flexibility, but it too presents fundamental obstacles for Proof of Physics:</p>
+<p>The SDK’s networking layer is optimized for Tendermint’s communication patterns. While you can customize validator selection, implementing precise latency measurements and topology validation would require bypassing many of the SDK’s abstractions. We would spend more time working around the framework than building our core functionality.</p>
+<p>Additionally, the SDK’s extensive features for inter-chain communication and governance, while valuable for many projects, represent unnecessary complexity for our focused goal of implementing physical network validation.</p>
+</section>
+<section id="the-challenge-with-substrate" class="level2">
+<h2 class="anchored" data-anchor-id="the-challenge-with-substrate">The Challenge with Substrate</h2>
+<p>While Substrate offers impressive modularity, it faces similar limitations to other frameworks when it comes to implementing Proof of Physics. Its networking layer and consensus interfaces, while flexible, are designed with traditional consensus mechanisms in mind. Implementing our physical validation approach would require significant modifications to core framework components.</p>
+</section>
+</section>
+<section id="the-commonware-advantage" class="level1">
+<h1>The Commonware Advantage</h1>
+<p>What sets Commonware apart is its elegant approach to blockchain primitives. Rather than providing a rigid framework with opinionated defaults, Commonware gives us fundamental building blocks that handle the complex infrastructure requirements while leaving complete freedom for custom implementation. This approach is transformative for building novel blockchain architectures.</p>
+<p>Let’s break down how Commonware’s primitives enable our vision:</p>
+<section id="core-infrastructure-handled-for-us" class="level2">
+<h2 class="anchored" data-anchor-id="core-infrastructure-handled-for-us">Core Infrastructure Handled For Us</h2>
+<p>Commonware provides essential infrastructure through well-designed traits and implementations:</p>
+<ol type="1">
+<li><p>The Supervisor trait handles the complex mechanics of leader election and validator set management. We simply implement our custom selection logic on top of this robust foundation.</p></li>
+<li><p>The Automaton trait manages all consensus messaging and state transitions between nodes. We don’t have to worry about message delivery, retry logic, or network failures—we just define our custom validation rules.</p></li>
+<li><p>The Storage primitives handle the intricate details of persisting blockchain data. Block storage, journal management, and state synchronization are all provided out of the box.</p></li>
+<li><p>The Runtime offers a production-grade async execution environment with proper error handling and resource management.</p></li>
+</ol>
+</section>
+<section id="complete-freedom-for-innovation" class="level2">
+<h2 class="anchored" data-anchor-id="complete-freedom-for-innovation">Complete Freedom for Innovation</h2>
+<p>With these core capabilities handled, we’re free to focus on implementing our unique requirements:</p>
+<ol type="1">
+<li><p><strong>Custom Validator Requirements</strong>: We can implement our physical hardware verification system using zero-knowledge proofs without having to modify any core networking or consensus code. Commonware’s trait-based design means we can plug in our custom validation logic seamlessly.</p></li>
+<li><p><strong>Novel Leader Election</strong>: While Commonware handles the mechanics of leader rotation, we have complete freedom to implement our geographic-aware leader selection algorithm. The Supervisor trait provides the interface—we provide the logic.</p></li>
+<li><p><strong>Dynamic Token Economics</strong>: We can implement our unique tokenomics model and supply adjustment mechanisms without having to worry about how state changes are propagated through the network. Commonware’s storage primitives handle the heavy lifting of state management.</p></li>
+<li><p><strong>Flexible Execution</strong>: Need to connect to an external VM or implement custom smart contract execution? Commonware’s modular design means we can plug in any execution environment without modifying core consensus or networking code.</p></li>
+</ol>
+</section>
+<section id="the-power-of-primitives" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-primitives">The Power of Primitives</h2>
+<p>The beauty of this approach is that we get the best of both worlds: rock-solid infrastructure components built by world-class distributed systems engineers, combined with complete freedom to innovate on our unique features. We’re not fighting against framework assumptions or trying to modify someone else’s opinion about how blockchains should work.</p>
+<p>The only alternative would have been building everything from scratch—implementing our own networking stack, consensus messaging, storage layer, and runtime environment. Instead, Commonware gives us these capabilities as composable primitives, letting us focus our engineering efforts on the novel aspects of our design.</p>
+<p>Consider our Proof of Physics implementation: we can focus entirely on building the geographic validation and physical hardware verification systems because we’re not worrying about:</p>
+<ul>
+<li>How blocks are stored and retrieved</li>
+<li>How messages are delivered between nodes</li>
+<li>How leader election state is maintained</li>
+<li>How async operations are scheduled</li>
+<li>How network connections are managed</li>
+</ul>
+<p>This is what makes Commonware unique in the blockchain space. Other platforms force you to accept their opinions about these core components. Commonware just gives you the building blocks and lets you assemble them however you need.</p>
+</section>
+</section>
+<section id="looking-forward" class="level1">
+<h1>Looking Forward</h1>
+<p>Choosing Commonware means more direct implementation work compared to using a full-featured framework. However, this investment in foundational architecture allows us to implement Proof of Physics exactly as envisioned, without compromising on its core principles of physical decentralization.</p>
+<p>The goal isn’t just to build another blockchain—it’s to demonstrate that we can build networks that are truly decentralized in their physical reality, not just in their token distribution. By starting with primitives rather than frameworks, we have the flexibility to implement this vision without fighting against existing assumptions about how blockchains should work.</p>
+<p>As we continue development, we’ll be sharing more detailed insights into how we’re using Commonware’s primitives to build a blockchain that considers physical reality as a first-class concern. Stay tuned for deep dives into our implementation of network measurements, geographic validation, and hardware attestation.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>technical</category>
+  <category>architecture</category>
+  <category>mev</category>
+  <guid>http://romer.network/blog/posts/2024-12-31-why-commonware/</guid>
+  <pubDate>Mon, 30 Dec 2024 14:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <link>http://romer.network/blog/posts/2024-12-31-mev/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="order-flow-wars-from-wall-street-to-blockchain" class="level1">
+<h1>Order Flow Wars: From Wall Street to Blockchain</h1>
+<p>Imagine you’re at a busy auction house. Before an item goes up for bid, some buyers get to peek at what’s coming up next, while others have to wait. Those with the early peek have an obvious advantage - they can prepare their bids and strategy before anyone else. This is essentially what happens in financial markets through something called “order flow” - the stream of incoming trades that people want to make.</p>
+<section id="the-power-of-seeing-whats-next" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-seeing-whats-next">The Power of Seeing What’s Next</h2>
+<p>Let’s start with a simple example from traditional stock trading. When you click “buy” on your trading app to purchase some Apple shares, your order doesn’t go directly to the stock exchange. Instead, it typically goes through several intermediaries, each of whom gets to see your intention to buy before it becomes public knowledge.</p>
+<p>This advance knowledge is incredibly valuable. If someone knows you’re about to buy 1,000 shares of Apple at the market price, they could quickly buy shares themselves and sell them to you at a slightly higher price. This practice, known as front-running in traditional markets, has evolved into a sophisticated industry in the world of cryptocurrency.</p>
+</section>
+<section id="from-wall-street-to-crypto-the-evolution-of-speed-trading" class="level2">
+<h2 class="anchored" data-anchor-id="from-wall-street-to-crypto-the-evolution-of-speed-trading">From Wall Street to Crypto: The Evolution of Speed Trading</h2>
+<p>On Wall Street, high-frequency trading (HFT) firms spend millions of dollars to place their computers as close as possible to stock exchanges. They even lay specialized cables to gain microsecond advantages in trading speed. When a pension fund wants to buy a large amount of shares, these HFT firms can spot the order coming and react before it hits the exchange.</p>
+<p>In cryptocurrency markets, this race for speed has taken on new forms. Instead of building faster cables, traders compete to have their transactions included in the next block of a blockchain. This competition is what we call MEV (Maximal Extractable Value), and it’s become a multi-billion dollar industry.</p>
+</section>
+<section id="why-order-flow-matters-a-super-bowl-betting-analogy" class="level2">
+<h2 class="anchored" data-anchor-id="why-order-flow-matters-a-super-bowl-betting-analogy">Why Order Flow Matters: A Super Bowl Betting Analogy</h2>
+<p>Imagine you’re at a Las Vegas sportsbook during the Super Bowl. Bettors are lining up to place their wagers at betting windows. As the game progresses, the betting odds constantly change based on what’s happening on the field. Now imagine three different scenarios:</p>
+<p>First, think about someone who could see all the bets people are about to place before they reach the window. If they notice a large bet coming that might move the odds, they could quickly place their own bet first at better odds. This is exactly how order flow works in financial markets - seeing what trades are coming before they happen is incredibly valuable information.</p>
+<p>Second, consider if someone could pay extra to jump to the front of the betting line during crucial moments - like right after a big touchdown when everyone’s rushing to place bets at the current odds. They’d have a huge advantage over other bettors who have to wait in line while the odds change. This is similar to how traders pay higher fees to have their transactions processed first in cryptocurrency markets.</p>
+<p>Third, picture if certain bettors had a special VIP betting window that processed their bets faster than the regular windows. While everyone else waits in long lines watching the odds change, these VIP bettors could always get their bets in quickly at the odds they want. This is like having special access to faster blockchain infrastructure.</p>
+<p>This is similar to how order flow works in crypto markets. The line of people waiting to place bets is like the “mempool” - where transactions wait to be processed. Different blockchain networks handle this queue of transactions in different ways.</p>
+</section>
+<section id="different-approaches-to-the-order-box" class="level2">
+<h2 class="anchored" data-anchor-id="different-approaches-to-the-order-box">Different Approaches to the Order Box</h2>
+<section id="ethereums-open-auction-system" class="level3">
+<h3 class="anchored" data-anchor-id="ethereums-open-auction-system">Ethereum’s Open Auction System</h3>
+<p>Ethereum treats its order box like a transparent auction house. Everyone can see the incoming orders, and traders can openly bid to have their transactions processed first. While this is transparent, it means that regular users often have to pay extra to have their transactions processed in a timely manner.</p>
+</section>
+<section id="solanas-private-line" class="level3">
+<h3 class="anchored" data-anchor-id="solanas-private-line">Solana’s Private Line</h3>
+<p>Solana takes a different approach - like a special VIP line that only certain customers know about. While this prevents some types of front-running, it gives special advantages to those with insider access to the network.</p>
+</section>
+</section>
+<section id="rømers-new-approach" class="level2">
+<h2 class="anchored" data-anchor-id="rømers-new-approach">Rømer’s New Approach</h2>
+<p>Rømer Chain is trying to create a fairer system through several innovations:</p>
+<section id="pay-first-model" class="level3">
+<h3 class="anchored" data-anchor-id="pay-first-model">Pay-First Model</h3>
+<p>The Move VM takes a fundamentally different approach. Rather than allowing cheap transaction reverts, it requires all computational costs to be paid upfront. Success or failure, the resources consumed by a transaction must be paid for. This shifts the economic model from “try everything and pay for successes” to “carefully validate before attempting.” The result is more efficient network usage and reduced spam opportunities.</p>
+</section>
+<section id="geographic-balance" class="level3">
+<h3 class="anchored" data-anchor-id="geographic-balance">Geographic Balance</h3>
+<p>Instead of having one central location where all orders are processed, Rømer spreads out its order processing across many locations. This prevents any one location from having too much control over all the orders.</p>
+</section>
+<section id="rotating-service-windows" class="level3">
+<h3 class="anchored" data-anchor-id="rotating-service-windows">Rotating Service Windows</h3>
+<p>Rather than allowing geographic concentration to determine transaction ordering, Rømer’s consensus mechanism incorporates physical location as a core part of its design. This distributes transaction processing across a broader geographic area, reducing the advantages of proximity to any single point of infrastructure.</p>
+</section>
+</section>
+<section id="the-future-of-market-structure" class="level2">
+<h2 class="anchored" data-anchor-id="the-future-of-market-structure">The Future of Market Structure</h2>
+<p>The goal isn’t to eliminate all MEV - that would be both impossible and, in some cases, undesirable. Rather, Rømer Chain aims to create a market structure where:</p>
+<ul>
+<li>Value extraction requires actual market intelligence rather than just technical advantages</li>
+<li>Infrastructure positioning can’t override market fundamentals</li>
+<li>Failed speculation has real costs that must be considered</li>
+<li>Information flow follows natural network topology rather than centralized paths</li>
+</ul>
+<p>This creates an environment where MEV extraction aligns more closely with genuine market making and price discovery, rather than pure technical exploitation. The result is a more efficient market where resources flow toward actual value creation rather than rent-seeking behavior.</p>
+</section>
+<section id="looking-forward" class="level2">
+<h2 class="anchored" data-anchor-id="looking-forward">Looking Forward</h2>
+<p>The conversation around MEV often focuses on whether it can be eliminated. This misses the point. The real question is how we can structure markets to channel trading activity toward beneficial forms of value extraction while making harmful forms prohibitively expensive. Through its combination of economic incentives, geographic distribution, and infrastructure rotation, Rømer Chain works to create markets where MEV extraction aligns with, rather than opposes, market efficiency.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>http://romer.network/blog/posts/2024-12-31-mev/</guid>
+  <pubDate>Tue, 31 Dec 2024 21:28:01 GMT</pubDate>
+</item>
+</channel>
+</rss>

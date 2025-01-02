@@ -1,0 +1,99 @@
+---
+title: "Why We Chose Commonware for Rømer Chain"
+description: "A personal journey from MEV research to building a physically decentralized blockchain"
+author: "Justin Trollip"
+date: "2024-12-31"
+categories: [technical, architecture, mev]
+---
+
+# The Journey to Proof of Physics
+
+After spending two years exploring the world of Maximal Extractable Value (MEV), I've come to share the growing consensus among researchers and builders: MEV represents one of the most crucial challenges in cryptocurrency today. It's not just about trading profits or transaction ordering—it's about the fundamental fairness and decentralization of blockchain networks.
+
+My journey took an unexpected turn when I read [Phil Daian's](https://x.com/phildaian) thought-provoking post on [geographical decentralization](https://collective.flashbots.net/t/decentralized-crypto-needs-you-to-be-a-geographical-decentralization-maxi/1385/7). As the founder of Flashbots, Phil's insights into MEV and network topology carry particular weight. His vision of true geographic decentralization resonated deeply with me.
+
+Around the same time, [Patrick O'Grady](https://x.com/_patrickogrady) launched [Commonware](https://commonware.xyz/). I'd been following Patrick's work for nearly three years, and his approach to blockchain primitives immediately caught my attention. Despite not being a Rust developer by background, I found myself drawn to explore what could be built with these low-level primitives. It was different from my previous experiences with frameworks like Substrate and Cosmos SDK—this was about building from fundamental components rather than working within a predefined structure.
+
+What started as a curiosity-driven experiment—building a basic blockchain with Commonware—evolved into something more significant. As I worked with the primitives, I began to see how their flexibility could enable something entirely new: [Proof of Physics](../../../technical/pop.qmd), a consensus mechanism that would validate nodes based on their physical network characteristics and geographic distribution, directly addressing the centralization concerns Phil had highlighted.
+
+# Why Not Existing Frameworks?
+
+The journey from concept to implementation required a critical decision: which platform would best support this novel consensus mechanism? Let me walk you through why common approaches proved impractical for implementing Proof of Physics.
+
+## The Ethereum Layer 2 Challenge
+
+Building as an Ethereum Layer 2 would fundamentally undermine the core premise of Proof of Physics. While Layer 2s offer impressive scalability, they ultimately rely on Ethereum's base layer for security. This means they inherit not just Ethereum's security assumptions but also its network topology—precisely what we're trying to rethink with Proof of Physics.
+
+## Limitations of Avalanche L1s
+
+Avalanche's custom L1 platform initially seemed promising. However, several fundamental challenges emerged:
+
+First, Avalanche's networking stack is intimately tied to its Snow* protocols. These aren't just implementation details—they're core assumptions baked into how nodes communicate. Implementing Proof of Physics would require rebuilding much of the networking layer, essentially fighting against the framework rather than working with it.
+
+Second, while Avalanche allows customization of validator selection, its abstractions assume a stake-based system. Our need to validate physical network characteristics and geographic distribution would require deep modifications to core framework components.
+
+## The Cosmos SDK Consideration
+
+The Cosmos SDK offers significant flexibility, but it too presents fundamental obstacles for Proof of Physics:
+
+The SDK's networking layer is optimized for Tendermint's communication patterns. While you can customize validator selection, implementing precise latency measurements and topology validation would require bypassing many of the SDK's abstractions. We would spend more time working around the framework than building our core functionality.
+
+Additionally, the SDK's extensive features for inter-chain communication and governance, while valuable for many projects, represent unnecessary complexity for our focused goal of implementing physical network validation.
+
+## The Challenge with Substrate
+
+While Substrate offers impressive modularity, it faces similar limitations to other frameworks when it comes to implementing Proof of Physics. Its networking layer and consensus interfaces, while flexible, are designed with traditional consensus mechanisms in mind. Implementing our physical validation approach would require significant modifications to core framework components.
+
+# The Commonware Advantage
+
+What sets Commonware apart is its elegant approach to blockchain primitives. Rather than providing a rigid framework with opinionated defaults, Commonware gives us fundamental building blocks that handle the complex infrastructure requirements while leaving complete freedom for custom implementation. This approach is transformative for building novel blockchain architectures.
+
+Let's break down how Commonware's primitives enable our vision:
+
+## Core Infrastructure Handled For Us
+
+Commonware provides essential infrastructure through well-designed traits and implementations:
+
+1. The Supervisor trait handles the complex mechanics of leader election and validator set management. We simply implement our custom selection logic on top of this robust foundation.
+
+2. The Automaton trait manages all consensus messaging and state transitions between nodes. We don't have to worry about message delivery, retry logic, or network failures—we just define our custom validation rules.
+
+3. The Storage primitives handle the intricate details of persisting blockchain data. Block storage, journal management, and state synchronization are all provided out of the box.
+
+4. The Runtime offers a production-grade async execution environment with proper error handling and resource management.
+
+## Complete Freedom for Innovation
+
+With these core capabilities handled, we're free to focus on implementing our unique requirements:
+
+1. **Custom Validator Requirements**: We can implement our physical hardware verification system using zero-knowledge proofs without having to modify any core networking or consensus code. Commonware's trait-based design means we can plug in our custom validation logic seamlessly.
+
+2. **Novel Leader Election**: While Commonware handles the mechanics of leader rotation, we have complete freedom to implement our geographic-aware leader selection algorithm. The Supervisor trait provides the interface—we provide the logic.
+
+3. **Dynamic Token Economics**: We can implement our unique tokenomics model and supply adjustment mechanisms without having to worry about how state changes are propagated through the network. Commonware's storage primitives handle the heavy lifting of state management.
+
+4. **Flexible Execution**: Need to connect to an external VM or implement custom smart contract execution? Commonware's modular design means we can plug in any execution environment without modifying core consensus or networking code.
+
+## The Power of Primitives
+
+The beauty of this approach is that we get the best of both worlds: rock-solid infrastructure components built by world-class distributed systems engineers, combined with complete freedom to innovate on our unique features. We're not fighting against framework assumptions or trying to modify someone else's opinion about how blockchains should work.
+
+The only alternative would have been building everything from scratch—implementing our own networking stack, consensus messaging, storage layer, and runtime environment. Instead, Commonware gives us these capabilities as composable primitives, letting us focus our engineering efforts on the novel aspects of our design.
+
+Consider our Proof of Physics implementation: we can focus entirely on building the geographic validation and physical hardware verification systems because we're not worrying about:
+
+- How blocks are stored and retrieved
+- How messages are delivered between nodes
+- How leader election state is maintained
+- How async operations are scheduled
+- How network connections are managed
+
+This is what makes Commonware unique in the blockchain space. Other platforms force you to accept their opinions about these core components. Commonware just gives you the building blocks and lets you assemble them however you need.
+
+# Looking Forward
+
+Choosing Commonware means more direct implementation work compared to using a full-featured framework. However, this investment in foundational architecture allows us to implement Proof of Physics exactly as envisioned, without compromising on its core principles of physical decentralization.
+
+The goal isn't just to build another blockchain—it's to demonstrate that we can build networks that are truly decentralized in their physical reality, not just in their token distribution. By starting with primitives rather than frameworks, we have the flexibility to implement this vision without fighting against existing assumptions about how blockchains should work.
+
+As we continue development, we'll be sharing more detailed insights into how we're using Commonware's primitives to build a blockchain that considers physical reality as a first-class concern. Stay tuned for deep dives into our implementation of network measurements, geographic validation, and hardware attestation.

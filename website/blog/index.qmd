@@ -1,0 +1,37 @@
+---
+title: "Rømer Chain Development Blog"
+subtitle: "Technical insights into building a first-principles blockchain"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  fields: [date, title, description, categories, reading-time]
+  feed: true
+page-layout: full
+title-block-banner: true
+---
+
+Welcome to the Rømer Chain development blog, where we share deep technical insights into our journey building a novel blockchain architecture from first principles. Here, we explore the engineering decisions, technical challenges, and innovative solutions that shape Rømer Chain's development.
+
+Each post aims to illuminate a specific aspect of our design process, fostering transparency and encouraging meaningful technical discourse within our community. Whether you're interested in distributed systems, cryptographic protocols, or blockchain architecture, you'll find detailed explorations of how we're tackling these challenges in novel ways.
+
+## Featured Post
+
+Our inaugural post explores why we chose Commonware as our foundational framework over traditional blockchain development platforms. This decision reflects our commitment to building a truly novel consensus mechanism [Proof of Physics](../technical/pop.qmd) that validates nodes based on their physical network characteristics rather than stake or computational work.
+
+This technical deep dive examines:
+
+- The unique requirements of Proof of Physics consensus
+- Why traditional blockchain frameworks fell short
+- How Commonware's primitives enable our vision
+- The engineering tradeoffs of our approach
+
+As we continue development, we'll share more insights into our technical architecture, consensus implementation, and the challenges of building a blockchain that explicitly considers physical reality in its design. Stay tuned for future posts about our progress, technical decisions, and the evolving landscape of blockchain infrastructure.
+
+## Latest Posts
+
+:::{#posts}
+:::

@@ -1,0 +1,14 @@
+# Notes
+
+[ ] Currently using a simple hash for transactions_root and state_root. Need to decide on the optimal structure for this. Acceptable at this point of development
+
+# TODO
+
+* Genesis Config needs to be refactored
+    * NetworkConfig needs to be imported from domain/network.rs
+    * ConsensusConfig - block config should be gotten from domain/block.rs. Don't need an Epoch at this stage as there's no leader election. min and max validators should be gotten from domain/validator.rs
+    * NetworkingConfig should be moved to domain/network.rs
+    * TechnicalConfig should be moved to domain/block.rs
+* When creating Node identity. We should consider persisting it and also not use `node identity` but rather public-private pair created and then show the public key while persisting the private key somewhere secure locally. 
+* In Validator.rs we shouldn't store the Genesis block in Journal but rather Archive
+* Get a release to be able to be installed with Homebrew on Mac and Chocolatey on Windows
