@@ -1,8 +1,7 @@
-use bytes::{BufMut, Bytes, BytesMut};
-use commonware_cryptography::{Ed25519, Hasher, Sha256};
-use std::time::{SystemTime, UNIX_EPOCH};
+use bytes::{BufMut, BytesMut};
+use commonware_cryptography::{ Hasher, Sha256};
 
-use crate::block::{Block, BlockHeader, Transaction, TransactionType, TransferType};
+use crate::block::{Block, Transaction, TransactionType, TransferType};
 
 /// Provides core hashing functionality for the blockchain using Ed25519
 #[derive(Clone)]
@@ -159,6 +158,8 @@ impl BlockHasher {
 
 #[cfg(test)]
 mod tests {
+    use crate::block::BlockHeader;
+
     use super::*;
     use std::time::Duration;
 

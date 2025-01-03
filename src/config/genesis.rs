@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Error type for genesis configuration operations
 #[derive(Debug)]
@@ -86,21 +85,6 @@ pub struct TechnicalConfig {
     pub max_tx_size: u32,
 }
 
-/// Default values for configuration parameters
-pub mod defaults {
-    pub const DEFAULT_BLOCK_TIME_MS: u64 = 1000;
-    pub const DEFAULT_EPOCH_LENGTH: u64 = 1000;
-    pub const DEFAULT_MIN_VALIDATORS: u32 = 1;
-    pub const DEFAULT_MAX_VALIDATORS: u32 = 100;
-    pub const DEFAULT_MAX_PEERS: u32 = 50;
-    pub const DEFAULT_MAX_MESSAGE_BACKLOG: usize = 128;
-    pub const DEFAULT_COMPRESSION_LEVEL: u8 = 3;
-    pub const DEFAULT_MAX_MESSAGE_SIZE: usize = 1024 * 1024; // 1MB
-    pub const DEFAULT_CONNECTION_TIMEOUT_MS: u32 = 5000;
-    pub const DEFAULT_PEER_DISCOVERY_INTERVAL: u32 = 30;
-    pub const DEFAULT_MAX_BLOCK_SIZE: u32 = 1024 * 1024; // 1MB
-    pub const DEFAULT_MAX_TX_SIZE: u32 = 64 * 1024; // 64KB
-}
 
 impl GenesisConfig {
     /// Loads the configuration from the default location
@@ -143,38 +127,6 @@ impl GenesisConfig {
         Err(ConfigError::ValidationError(
             "Could not find configuration file".to_string(),
         ))
-    }
-
-    /// Creates a new development configuration with default values
-    pub fn development() -> Self {
-        Self {
-            network: NetworkConfig {
-                chain_id: "romer-dev".to_string(),
-                version: "0.1.0".to_string(),
-                genesis_time: SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .as_secs(),
-            },
-            consensus: ConsensusConfig {
-                block_time_ms: defaults::DEFAULT_BLOCK_TIME_MS,
-                epoch_length: defaults::DEFAULT_EPOCH_LENGTH,
-                min_validators: defaults::DEFAULT_MIN_VALIDATORS,
-                max_validators: defaults::DEFAULT_MAX_VALIDATORS,
-            },
-            networking: NetworkingConfig {
-                max_peers: defaults::DEFAULT_MAX_PEERS,
-                max_message_size: defaults::DEFAULT_MAX_MESSAGE_SIZE,
-                max_message_backlog: defaults::DEFAULT_MAX_MESSAGE_BACKLOG,
-                compression_level: defaults::DEFAULT_COMPRESSION_LEVEL,
-                connection_timeout_ms: defaults::DEFAULT_CONNECTION_TIMEOUT_MS,
-                peer_discovery_interval: defaults::DEFAULT_PEER_DISCOVERY_INTERVAL,
-            },
-            technical: TechnicalConfig {
-                max_block_size: defaults::DEFAULT_MAX_BLOCK_SIZE,
-                max_tx_size: defaults::DEFAULT_MAX_TX_SIZE,
-            },
-        }
     }
 
     /// Validates the configuration values

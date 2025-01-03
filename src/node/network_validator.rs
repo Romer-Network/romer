@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::net::{IpAddr, SocketAddr};
 use std::time::{Duration, Instant};
-use async_std::net::TcpStream;
 use serde::{Deserialize, Serialize};
 
 /// Represents a major Internet Exchange Point (IX)

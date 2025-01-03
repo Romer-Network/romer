@@ -104,18 +104,6 @@ pub struct BackupConfig {
     pub retention_days: u32,
 }
 
-/// Default values for configuration parameters
-pub mod defaults {
-    pub const BLOCKS_PER_SECTION: u64 = 1000;
-    pub const MINIMUM_SECTIONS: u64 = 100;
-    pub const MAX_AGE_DAYS: u32 = 30;
-    pub const SYNC_INTERVAL_MS: u64 = 5000;
-    pub const MAX_BATCH_SIZE: usize = 1000;
-    pub const REPLAY_CONCURRENCY: usize = 4;
-    pub const PENDING_WRITES: usize = 10;
-    pub const COMPRESSION_LEVEL: i32 = 3;
-}
-
 impl StorageConfig {
     /// Loads the configuration from the default location
     pub fn load_default() -> Result<Self, ConfigError> {
@@ -157,48 +145,6 @@ impl StorageConfig {
         Err(ConfigError::ValidationError(
             "Could not find storage configuration file".to_string()
         ))
-    }
-
-    /// Creates a development configuration with default values
-    pub fn development() -> Self {
-        Self {
-            metadata: MetadataConfig {
-                validator_partition: "validators".to_string(),
-                region_partition: "regions".to_string(),
-                network_partition: "network_state".to_string(),
-                sync_interval_ms: defaults::SYNC_INTERVAL_MS,
-                max_batch_size: defaults::MAX_BATCH_SIZE,
-            },
-            journal: JournalConfig {
-                blocks_per_section: defaults::BLOCKS_PER_SECTION,
-                partitions: JournalPartitions {
-                    genesis: "genesis_data".to_string(),
-                    blocks: "block_data".to_string(),
-                    transactions: "tx_data".to_string(),
-                    receipts: "receipt_data".to_string(),
-                },
-                retention: RetentionPolicy {
-                    minimum_sections: defaults::MINIMUM_SECTIONS,
-                    max_age_days: defaults::MAX_AGE_DAYS,
-                },
-                performance: PerformanceConfig {
-                    replay_concurrency: defaults::REPLAY_CONCURRENCY,
-                    pending_writes: defaults::PENDING_WRITES,
-                    compression_level: defaults::COMPRESSION_LEVEL,
-                },
-            },
-            paths: PathConfig {
-                data_dir: PathBuf::from("data"),
-                metadata_dir: PathBuf::from("data/metadata"),
-                journal_dir: PathBuf::from("data/journal"),
-                archive_dir: PathBuf::from("data/archive"),
-            },
-            backup: BackupConfig {
-                enabled: true,
-                interval_hours: 24,
-                retention_days: 7,
-            },
-        }
     }
 
     /// Validates the configuration values

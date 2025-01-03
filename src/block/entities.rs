@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize}; 
-use bytes::Bytes;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlockHeader {
