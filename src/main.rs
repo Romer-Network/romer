@@ -5,6 +5,7 @@ mod config;
 mod consensus;
 mod identity;
 mod node;
+mod storage;
 mod utils;
 
 use clap::Parser;
@@ -15,7 +16,7 @@ use node::validator::NodeError;
 use tracing::{error, info};
 
 use crate::cmd::cli::NodeCliArgs;
-use crate::config::shared::SharedConfig;
+use crate::config::{application, runtime};
 use crate::identity::keymanager::NodeKeyManager;
 use crate::node::validator::Node;
 

@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock};
 use thiserror::Error;
 use tracing::{info, warn};
 
-use crate::domain::block::entities::{Block, Transaction, TransactionType};
+use crate::block::entities::{Block, Transaction, TransactionType};
 
 #[derive(Error, Debug)]
 pub enum StateError {
@@ -15,7 +15,6 @@ pub enum StateError {
     BlockNotFound(u64),
 }
 
-/// Represents the complete state of the blockchain at any point
 pub struct BlockchainState {
     // Using RwLock for concurrent access to state
     blocks: Arc<RwLock<HashMap<u64, Block>>>,

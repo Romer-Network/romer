@@ -1,2 +1,2 @@
 pub mod automaton;
-pub mod supervisor;
+pub mod coordinator;

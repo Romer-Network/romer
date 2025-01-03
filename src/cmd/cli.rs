@@ -1,5 +1,16 @@
-use clap::{Parser, command};
+use clap::{Parser, command, ValueEnum};
 use std::net::SocketAddr;
+
+// First, let's create an enum for the possible environments
+#[derive(Debug, Clone, ValueEnum)]
+pub enum Environment {
+    /// Production environment using tokio runtime
+    Production,
+    /// Testing environment using deterministic runtime
+    Testing,
+    /// Local development environment with additional logging
+    Development,
+}
 
 #[derive(Parser, Debug)]
 #[command(
@@ -9,6 +20,16 @@ use std::net::SocketAddr;
     about = "A blockchain with physical infrastructure requirements"
 )]
 pub struct NodeCliArgs {
+    /// The environment to run the node in
+    #[arg(
+        short,
+        long,
+        value_enum,
+        default_value = "development",
+        help = "Specify the environment (production, testing, development)"
+    )]
+    pub environment: Environment,
+
     /// Network address for this node in the format IP:PORT
     #[arg(
         short, 
@@ -48,6 +69,7 @@ pub struct NodeCliArgs {
 }
 
 impl NodeCliArgs {
+    // Existing methods remain the same
     pub fn get_log_level(&self) -> tracing::Level {
         match self.log_level.as_str() {
             "error" => tracing::Level::ERROR,
@@ -63,5 +85,47 @@ impl NodeCliArgs {
         self.bootstrap
             .as_ref()
             .map(|addr| addr.parse().expect("Invalid bootstrap address"))
+    }
+
+    // Add a helper method to get appropriate runtime settings
+    pub fn get_runtime_config(&self) -> RuntimeConfig {
+        match self.environment {
+            Environment::Production => RuntimeConfig::new_production(),
+            Environment::Testing => RuntimeConfig::new_testing(),
+            Environment::Development => RuntimeConfig::new_development(),
+        }
+    }
+}
+
+// You'll need to define this struct to hold runtime-specific configurations
+pub struct RuntimeConfig {
+    pub storage_partition: String,
+    pub network_timeout: std::time::Duration,
+    // Add other runtime-specific settings
+}
+
+impl RuntimeConfig {
+    pub fn new_production() -> Self {
+        Self {
+            storage_partition: "prod".to_string(),
+            network_timeout: std::time::Duration::from_secs(30),
+            // Set production-appropriate values
+        }
+    }
+
+    pub fn new_testing() -> Self {
+        Self {
+            storage_partition: "test".to_string(),
+            network_timeout: std::time::Duration::from_secs(5),
+            // Set testing-appropriate values
+        }
+    }
+
+    pub fn new_development() -> Self {
+        Self {
+            storage_partition: "dev".to_string(),
+            network_timeout: std::time::Duration::from_secs(10),
+            // Set development-appropriate values
+        }
     }
 }

@@ -9,7 +9,7 @@ use tracing::{info, warn};
 
 use crate::config::shared::SharedConfig;
 use crate::consensus::coordinator::ConsensusCoordinator;
-use crate::domain::block::{
+use crate::block::{
     producer::BlockProducer,
     state::BlockchainState,
     entities::Block,
