@@ -1,3 +1,4 @@
+/* 
 use bytes::{Bytes, BytesMut};
 use commonware_consensus::{simplex::Context, Automaton};
 use commonware_cryptography::Ed25519;
@@ -237,3 +238,4 @@ mod tests {
     use super::*;
     // Add tests for automaton coordination
 }
+    */

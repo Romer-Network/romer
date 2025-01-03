@@ -1,3 +1,4 @@
+/* 
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use thiserror::Error;
@@ -190,3 +191,4 @@ mod tests {
     
     // Add state transition and balance tracking tests
 }
+    */

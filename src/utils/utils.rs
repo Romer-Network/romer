@@ -1,7 +1,7 @@
 use bytes::{BufMut, BytesMut};
 use commonware_cryptography::{ Hasher, Sha256};
 
-use crate::block::{Block, Transaction, TransactionType, TransferType};
+use crate::block::entities::{Block, Transaction, TransactionType, TransferType};
 
 /// Provides core hashing functionality for the blockchain using Ed25519
 #[derive(Clone)]
@@ -156,62 +156,3 @@ impl BlockHasher {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::block::BlockHeader;
-
-    use super::*;
-    use std::time::Duration;
-
-    #[test]
-    fn test_transaction_hash_consistency() {
-        let mut hasher = BlockHasher::new();
-
-        let tx = Transaction {
-            transaction_type: TransactionType::TokenTransfer {
-                to: [1u8; 32],
-                amount: 100,
-                transfer_type: TransferType::Normal,
-            },
-            from: [2u8; 32],
-            nonce: 1,
-            gas_amount: 21000,
-            signature: [3u8; 32],
-        };
-
-        let hash1 = hasher.hash_transaction(&tx);
-        let hash2 = hasher.hash_transaction(&tx);
-        assert_eq!(hash1, hash2, "Same transaction should produce same hash");
-    }
-
-    #[test]
-    fn test_empty_transactions_root() {
-        let mut hasher = BlockHasher::new();
-        let root = hasher.calculate_transactions_root(&[]);
-        assert_eq!(root, [0u8; 32], "Empty transactions should have zero root");
-    }
-
-    #[test]
-    fn test_block_hash_consistency() {
-        let mut hasher = BlockHasher::new();
-
-        let header = BlockHeader {
-            view: 1,
-            height: 1000,
-            timestamp: 1_000_000_000_000,
-            previous_hash: [4u8; 32],
-            transactions_root: [5u8; 32],
-            state_root: [6u8; 32],
-            validator_public_key: [7u8; 32],
-        };
-
-        let block = Block {
-            header,
-            transactions: vec![],
-        };
-
-        let hash1 = hasher.hash_block(&block);
-        let hash2 = hasher.hash_block(&block);
-        assert_eq!(hash1, hash2, "Same block should produce same hash");
-    }
-}

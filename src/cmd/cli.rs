@@ -1,16 +1,8 @@
-use clap::{Parser, command, ValueEnum};
+use crate::config::runtime::{RuntimeConfig, RuntimeEnvironment};
+use clap::{command, Parser, ValueEnum};
 use std::net::SocketAddr;
 
-// First, let's create an enum for the possible environments
-#[derive(Debug, Clone, ValueEnum)]
-pub enum Environment {
-    /// Production environment using tokio runtime
-    Production,
-    /// Testing environment using deterministic runtime
-    Testing,
-    /// Local development environment with additional logging
-    Development,
-}
+// Remove the Environment enum since we'll use RuntimeEnvironment
 
 #[derive(Parser, Debug)]
 #[command(
@@ -26,36 +18,35 @@ pub struct NodeCliArgs {
         long,
         value_enum,
         default_value = "development",
-        help = "Specify the environment (production, testing, development)"
+        help = "Specify the environment (production or development)"
     )]
-    pub environment: Environment,
+    pub environment: RuntimeEnvironment, // Changed to use RuntimeEnvironment
 
-    /// Network address for this node in the format IP:PORT
     #[arg(
-        short, 
         long,
-        default_value = "127.0.0.1:8000",
-        help = "The network address this node will listen on"
+        default_value = "127.0.0.1",
+        help = "The IP address this node will listen on"
     )]
-    pub address: SocketAddr,
+    pub ip: String,
+
+    #[arg(
+        long,
+        default_value = "8000",
+        help = "The port number this node will listen on"
+    )]
+    pub port: u16,
+
+    #[arg(
+        short,
+        long,
+        help = "Addresses of existing nodes to connect to (format: seed@ip:port)",
+        value_delimiter = ','
+    )]
+    pub bootstrappers: Option<Vec<String>>,
 
     /// Designates this node as a genesis node
-    #[arg(
-        short,
-        long,
-        help = "Start this node as a genesis node"
-    )]
+    #[arg(short, long, help = "Start this node as a genesis node")]
     pub genesis: bool,
-
-    /// Address of an existing node to bootstrap from
-    #[arg(
-        short,
-        long,
-        help = "Address of an existing node to connect to",
-        required_unless_present = "genesis",
-        conflicts_with = "genesis"
-    )]
-    pub bootstrap: Option<String>,
 
     /// Log level for node operation
     #[arg(
@@ -69,7 +60,6 @@ pub struct NodeCliArgs {
 }
 
 impl NodeCliArgs {
-    // Existing methods remain the same
     pub fn get_log_level(&self) -> tracing::Level {
         match self.log_level.as_str() {
             "error" => tracing::Level::ERROR,
@@ -78,54 +68,6 @@ impl NodeCliArgs {
             "debug" => tracing::Level::DEBUG,
             "trace" => tracing::Level::TRACE,
             _ => tracing::Level::INFO,
-        }
-    }
-
-    pub fn get_bootstrap_addr(&self) -> Option<SocketAddr> {
-        self.bootstrap
-            .as_ref()
-            .map(|addr| addr.parse().expect("Invalid bootstrap address"))
-    }
-
-    // Add a helper method to get appropriate runtime settings
-    pub fn get_runtime_config(&self) -> RuntimeConfig {
-        match self.environment {
-            Environment::Production => RuntimeConfig::new_production(),
-            Environment::Testing => RuntimeConfig::new_testing(),
-            Environment::Development => RuntimeConfig::new_development(),
-        }
-    }
-}
-
-// You'll need to define this struct to hold runtime-specific configurations
-pub struct RuntimeConfig {
-    pub storage_partition: String,
-    pub network_timeout: std::time::Duration,
-    // Add other runtime-specific settings
-}
-
-impl RuntimeConfig {
-    pub fn new_production() -> Self {
-        Self {
-            storage_partition: "prod".to_string(),
-            network_timeout: std::time::Duration::from_secs(30),
-            // Set production-appropriate values
-        }
-    }
-
-    pub fn new_testing() -> Self {
-        Self {
-            storage_partition: "test".to_string(),
-            network_timeout: std::time::Duration::from_secs(5),
-            // Set testing-appropriate values
-        }
-    }
-
-    pub fn new_development() -> Self {
-        Self {
-            storage_partition: "dev".to_string(),
-            network_timeout: std::time::Duration::from_secs(10),
-            // Set development-appropriate values
         }
     }
 }

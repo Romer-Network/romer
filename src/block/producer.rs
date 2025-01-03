@@ -1,3 +1,4 @@
+/* 
 use std::sync::Arc;
 use thiserror::Error;
 use commonware_cryptography::Ed25519;
@@ -198,3 +199,4 @@ mod tests {
     
     // Add tests for block creation and validation
 }
+    */

@@ -7,7 +7,7 @@ When running a RØMER Chain node, you must specify an environment that determine
 
 ### Production Environment
 ```bash
-cargo run -- -e production --address 127.0.0.1:8000
+cargo run -- -e production --ip 127.0.0.1 --port 8000
 ```
 
 The production environment utilizes Commonware's tokio runtime, which provides:
@@ -18,12 +18,12 @@ Real Clock Time: The node uses actual system time for block production and conse
 
 Network Stack: The tokio runtime implements full TCP networking with connection pooling, backpressure handling, and automatic reconnection. Network messages are handled asynchronously with configurable buffers to prevent memory exhaustion.
 
-### Testing Environment 
+### Development Environment 
 ```bash
-cargo run -- -e testing --address 127.0.0.1:8000
+cargo run -- -e development --ip 127.0.0.1 --port 8000
 ```
 
-The testing environment uses Commonware's deterministic runtime, providing:
+The development environment uses Commonware's deterministic runtime, providing:
 
 Simulated Storage: Instead of writing to disk, the storage system maintains data in memory with simulated persistence. This allows for faster testing cycles and predictable storage behavior. The storage system still maintains ACID properties but without actual disk I/O.
 
@@ -31,18 +31,6 @@ Deterministic Time: Time advancement is controlled programmatically rather than 
 
 Simulated Network: The network layer simulates message delivery with configurable latency and packet loss. This allows testing network partition scenarios and consensus behavior under adverse conditions. Network characteristics remain consistent across test runs.
 
-### Development Environment
-```bash
-cargo run -- -e development --address 127.0.0.1:8000
-```
-
-The development environment provides enhanced debugging capabilities using Commonware's tokio runtime with additional instrumentation:
-
-Debug Storage: Storage operations maintain additional metadata for debugging and include extra validation checks. Storage errors provide detailed context for troubleshooting.
-
-Development Clock: Uses system time but includes additional logging of timing-related events. Timeouts are more lenient to accommodate debugging sessions.
-
-Traced Network: Network operations include detailed logging and metrics collection. Message flows can be traced through the system for debugging consensus issues.
 
 ## Additional Configuration
 
@@ -50,8 +38,8 @@ Each environment supports these additional flags:
 
 ```
 --genesis               # Start as a genesis node
---bootstrap <IP:PORT>   # Connect to existing network
---log-level <LEVEL>     # Set logging verbosity
+--bootstrappers         # Connect to existing network
+--log-level             # Set logging verbosity
 ```
 
 ## Impact on Consensus
