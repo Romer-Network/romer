@@ -6,7 +6,7 @@ use tokio::time::timeout;
 use anyhow::{Result, Error};
 use tracing::{debug, warn};
 
-use crate::node::location::types::{PathHop, NetworkPath};
+use crate::node::location_validator::types::{PathHop, NetworkPath};
 
 /// Handles network measurements for location validation, including latency
 /// measurements and path analysis. This implementation uses TCP connections

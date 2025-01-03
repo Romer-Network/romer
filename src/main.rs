@@ -15,7 +15,7 @@ use tracing::{error, info};
 use crate::cmd::cli::NodeCliArgs;
 use crate::identity::keymanager::NodeKeyManager;
 use crate::node::hardware_validator::{HardwareDetector, VirtualizationType};
-use crate::node::location::LocationValidator;
+use crate::node::location_validator::LocationValidator;
 
 // Gold Coast, Australia coordinates
 const VALIDATOR_LATITUDE: f64 = -28.0167;

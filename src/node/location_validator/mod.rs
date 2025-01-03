@@ -9,9 +9,9 @@ use tokio::time::timeout;
 use geo::{Point, HaversineDistance};
 use anyhow::{Result, Error};
 
-pub use crate::node::location::types::*;
-pub use crate::node::location::measurements::*;
-pub use crate::node::location::analysis::*;
+pub use crate::node::location_validator::types::*;
+pub use crate::node::location_validator::measurements::*;
+pub use crate::node::location_validator::analysis::*;
 
 const SPEED_OF_LIGHT_KMS: f64 = 299792.458; // km/s
 const FIBER_OVERHEAD: f64 = 1.4; // Typical fiber route overhead factor
