@@ -10,9 +10,10 @@ use crate::config::storage::ConfigError as StorageConfigError;
 use crate::config::storage::StorageConfig;
 use crate::config::tokenomics::TokenomicsConfig;
 use crate::config::tokenomics::TokenomicsConfigError;
+
+use crate::config::shared::{SharedConfiguration, SharedConfigError};
 use crate::consensus::automaton::BlockchainAutomaton;
 use crate::node::hardware_validator::HardwareDetector;
-use crate::node::hardware_validator::OperatingSystem;
 use crate::node::hardware_validator::VirtualizationType;
 
 #[derive(Error, Debug)]
