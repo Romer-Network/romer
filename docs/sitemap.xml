@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://romer.network/technical/validators.html</loc>
-    <lastmod>2024-12-29T03:00:50.593Z</lastmod>
+    <lastmod>2025-01-05T21:53:24.956Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/technical/notes.html</loc>
@@ -33,16 +33,20 @@
     <lastmod>2024-12-31T01:02:06.663Z</lastmod>
   </url>
   <url>
-    <loc>http://romer.network/blog/drafts/2025-01-01-devnet/index.html</loc>
-    <lastmod>2025-01-02T20:42:08.380Z</lastmod>
+    <loc>http://romer.network/blog/drafts/2025-01-03-us-cloud-act/index.html</loc>
+    <lastmod>2025-01-02T21:58:37.042Z</lastmod>
+  </url>
+  <url>
+    <loc>http://romer.network/blog/drafts/2024-12-31-mev/index.html</loc>
+    <lastmod>2024-12-31T05:07:52.311Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/about.html</loc>
     <lastmod>2024-12-26T23:24:27.544Z</lastmod>
   </url>
   <url>
-    <loc>http://romer.network/blog/drafts/2024-12-31-mev/index.html</loc>
-    <lastmod>2024-12-31T05:07:52.311Z</lastmod>
+    <loc>http://romer.network/blog/drafts/2025-01-01-devnet/index.html</loc>
+    <lastmod>2025-01-02T20:42:08.380Z</lastmod>
   </url>
   <url>
     <loc>http://romer.network/blog/index.html</loc>
