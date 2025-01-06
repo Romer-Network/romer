@@ -157,18 +157,40 @@ impl NetworkAnalyzer {
         point_a: Point<f64>,
         reference: &ReferencePoint,
     ) -> f64 {
-        const SPEED_OF_LIGHT_KMS: f64 = 299792.458;
-        const FIBER_OVERHEAD: f64 = 1.4;
-        const PROCESSING_OVERHEAD_MS: f64 = 0.2;
+        // Constants with more explicit typing
+        const SPEED_OF_LIGHT_KMS: f64 = 299_792.458; // Speed of light in km/s
+        const FIBER_OVERHEAD: f64 = 1.4; // Typical fiber route overhead factor
+        const PROCESSING_OVERHEAD_MS: f64 = 5.0; // Processing overhead in milliseconds
 
+        // Calculate great circle distance between points
         let distance_km = point_a.haversine_distance(&reference.location);
 
-        // Calculate round trip time including:
-        // 1. Fiber optic travel time (speed of light / fiber index)
-        // 2. Path overhead (cables don't follow great circles)
-        // 3. Minimum processing time at each end
-        let light_time = (distance_km * FIBER_OVERHEAD * 2.0 / SPEED_OF_LIGHT_KMS) * 1000.0;
-        light_time + PROCESSING_OVERHEAD_MS
+        // Detailed step-by-step calculation with explicit decimal handling
+        // 1. Calculate the time to travel the distance (one way)
+        let one_way_light_time_s = (distance_km * FIBER_OVERHEAD) / SPEED_OF_LIGHT_KMS;
+
+        // 2. Convert to round-trip time in milliseconds (multiply by 2)
+        let round_trip_time_ms = one_way_light_time_s * 2.0;
+
+        // 3. Add processing overhead
+        let total_latency_ms = round_trip_time_ms + PROCESSING_OVERHEAD_MS;
+
+        // Debugging print to understand the calculation
+        debug!(
+            "Theoretical Minimum Latency Calculation:\n\
+            - Distance: {:.4} km\n\
+            - One-way light time: {:.6} s\n\
+            - Round-trip time: {:.4} ms\n\
+            - Processing overhead: {:.2} ms\n\
+            - Total theoretical minimum: {:.4} ms",
+            distance_km,
+            one_way_light_time_s,
+            round_trip_time_ms,
+            PROCESSING_OVERHEAD_MS,
+            total_latency_ms
+        );
+
+        total_latency_ms
     }
 
     /// Analyzes temporal aspects of measurements to detect inconsistencies

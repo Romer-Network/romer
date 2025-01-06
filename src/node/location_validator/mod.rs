@@ -32,13 +32,7 @@ impl LocationValidator {
                 "80.81.192.3".parse().unwrap(),
                 50.1109,
                 8.6821,
-            ),
-            ReferencePoint::new(
-                "Cloudflare NYC",
-                "104.18.0.0".parse().unwrap(),
-                40.7128,
-                -74.0060,
-            ),
+            )
         ];
 
         Self {
