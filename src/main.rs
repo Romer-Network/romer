@@ -3,9 +3,8 @@ mod config;
 mod identity;
 mod node;
 
-use std::process;
-
 use clap::Parser;
+use std::process;
 use tracing::{error, info, warn};
 
 use crate::cmd::cli::NodeCliArgs;
@@ -58,7 +57,7 @@ async fn verify_physical_location() -> Result<(), String> {
         // Location verified successfully
         info!(
             "Location verification passed 
-            - Confidence: {:.2}%", 
+            - Confidence: {:.2}%",
             validation_result.confidence * 100.0
         );
 

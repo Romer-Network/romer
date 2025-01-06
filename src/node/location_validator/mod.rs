@@ -32,7 +32,13 @@ impl LocationValidator {
                 "80.81.192.3".parse().unwrap(),
                 50.1109,
                 8.6821,
-            )
+            ),
+            ReferencePoint::new(
+                "Trollip",
+                "27.33.41.4".parse().unwrap(),
+                -28.0167,
+                153.4000,
+            ),
         ];
 
         Self {

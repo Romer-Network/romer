@@ -34,3 +34,6 @@ geo = "0.26"
 anyhow = "1.0.75"
 surge-ping = "0.8.0"
 chrono = { version = "0.4", features = ["serde"] }
+halo2_proofs = "0.3.0"
+halo2_gadgets = "0.3.0"
+pasta_curves = "0.5.0"

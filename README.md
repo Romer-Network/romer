@@ -34,7 +34,7 @@ Get your Public IP address from https://www.whatismyip.com/
 
 ### Production Environment
 ```bash
-cargo run -- -e production --ip 27.33.41.4 --port 8000
+cargo run -- --ip 27.33.41.4 --port 8000
 ```
 
 The production environment utilizes Commonware's tokio runtime, which provides:
@@ -45,50 +45,3 @@ Real Clock Time: The node uses actual system time for block production and conse
 
 Network Stack: The tokio runtime implements full TCP networking with connection pooling, backpressure handling, and automatic reconnection. Network messages are handled asynchronously with configurable buffers to prevent memory exhaustion.
 
-### Development Environment 
-```bash
-cargo run -- -e development --ip 127.0.0.1 --port 8000
-```
-
-The development environment uses Commonware's deterministic runtime, providing:
-
-Simulated Storage: Instead of writing to disk, the storage system maintains data in memory with simulated persistence. This allows for faster testing cycles and predictable storage behavior. The storage system still maintains ACID properties but without actual disk I/O.
-
-Deterministic Time: Time advancement is controlled programmatically rather than using system time. This enables reproducible testing of time-dependent behaviors like consensus rounds and network timeouts. Tests can explicitly advance time to trigger specific behaviors.
-
-Simulated Network: The network layer simulates message delivery with configurable latency and packet loss. This allows testing network partition scenarios and consensus behavior under adverse conditions. Network characteristics remain consistent across test runs.
-
-
-## Additional Configuration
-
-Each environment supports these additional flags:
-
-```
---genesis               # Start as a genesis node
---bootstrappers         # Connect to existing network
---log-level             # Set logging verbosity
-```
-
-## Impact on Consensus
-
-The choice of environment affects how Simplex Consensus operates:
-
-Production uses real network latency and system time for view changes and leader election. Geographic distribution of nodes impacts actual consensus timing.
-
-Testing provides reproducible consensus runs by controlling message delivery and time advancement. This enables verification of consensus properties under specific conditions.
-
-Development maintains consensus properties while providing additional introspection into the consensus process through enhanced logging and metrics.
-
-## Resource Requirements
-
-Each environment has different resource needs:
-
-Production requires dedicated hardware meeting minimum specifications for CPU, memory, storage, and network bandwidth. Storage requires high-performance SSDs for journal persistence.
-
-Testing can run with reduced resources since storage is simulated and network operations are lightweight. Memory requirements are higher since data is kept in RAM.
-
-Development has similar requirements to production but needs additional storage space for debug logs and metrics data.
-
-The environment choice fundamentally shapes how your node interacts with the network through Commonware's runtime abstractions. Choose based on your specific needs for persistence, determinism, and debugging capabilities.
-
-Would you like me to expand on any aspect of how Commonware's runtimes behave in these environments? For example, I could elaborate on the storage implementation differences or consensus timing behaviors.
