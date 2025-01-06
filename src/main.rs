@@ -4,22 +4,14 @@ mod identity;
 mod node;
 
 use std::process;
-use std::str::FromStr;
-use std::net::{IpAddr, SocketAddr};
-use geo::Point;
 
 use clap::Parser;
-use commonware_cryptography::{Ed25519, Scheme};
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 use crate::cmd::cli::NodeCliArgs;
 use crate::identity::keymanager::NodeKeyManager;
 use crate::node::hardware_validator::{HardwareDetector, VirtualizationType};
 use crate::node::location_validator::LocationValidator;
-
-// Gold Coast, Australia coordinates
-const VALIDATOR_LATITUDE: f64 = -28.0167;
-const VALIDATOR_LONGITUDE: f64 = 153.4000;
 
 /// Verifies that the node is running on physical hardware, not in a virtual environment.
 /// This is crucial for the security of the network as virtual machines could be used
@@ -49,23 +41,56 @@ fn verify_hardware_requirements() -> Result<(), String> {
 /// Verifies the physical location of the node using network latency measurements.
 /// Returns Ok if the measured location matches the claimed location within acceptable bounds.
 async fn verify_physical_location() -> Result<(), String> {
-    let validator = LocationValidator::new();
-    
-    // Gold Coast coordinates for initial testing
-    let claimed_location = Point::new(VALIDATOR_LONGITUDE, VALIDATOR_LATITUDE);
-    
-    match validator.validate_location(VALIDATOR_LATITUDE, VALIDATOR_LONGITUDE).await {
-        Ok(validation) => {
-            if validation.is_valid {
-                info!("Location verification passed with confidence: {:.2}%", 
-                      validation.confidence * 100.0);
-                Ok(())
-            } else {
-                let issues = validation.inconsistencies.join("\n- ");
-                Err(format!("Location verification failed:\n- {}", issues))
+    let location_verifier = LocationValidator::new();
+
+    // Gold Coast coordinates
+    let lat = -28.0167;
+    let lon = 153.4000;
+
+    // Perform location validation
+    let validation_result = location_verifier
+        .validate_location(lat, lon)
+        .await
+        .map_err(|e| format!("Location validation error: {}", e))?;
+
+    // Detailed analysis of the validation result
+    if validation_result.is_valid {
+        // Location verified successfully
+        info!(
+            "Location verification passed 
+            - Confidence: {:.2}%", 
+            validation_result.confidence * 100.0
+        );
+
+        // Log any minor inconsistencies
+        if !validation_result.inconsistencies.is_empty() {
+            warn!("Minor location inconsistencies detected:");
+            for issue in &validation_result.inconsistencies {
+                warn!("- {}", issue);
             }
         }
-        Err(e) => Err(format!("Location verification error: {}", e))
+
+        Ok(())
+    } else {
+        // Location verification failed
+        error!(
+            "Location verification failed 
+            - Confidence: {:.2}%
+            - Detected inconsistencies:",
+            validation_result.confidence * 100.0
+        );
+
+        // Detailed logging of inconsistencies
+        for issue in &validation_result.inconsistencies {
+            error!("- {}", issue);
+        }
+
+        // Return a specific error with confidence level
+        Err(format!(
+            "Location verification failed with {:.2}% confidence. {} inconsistencies detected.",
+            validation_result.confidence * 100.0,
+            validation_result.inconsistencies.len()
+        ))
     }
 }
 
@@ -91,7 +116,6 @@ async fn main() {
     // Parse command line arguments
     let args = NodeCliArgs::parse();
 
-    // Step 1: Verify hardware requirements
     info!("Verifying hardware requirements...");
     if let Err(e) = verify_hardware_requirements() {
         error!("Hardware verification failed: {}", e);
@@ -99,7 +123,6 @@ async fn main() {
     }
     info!("Hardware verification passed");
 
-    // Step 2: Initialize the key manager and get the signer
     info!("Initializing node identity...");
     let signer = match NodeKeyManager::new().and_then(|km| km.initialize()) {
         Ok(signer) => {

@@ -48,39 +48,6 @@ impl ReferencePoint {
     }
 }
 
-/// Represents a single network hop discovered during path analysis
-#[derive(Debug, Clone)]
-pub struct PathHop {
-    /// IP address of this hop
-    pub ip: IpAddr,
-    
-    /// Round trip time to this hop in milliseconds
-    pub rtt: f64,
-    
-    /// Whether this hop responded to our probe
-    pub responded: bool,
-}
-
-/// Represents the complete analysis of a network path to a reference point
-#[derive(Debug, Clone)]
-pub struct NetworkPath {
-    /// Ordered list of hops from source to destination
-    pub hops: Vec<PathHop>,
-    
-    /// List of suspicious patterns detected in this path
-    pub suspicious_patterns: Vec<String>,
-    
-    /// Average latency between consecutive hops
-    pub average_inter_hop_latency: f64,
-    
-    /// Score indicating how consistent the latencies are between hops
-    /// (too consistent might indicate tunneling)
-    pub latency_consistency_score: f64,
-    
-    /// Total number of responsive hops in the path
-    pub path_length: usize,
-}
-
 /// Records a latency measurement to a reference point
 #[derive(Debug, Clone)]
 pub struct LatencyMeasurement {
@@ -109,9 +76,6 @@ pub struct LocationValidation {
     
     /// Collection of latency measurements to reference points
     pub measurements: Vec<LatencyMeasurement>,
-    
-    /// Optional detailed path analyses (if performed)
-    pub path_analyses: Option<Vec<NetworkPath>>,
     
     /// Whether the location claim meets our minimum confidence threshold
     pub is_valid: bool,
@@ -148,8 +112,6 @@ pub struct ValidatorConfig {
     /// Minimum confidence score required to consider a location verified
     pub min_confidence_threshold: f64,
     
-    /// Maximum number of hops to check in path analysis
-    pub max_path_hops: u32,
 }
 
 impl Default for ValidatorConfig {
@@ -158,7 +120,6 @@ impl Default for ValidatorConfig {
             samples_per_reference: 10,
             measurement_timeout_ms: 1000,
             min_confidence_threshold: 0.7,
-            max_path_hops: 30,
         }
     }
 }

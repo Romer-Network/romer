@@ -1,12 +1,12 @@
+use anyhow::{Error, Result};
+use rand::random;
+use std::error::Error as StdError;
 use std::net::IpAddr;
 use std::time::{Duration, Instant};
-use tokio::net::TcpStream;
+use surge_ping::{Client, Config as PingConfig, PingIdentifier, PingSequence};
 use tokio::process::Command;
 use tokio::time::timeout;
-use anyhow::{Result, Error};
-use tracing::{debug, warn};
-
-use crate::node::location_validator::types::{PathHop, NetworkPath};
+use tracing::{debug, error, info, warn};
 
 /// Handles network measurements for location validation, including latency
 /// measurements and path analysis. This implementation uses TCP connections
@@ -15,13 +15,13 @@ use crate::node::location_validator::types::{PathHop, NetworkPath};
 pub struct NetworkMeasurement {
     /// Maximum time to wait for any single measurement
     timeout_ms: u64,
-    
+
     /// Number of samples to collect for latency measurements
     sample_count: usize,
-    
+
     /// Delay between consecutive measurements to avoid flooding
     inter_measurement_delay_ms: u64,
-    
+
     /// Maximum number of network hops to analyze
     max_hops: u32,
 }
@@ -40,76 +40,151 @@ impl NetworkMeasurement {
     /// Collects multiple samples and performs statistical analysis to
     /// filter out anomalies and determine a reliable latency value.
     pub async fn measure_latency(&self, target: IpAddr) -> Result<Vec<f64>> {
-        debug!("Starting latency measurement to {}", target);
+        // Log the start of the measurement with key details
+        info!(
+            "Attempting ICMP latency measurement to {} with {} samples",
+            target, self.sample_count
+        );
+
+        // Client creation with more diagnostic information
+        let client = match Client::new(&PingConfig::default()) {
+            Ok(client) => client,
+            Err(e) => {
+                error!(
+                    "ICMP client creation failed. 
+                    This typically indicates:
+                    - Insufficient network privileges
+                    - Firewall blocking raw socket creation
+                    Specific error: {}",
+                    e
+                );
+                return Err(Error::msg(format!("ICMP client creation failed: {}", e)));
+            }
+        };
+
+        // Create unique identifier for this ping session
+        let ident = PingIdentifier(random::<u16>());
+
+        // Create pinger
+        let mut pinger = client.pinger(target, ident).await;
+
+        // Diagnostic payload (32 bytes of zeros)
+        let payload = vec![0; 32];
+
         let mut samples = Vec::with_capacity(self.sample_count);
-        let mut failed_attempts = 0;
-        
-        for i in 0..self.sample_count {
-            match self.single_latency_measurement(target).await {
-                Ok(latency) => {
-                    debug!("Sample {} to {}: {:.2}ms", i + 1, target, latency);
+        let mut failures = 0;
+
+        for attempt in 0..self.sample_count {
+            let start = Instant::now();
+
+            match pinger.ping(PingSequence(attempt as u16), &payload).await {
+                Ok(_) => {
+                    let latency = start.elapsed().as_secs_f64() * 1000.0;
+                    info!("Successful ping to {}: {:.2} ms", target, latency);
                     samples.push(latency);
                 }
                 Err(e) => {
-                    warn!("Failed to measure latency to {}: {}", target, e);
-                    failed_attempts += 1;
-                    if failed_attempts > self.sample_count / 2 {
-                        return Err(Error::msg("Too many failed measurements"));
+                    // Comprehensive error logging
+                    warn!(
+                        "Ping to {} failed (Attempt {}/{}). 
+                        Error details:
+                        - Error: {}
+                        - Sequence: {}
+                        ",
+                        target,
+                        attempt + 1,
+                        self.sample_count,
+                        e,
+                        attempt
+                    );
+
+                    failures += 1;
+
+                    // Add system-level diagnostic commands to help troubleshoot
+                    if let Err(cmd_err) = self.run_network_diagnostics(target).await {
+                        warn!("Additional network diagnostics failed: {}", cmd_err);
+                    }
+
+                    // Fail fast if too many attempts fail
+                    if failures > self.sample_count / 2 {
+                        error!(
+                            "Measurement to {} failed after {} attempts. 
+                            Consider manual network troubleshooting.",
+                            target, failures
+                        );
+                        return Err(Error::msg("Excessive ping failures"));
                     }
                 }
             }
 
-            // Add delay between measurements to avoid flooding
+            // Delay between attempts to avoid overwhelming the network
             tokio::time::sleep(Duration::from_millis(self.inter_measurement_delay_ms)).await;
         }
 
+        // Validate measurement results
         if samples.is_empty() {
+            error!(
+                "No successful measurements to {}. 
+                This suggests a consistent connectivity issue.",
+                target
+            );
             return Err(Error::msg("No successful latency measurements"));
         }
 
-        // Filter out anomalies and calculate final result
         Ok(self.process_latency_samples(samples))
     }
 
-    /// Performs path analysis to the target IP address, analyzing each hop
-    /// for suspicious patterns that might indicate proxying or tunneling.
-    pub async fn analyze_path(&self, target: IpAddr) -> Result<NetworkPath> {
-        debug!("Starting path analysis to {}", target);
-        let mut hops: Vec<PathHop> = Vec::new();
-        let mut suspicious_patterns = Vec::new();
+    // Additional diagnostic method to run system-level network checks
+    async fn run_network_diagnostics(&self, target: IpAddr) -> Result<()> {
+        // Run various network diagnostic commands
+        let commands = vec![
+            format!("ping -c 4 {}", target),
+            format!("traceroute {}", target),
+            "netstat -rn".to_string(),
+            "ip route".to_string(),
+        ];
 
-        // Use traceroute for path analysis
-        let output = self.run_traceroute(target).await?;
-        let path_data = self.parse_traceroute_output(&output)?;
-
-        // Analyze the path for suspicious patterns
-        let (consistency_score, avg_latency) = self.analyze_path_characteristics(&path_data);
-        
-        if let Some(patterns) = self.detect_path_anomalies(&path_data) {
-            suspicious_patterns.extend(patterns);
+        for cmd in commands {
+            match Command::new("sh").arg("-c").arg(&cmd).output().await {
+                Ok(output) => {
+                    // Log command output for deeper investigation
+                    debug!(
+                        "Diagnostic command '{}' output:\nSTDOUT: {}\nSTDERR: {}",
+                        cmd,
+                        String::from_utf8_lossy(&output.stdout),
+                        String::from_utf8_lossy(&output.stderr)
+                    );
+                }
+                Err(e) => {
+                    warn!("Failed to run diagnostic command '{}': {}", cmd, e);
+                }
+            }
         }
 
-        Ok(NetworkPath {
-            hops: path_data,
-            suspicious_patterns,
-            average_inter_hop_latency: avg_latency,
-            latency_consistency_score: consistency_score,
-            path_length: hops.len(),
-        })
+        Ok(())
     }
+
 
     /// Performs a single latency measurement using TCP connection timing.
     /// This method avoids using ICMP ping which requires root privileges.
     async fn single_latency_measurement(&self, target: IpAddr) -> Result<f64> {
+        // Create a new ICMP client with default configuration
+        let client = Client::new(&PingConfig::default())?;
+
+        // Create a unique identifier for this ping session
+        let ident = PingIdentifier(random::<u16>());
+
+        // Create a pinger for this specific target
+        let mut pinger = client.pinger(target, ident).await;
+
+        // Create a buffer for timing measurement
         let start = Instant::now();
-        
-        match timeout(
-            Duration::from_millis(self.timeout_ms),
-            TcpStream::connect((target, 80))
-        ).await {
-            Ok(Ok(_)) => Ok(start.elapsed().as_secs_f64() * 1000.0),
-            Ok(Err(e)) => Err(Error::msg(format!("Connection failed: {}", e))),
-            Err(_) => Err(Error::msg("Connection timed out")),
+
+        // Send ping with sequence number and standard 32-byte payload
+        // Using vec![0; 32] creates a payload of 32 zero bytes, similar to standard ping
+        match pinger.ping(PingSequence(0), &vec![0; 32]).await {
+            Ok(_) => Ok(start.elapsed().as_secs_f64() * 1000.0),
+            Err(e) => Err(Error::msg(format!("ICMP ping failed: {}", e))),
         }
     }
 
@@ -120,17 +195,18 @@ impl NetworkMeasurement {
     fn process_latency_samples(&self, mut samples: Vec<f64>) -> Vec<f64> {
         // Sort samples for percentile calculations
         samples.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        
+
         // Calculate quartiles for outlier detection
         let q1 = samples[samples.len() / 4];
         let q3 = samples[3 * samples.len() / 4];
         let iqr = q3 - q1;
-        
+
         // Filter out outliers using 1.5 * IQR rule
         let lower_bound = q1 - 1.5 * iqr;
         let upper_bound = q3 + 1.5 * iqr;
-        
-        samples.into_iter()
+
+        samples
+            .into_iter()
             .filter(|&s| s >= lower_bound && s <= upper_bound)
             .collect()
     }
@@ -139,9 +215,12 @@ impl NetworkMeasurement {
     async fn run_traceroute(&self, target: IpAddr) -> Result<String> {
         let output = Command::new("traceroute")
             .arg("-n") // Numeric output only
-            .arg("-q").arg("3") // 3 probes per hop
-            .arg("-w").arg("2") // 2 second timeout
-            .arg("-m").arg(self.max_hops.to_string())
+            .arg("-q")
+            .arg("3") // 3 probes per hop
+            .arg("-w")
+            .arg("2") // 2 second timeout
+            .arg("-m")
+            .arg(self.max_hops.to_string())
             .arg(target.to_string())
             .output()
             .await?;
@@ -149,108 +228,10 @@ impl NetworkMeasurement {
         Ok(String::from_utf8(output.stdout)?)
     }
 
-    /// Parses raw traceroute output into structured path data
-    fn parse_traceroute_output(&self, output: &str) -> Result<Vec<PathHop>> {
-        let mut hops = Vec::new();
+    
+    
 
-        for line in output.lines().skip(1) { // Skip header line
-            if let Some(hop) = self.parse_traceroute_hop(line)? {
-                hops.push(hop);
-            }
-        }
-
-        Ok(hops)
-    }
-
-    /// Parses a single line of traceroute output into a PathHop structure
-    fn parse_traceroute_hop(&self, line: &str) -> Result<Option<PathHop>> {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() < 2 {
-            return Ok(None);
-        }
-
-        // Handle non-responding hops
-        let (ip, rtt, responded) = if parts[1] == "*" {
-            (IpAddr::V4(std::net::Ipv4Addr::UNSPECIFIED), 0.0, false)
-        } else {
-            let ip: IpAddr = parts[1].parse()?;
-            let rtt: f64 = parts[2].trim_end_matches("ms").parse()?;
-            (ip, rtt, true)
-        };
-
-        Ok(Some(PathHop {
-            ip,
-            rtt,
-            responded,
-        }))
-    }
-
-    /// Analyzes characteristics of the network path
-    fn analyze_path_characteristics(&self, hops: &[PathHop]) -> (f64, f64) {
-        let mut latencies = Vec::new();
-        let mut prev_rtt = 0.0;
-
-        for hop in hops.iter().filter(|h| h.responded) {
-            if prev_rtt > 0.0 {
-                latencies.push(hop.rtt - prev_rtt);
-            }
-            prev_rtt = hop.rtt;
-        }
-
-        if latencies.is_empty() {
-            return (0.0, 0.0);
-        }
-
-        let avg_latency = latencies.iter().sum::<f64>() / latencies.len() as f64;
-        
-        // Calculate consistency score using coefficient of variation
-        let variance = latencies.iter()
-            .map(|&lat| (lat - avg_latency).powi(2))
-            .sum::<f64>() / latencies.len() as f64;
-        
-        let std_dev = variance.sqrt();
-        let consistency_score = 1.0 / (1.0 + (std_dev / avg_latency));
-
-        (consistency_score, avg_latency)
-    }
-
-    /// Detects anomalies in the network path that might indicate proxying
-    fn detect_path_anomalies(&self, hops: &[PathHop]) -> Option<Vec<String>> {
-        let mut anomalies = Vec::new();
-        
-        // Check for physically impossible latency decreases
-        for window in hops.windows(2) {
-            if let [hop1, hop2] = window {
-                if hop1.responded && hop2.responded {
-                    if hop2.rtt < hop1.rtt {
-                        anomalies.push(
-                            "Physically impossible latency decrease detected".to_string()
-                        );
-                    }
-                }
-            }
-        }
-
-        // Check for suspiciously large gaps in responding hops
-        let mut gap_size = 0;
-        for hop in hops {
-            if !hop.responded {
-                gap_size += 1;
-            } else if gap_size > 3 {
-                anomalies.push(format!(
-                    "Suspicious gap of {} non-responding hops", 
-                    gap_size
-                ));
-                gap_size = 0;
-            }
-        }
-
-        if anomalies.is_empty() {
-            None
-        } else {
-            Some(anomalies)
-        }
-    }
+    
 }
 
 /// Configuration for network measurements
@@ -265,9 +246,9 @@ pub struct MeasurementConfig {
 impl Default for MeasurementConfig {
     fn default() -> Self {
         Self {
-            timeout_ms: 1000,
+            timeout_ms: 2000,
             sample_count: 10,
-            inter_measurement_delay_ms: 100,
+            inter_measurement_delay_ms: 200,
             max_hops: 30,
         }
     }
