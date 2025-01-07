@@ -56,7 +56,7 @@ cargo run --release -- \
   --longitude=153.4000
 
 # Windows
-cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir data\romer_log\0 --latitude=-28.0167 --longitude=153.4000
+cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir data\\romer_log\\0 --latitude=-28.0167 --longitude=153.4000
 ```
 
 #### Additional Nodes (1-3)
@@ -74,7 +74,7 @@ cargo run --release -- \
   --longitude=153.4000
 
 # Windows
-cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me NODE_ID@127.0.0.1:PORT --participants 0,1,2,3 --storage-dir data\romer_log\NODE_ID --latitude=-28.0167 --longitude=153.4000
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me NODE_ID@127.0.0.1:PORT --participants 0,1,2,3 --storage-dir data\\romer_log\\NODE_ID --latitude=-28.0167 --longitude=153.4000
 ```
 
 Replace NODE_ID with 1, 2, or 3, and PORT with 3001, 3002, or 3003 respectively.
