@@ -1,3 +1,5 @@
+use crate::validation::proof_generator::ProofGenerator;
+
 use super::{
     ingress::{Mailbox, Message},
     supervisor::Supervisor,
@@ -9,6 +11,7 @@ use commonware_utils::hex;
 use futures::{channel::mpsc, StreamExt};
 use rand::Rng;
 use tracing::info;
+use anyhow::Context;
 
 /// Genesis message to use during initialization.
 const GENESIS: &[u8] = b"commonware is neat";
@@ -24,6 +27,14 @@ pub struct Application<R: Rng, C: Scheme, H: Hasher> {
 impl<R: Rng, C: Scheme, H: Hasher> Application<R, C, H> {
     /// Create a new application actor.
     pub fn new(runtime: R, config: Config<C, H>) -> (Self, Supervisor, Mailbox) {
+        
+        let _proof_generator =
+            ProofGenerator::builder()
+                .validate_hardware()
+                .with_context(|| {
+                    "Failed to validate hardware requirements - node must run on physical hardware"
+                });
+
         let (sender, mailbox) = mpsc::channel(config.mailbox_size);
         (
             Self {
@@ -60,7 +71,12 @@ impl<R: Rng, C: Scheme, H: Hasher> Application<R, C, H> {
                     // Hash the message
                     self.hasher.update(&msg);
                     let digest = self.hasher.finalize();
-                    info!(msg = hex(&msg), payload = hex(&digest), "proposed");
+                    info!(
+                        target: "commonware_log::application",
+                        msg = hex(&msg),
+                        payload = hex(&digest),
+                        "proposed"
+                    );
 
                     // Send digest to consensus
                     let _ = response.send(digest);

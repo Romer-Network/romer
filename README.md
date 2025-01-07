@@ -13,7 +13,7 @@ cargo run --release -- --me 0@3000 --participants 0,1,2,3 --storage-dir /tmp/log
 
 **Windows**
 ```bash
-cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir \data\\romer_log\\0
+cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir \data\\romer_log\\0 --latitude=-28.0167 --longitude=153.4000
 ```
 
 ## Participant 1
@@ -23,7 +23,7 @@ cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 1@3001 --participan
 ```
 
 ```bash
-cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 1@127.0.0.1:3001 --participants 0,1,2,3 --storage-dir \data\\romer_log\\1
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 1@127.0.0.1:3001 --participants 0,1,2,3 --storage-dir \data\\romer_log\\1 --latitude=-28.0167 --longitude=153.4000
 ```
 
 # Participant 2
@@ -33,7 +33,7 @@ cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@3002 --participan
 ```
 
 ```bash
-cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@127.0.0.1:3002 --participants 0,1,2,3 --storage-dir \data\\romer_log\\2
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@127.0.0.1:3002 --participants 0,1,2,3 --storage-dir \data\\romer_log\\2 --latitude=-28.0167 --longitude=153.4000
 ```
 
 # Participant 3
@@ -41,3 +41,4 @@ cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@127.0.0.1:3002 --
 ```bash
 cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 3@3003 --participants 0,1,2,3 --storage-dir /tmp/log/3
 ```
+

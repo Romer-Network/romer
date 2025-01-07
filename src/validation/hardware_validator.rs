@@ -1,20 +1,21 @@
 use std::env;
-use std::error::Error;
-use std::fmt;
 use std::process::Command;
-
+use anyhow::{Context, Result};
 use tracing::info;
 
-/// Represents different virtualization types
+/// Represents different virtualization types that we might detect.
+/// This helps us clearly categorize the execution environment of the node.
 #[derive(Debug, Clone, PartialEq)]
 pub enum VirtualizationType {
     /// Indicates the system is running on physical hardware
     Physical,
-    /// Represents a specific virtualization technology
+    /// Represents a specific virtualization technology with its name
     Virtual(String),
 }
 
-/// Represents the operating system type
+/// Represents the operating system type. We need this to determine
+/// which validation strategies to use, as each OS has different
+/// methods for detecting virtualization.
 #[derive(Debug, Clone, PartialEq)]
 pub enum OperatingSystem {
     Windows,
@@ -23,33 +24,16 @@ pub enum OperatingSystem {
     Unknown,
 }
 
-/// Custom error type for hardware detection
-#[derive(Debug)]
-pub struct HardwareDetectionError {
-    message: String,
-}
-
-impl HardwareDetectionError {
-    fn new(message: String) -> Self {
-        HardwareDetectionError { message }
-    }
-}
-
-impl fmt::Display for HardwareDetectionError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Hardware Detection Error: {}", self.message)
-    }
-}
-
-impl Error for HardwareDetectionError {}
-
-/// Comprehensive hardware detection system
+/// The main hardware detection system. This struct serves as the entry point
+/// for all hardware-related validation operations.
 pub struct HardwareDetector;
 
 impl HardwareDetector {
-    /// Detect the current operating system
+    /// Detects the current operating system using conditional compilation.
+    /// This approach ensures we get the correct OS at compile time rather
+    /// than having to detect it at runtime.
     pub fn detect_os() -> OperatingSystem {
-        // Conditional compilation for OS detection
+        // Use cfg attributes to determine the OS at compile time
         #[cfg(windows)]
         {
             info!("Operating System: Windows");
@@ -58,7 +42,7 @@ impl HardwareDetector {
 
         #[cfg(target_os = "macos")]
         {
-            info!("Operating System: MacOs");
+            info!("Operating System: MacOS");
             return OperatingSystem::MacOS;
         }
 
@@ -75,126 +59,107 @@ impl HardwareDetector {
         }
     }
 
-    /// Detect virtualization across different operating systems
-    pub fn detect_virtualization() -> Result<VirtualizationType, HardwareDetectionError> {
+    /// Detects virtualization across different operating systems.
+    /// Returns a Result with either VirtualizationType or an error with context.
+    pub fn detect_virtualization() -> Result<VirtualizationType> {
+        // Route to the appropriate detection method based on OS
         match Self::detect_os() {
             OperatingSystem::Windows => Self::detect_windows_virtualization(),
             OperatingSystem::MacOS => Self::detect_macos_virtualization(),
             OperatingSystem::Linux => Self::detect_linux_virtualization(),
-            OperatingSystem::Unknown => Ok(VirtualizationType::Physical),
+            OperatingSystem::Unknown => Ok(VirtualizationType::Physical), // Conservative default
         }
     }
 
-    fn detect_windows_virtualization() -> Result<VirtualizationType, HardwareDetectionError> {
+    /// Windows-specific virtualization detection.
+    /// Uses both environment variables and WMI queries to detect virtualization.
+    fn detect_windows_virtualization() -> Result<VirtualizationType> {
         // Check environment variables first (faster)
         if env::var("SYSTEMTYPE").map_or(false, |v| v == "VIRTUAL") {
             return Ok(VirtualizationType::Virtual("Generic Virtual".to_string()));
         }
 
-        // Use a single, faster method
-        let output = match Command::new("wmic")
+        // Use WMI to check system model
+        let output = Command::new("wmic")
             .args(&["computersystem", "get", "model"])
             .output()
-        {
-            Ok(out) => out,
-            Err(_) => return Ok(VirtualizationType::Physical),
-        };
+            .context("Failed to execute wmic command")?;
 
-        let model_str = String::from_utf8_lossy(&output.stdout);
+        let model_str = String::from_utf8(output.stdout)
+            .context("Failed to parse wmic command output")?;
 
         if model_str.contains("VMware") {
-            return Ok(VirtualizationType::Virtual("VMware".to_string()));
+            Ok(VirtualizationType::Virtual("VMware".to_string()))
+        } else {
+            Ok(VirtualizationType::Physical)
         }
-
-        Ok(VirtualizationType::Physical)
     }
 
-    /// MacOS-specific virtualization detection
-    fn detect_macos_virtualization() -> Result<VirtualizationType, HardwareDetectionError> {
-        // Detection using system profiler
-        let output = match Command::new("system_profiler")
+    /// MacOS-specific virtualization detection.
+    /// Uses system profiler to gather hardware information.
+    fn detect_macos_virtualization() -> Result<VirtualizationType> {
+        let output = Command::new("system_profiler")
             .arg("SPHardwareDataType")
             .output()
-        {
-            Ok(out) => out,
-            Err(e) => {
-                return Err(HardwareDetectionError::new(format!(
-                    "System profiler query failed: {}",
-                    e
-                )))
-            }
-        };
+            .context("Failed to execute system_profiler command")?;
 
-        let hardware_info = String::from_utf8_lossy(&output.stdout);
+        let hardware_info = String::from_utf8(output.stdout)
+            .context("Failed to parse system_profiler output")?;
 
         // Check for known virtualization markers
         if hardware_info.contains("VMware") {
-            return Ok(VirtualizationType::Virtual("VMware".to_string()));
+            Ok(VirtualizationType::Virtual("VMware".to_string()))
+        } else if hardware_info.contains("Parallels") {
+            Ok(VirtualizationType::Virtual("Parallels".to_string()))
+        } else {
+            Ok(VirtualizationType::Physical)
         }
-
-        if hardware_info.contains("Parallels") {
-            return Ok(VirtualizationType::Virtual("Parallels".to_string()));
-        }
-
-        Ok(VirtualizationType::Physical)
     }
 
-    /// Linux-specific virtualization detection
-    fn detect_linux_virtualization() -> Result<VirtualizationType, HardwareDetectionError> {
-        // Multiple detection methods for Linux
-        let detection_methods = [
-            // systemd-detect-virt method
-            || {
-                let output = match Command::new("systemd-detect-virt").output() {
-                    Ok(out) => out,
-                    Err(_) => return None,
-                };
-
-                if output.status.success() {
-                    let virt_type = String::from_utf8_lossy(&output.stdout).trim().to_string();
-                    if virt_type != "none" {
-                        return Some(VirtualizationType::Virtual(virt_type));
-                    }
+    /// Linux-specific virtualization detection.
+    /// Uses multiple detection methods in sequence, falling back to simpler
+    /// methods if more sophisticated ones fail.
+    fn detect_linux_virtualization() -> Result<VirtualizationType> {
+        // Try systemd-detect-virt first
+        if let Ok(output) = Command::new("systemd-detect-virt").output() {
+            if output.status.success() {
+                let virt_type = String::from_utf8(output.stdout)
+                    .context("Failed to parse systemd-detect-virt output")?
+                    .trim()
+                    .to_string();
+                
+                if virt_type != "none" {
+                    return Ok(VirtualizationType::Virtual(virt_type));
                 }
-                None
-            },
-            // DMI detection method
-            || {
-                let output = match Command::new("dmidecode").arg("-t").arg("system").output() {
-                    Ok(out) => out,
-                    Err(_) => return None,
-                };
-
-                let output_str = String::from_utf8_lossy(&output.stdout);
-                if output_str.contains("VMware") || output_str.contains("Virtual") {
-                    return Some(VirtualizationType::Virtual("VMware".to_string()));
-                }
-                None
-            },
-            // Fallback: check for known virtualization environment variables
-            || {
-                if env::var("VIRTUAL_ENV").is_ok() {
-                    return Some(VirtualizationType::Virtual(
-                        "Python Virtual Env".to_string(),
-                    ));
-                }
-                if env::var("CONTAINER").is_ok() {
-                    return Some(VirtualizationType::Virtual("Container".to_string()));
-                }
-                if env::var("KUBERNETES_SERVICE_HOST").is_ok() {
-                    return Some(VirtualizationType::Virtual("Kubernetes".to_string()));
-                }
-                None
-            },
-        ];
-
-        // Try each detection method
-        for method in detection_methods.iter() {
-            if let Some(result) = method() {
-                return Ok(result);
             }
         }
 
+        // Try DMI detection as fallback
+        if let Ok(output) = Command::new("dmidecode")
+            .arg("-t")
+            .arg("system")
+            .output()
+        {
+            let output_str = String::from_utf8(output.stdout)
+                .context("Failed to parse dmidecode output")?;
+            
+            if output_str.contains("VMware") || output_str.contains("Virtual") {
+                return Ok(VirtualizationType::Virtual("VMware".to_string()));
+            }
+        }
+
+        // Check environment variables as last resort
+        if env::var("VIRTUAL_ENV").is_ok() {
+            return Ok(VirtualizationType::Virtual("Python Virtual Env".to_string()));
+        }
+        if env::var("CONTAINER").is_ok() {
+            return Ok(VirtualizationType::Virtual("Container".to_string()));
+        }
+        if env::var("KUBERNETES_SERVICE_HOST").is_ok() {
+            return Ok(VirtualizationType::Virtual("Kubernetes".to_string()));
+        }
+
+        // If no virtualization detected, assume physical
         Ok(VirtualizationType::Physical)
     }
 }
@@ -204,7 +169,6 @@ impl HardwareDetector {
 mod tests {
     use super::*;
 
-    /// Test operating system detection
     #[test]
     fn test_os_detection() {
         let os = HardwareDetector::detect_os();
@@ -220,23 +184,10 @@ mod tests {
         );
     }
 
-    /// Test virtualization detection
     #[test]
     fn test_virtualization_detection() {
+        // We expect this to complete without panicking
         let result = HardwareDetector::detect_virtualization();
         assert!(result.is_ok(), "Virtualization detection should not fail");
-    }
-}
-
-/// Example main function to demonstrate usage
-fn main() {
-    // Detect operating system
-    let os = HardwareDetector::detect_os();
-    println!("Detected OS: {:?}", os);
-
-    // Detect virtualization
-    match HardwareDetector::detect_virtualization() {
-        Ok(virt_type) => println!("Virtualization Type: {:?}", virt_type),
-        Err(e) => eprintln!("Virtualization detection error: {}", e),
     }
 }

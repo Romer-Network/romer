@@ -3,6 +3,16 @@ use clap::{value_parser, Arg, Command};
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 
+use crate::types::ValidatorLocation;
+
+pub struct AppConfig {
+    pub bootstrappers: Vec<String>,
+    pub me: (String, SocketAddr),
+    pub participants: Vec<u64>,
+    pub storage_dir: String,
+    pub location: ValidatorLocation,
+}
+
 fn parse_me(value: &str) -> Result<(String, SocketAddr), String> {
     let mut parts = value.split('@');
     let node_id = parts.next().ok_or("Invalid format for 'me' argument")?;
@@ -24,7 +34,8 @@ fn parse_me(value: &str) -> Result<(String, SocketAddr), String> {
     Ok((node_id.to_string(), socket_addr))
 }
 
-pub fn setup_clap_command() -> (String, SocketAddr, clap::ArgMatches) {
+// cmd.rs
+pub fn setup_clap_command() -> AppConfig {
     let matches = Command::new("romer")
         .about("generate secret logs and agree on their hash")
         .arg(
@@ -49,12 +60,50 @@ pub fn setup_clap_command() -> (String, SocketAddr, clap::ArgMatches) {
                 .help("All participants (arbiter and contributors)"),
         )
         .arg(Arg::new("storage-dir").long("storage-dir").required(true))
+        .arg(
+            Arg::new("latitude")
+                .long("latitude")
+                .required(true)
+                .value_parser(value_parser!(f64))
+                .help("Validator's latitude coordinate (-90 to 90)")
+        )
+        .arg(
+            Arg::new("longitude")
+                .long("longitude")
+                .required(true)
+                .value_parser(value_parser!(f64))
+                .help("Validator's longitude coordinate (-180 to 180)")
+        )
         .get_matches();
 
     let me = matches
         .get_one::<(String, SocketAddr)>("me")
         .expect("Invalid 'me' argument format");
-    let (node_id, socket_addr) = (me.0.clone(), me.1);
+    let bootstrappers = matches
+        .get_many::<String>("bootstrappers")
+        .map(|b| b.cloned().collect())
+        .unwrap_or_default();
+    let participants = matches
+        .get_many::<u64>("participants")
+        .map(|p| p.cloned().collect())
+        .expect("Please provide at least one participant");
+    let storage_dir = matches
+        .get_one::<String>("storage-dir")
+        .expect("Please provide storage directory")
+        .clone();
+    let latitude = *matches.get_one::<f64>("latitude")
+        .expect("Latitude is required");
+    let longitude = *matches.get_one::<f64>("longitude")
+        .expect("Longitude is required");
+    
+        let location = ValidatorLocation::new(latitude, longitude)
+        .expect("Invalid validator location coordinates");
 
-    (node_id, socket_addr, matches)
+    AppConfig {
+        bootstrappers,
+        me: (me.0.clone(), me.1),
+        participants,
+        storage_dir,
+        location,
+    }
 }

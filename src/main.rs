@@ -2,8 +2,8 @@ mod application;
 mod gui;
 mod node;
 mod validation;
+mod types;
 
-use node::cmd::cli;
 use commonware_consensus::simplex::{self, Engine, Prover};
 use commonware_cryptography::{Ed25519, Scheme, Sha256};
 use commonware_p2p::authenticated::{self, Network};
@@ -14,7 +14,9 @@ use commonware_runtime::{
 use commonware_storage::journal::{self, Journal};
 use commonware_utils::{hex, union};
 use governor::Quota;
+use node::cmd::cli;
 use prometheus_client::registry::Registry;
+use validation::hardware_validator::HardwareDetector;
 use std::sync::{Arc, Mutex};
 use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},
@@ -26,54 +28,42 @@ use std::{str::FromStr, time::Duration};
 const APPLICATION_NAMESPACE: &[u8] = b"ROMER";
 
 fn main() {
-    
-    let (node_id, socket_addr, matches) = node::cmd::cli::setup_clap_command();
+    let app_config = cli::setup_clap_command();
 
     // Create GUI
     let gui = gui::Gui::new();
-
-    let signer = Ed25519::from_seed(node_id.parse::<u64>().expect("Invalid node ID"));
+    
+    // TODO: Replace this with getting the Signer from NodeKeyManager
+    let signer = Ed25519::from_seed(app_config.me.0.parse::<u64>().expect("Invalid node ID"));
     tracing::info!(key = hex(&signer.public_key()), "loaded signer");
 
     // Configure my port
-    let port = socket_addr.port();
+    let port = app_config.me.1.port();
     tracing::info!(port, "loaded port");
 
     // Configure allowed peers
     let mut validators = Vec::new();
-    let participants = matches
-        .get_many::<u64>("participants")
-        .expect("Please provide allowed keys")
-        .copied();
-    if participants.len() == 0 {
-        panic!("Please provide at least one participant");
-    }
-    for peer in participants {
+    for peer in app_config.participants {
         let verifier = Ed25519::from_seed(peer).public_key();
         tracing::info!(key = hex(&verifier), "registered authorized key",);
         validators.push(verifier);
     }
 
     // Configure bootstrappers (if provided)
-    let bootstrappers = matches.get_many::<String>("bootstrappers");
     let mut bootstrapper_identities = Vec::new();
-    if let Some(bootstrappers) = bootstrappers {
-        for bootstrapper in bootstrappers {
-            let parts = bootstrapper.split('@').collect::<Vec<&str>>();
-            let bootstrapper_key = parts[0]
-                .parse::<u64>()
-                .expect("Bootstrapper key not well-formed");
-            let verifier = Ed25519::from_seed(bootstrapper_key).public_key();
-            let bootstrapper_address =
-                SocketAddr::from_str(parts[1]).expect("Bootstrapper address not well-formed");
-            bootstrapper_identities.push((verifier, bootstrapper_address));
-        }
+    for bootstrapper in app_config.bootstrappers {
+        let parts = bootstrapper.split('@').collect::<Vec<&str>>();
+        let bootstrapper_key = parts[0]
+            .parse::<u64>()
+            .expect("Bootstrapper key not well-formed");
+        let verifier = Ed25519::from_seed(bootstrapper_key).public_key();
+        let bootstrapper_address =
+            SocketAddr::from_str(parts[1]).expect("Bootstrapper address not well-formed");
+        bootstrapper_identities.push((verifier, bootstrapper_address));
     }
 
     // Configure storage directory
-    let storage_directory = matches
-        .get_one::<String>("storage-dir")
-        .expect("Please provide storage directory");
+    let storage_directory = app_config.storage_dir;
 
     // Initialize runtime
     let runtime_cfg = tokio::Config {
