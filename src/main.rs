@@ -131,6 +131,7 @@ fn main() {
                 hasher: hasher.clone(),
                 mailbox_size: 1024,
                 participants: validators.clone(),
+                validator_location: Some(app_config.location),
             },
         );
 

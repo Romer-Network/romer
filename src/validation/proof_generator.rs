@@ -23,6 +23,7 @@ impl ProofGeneratorBuilder {
         }
     }
 
+    /// Validates that the node is running on physical hardware
     pub fn validate_hardware(mut self) -> Result<Self> {
         let virt_type = HardwareDetector::detect_virtualization()
             .context("Failed to perform hardware validation")?;
@@ -66,11 +67,13 @@ impl ProofGeneratorBuilder {
         }
     }
 
+    /// Checks if all required validations have been completed
     fn validations_complete(&self) -> bool {
-        // Check that both hardware and location validations are complete
+        // Both hardware and location validations must be complete
         self.hardware_validation.is_some() && self.location_validation.is_some()
     }
 
+    /// Builds the ProofGenerator if all validations pass
     pub fn build(self) -> Result<ProofGenerator> {
         if !self.validations_complete() {
             return Err(anyhow::anyhow!(

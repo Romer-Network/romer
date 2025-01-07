@@ -4,9 +4,11 @@
 
 use commonware_consensus::simplex::Prover;
 use commonware_cryptography::{Hasher, PublicKey, Scheme};
+use crate::types::ValidatorLocation;
 
 mod actor;
 pub use actor::Application;
+
 mod ingress;
 mod supervisor;
 
@@ -24,4 +26,8 @@ pub struct Config<C: Scheme, H: Hasher> {
     /// Number of messages from consensus to hold in our backlog
     /// before blocking.
     pub mailbox_size: usize,
+
+    /// Validator location information - can be loaded from config file
+    /// or environment variables
+    pub validator_location: Option<ValidatorLocation>,
 }
