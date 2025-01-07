@@ -1,47 +1,43 @@
-# RØMER Chain Node Configuration Guide
+# RØMER
 
-When running a RØMER Chain node, you must configure both your local environment and network settings to enable proper participation in the network's Proof of Physics consensus mechanism.
+Commit to a secret log and agree to its hash.
 
-## Network Configuration
+# Usage (Run at Least 3 to Make Progress)
 
-### Port Forwarding Setup
-Before starting your node, you need to configure port forwarding on your router to enable location validation. This allows other validators to verify your physical presence in your claimed geographic region.
+## Participant 0 (Bootstrapper)
 
-To set up port forwarding:
-
-1. Access your router's administration interface by entering its IP address in your web browser (typically 192.168.0.1 or 192.168.1.1)
-
-2. Locate the port forwarding section (sometimes called "Virtual Server" or "Port Mapping")
-
-3. Create a new port forwarding rule with these settings:
-   - External Port: 8000 (or your chosen node port)
-   - Internal Port: 8000 (must match external port)
-   - Protocol: TCP
-   - Internal IP: Your node's local IP address
-   - Description: "RØMER Chain Node"
-
-4. Enable the rule and save your changes
-
-5. Verify your port forwarding setup by using a port checking service
-
-Port forwarding is crucial for the network's security model - without it, your node cannot participate in geographic validation, which would prevent you from participating in consensus.
-
-### Obtain External IP address
-
-Get your Public IP address from https://www.whatismyip.com/
-
-## Environment Options
-
-### Production Environment
+**UNIX like**
 ```bash
-cargo run -- --ip 27.33.41.4 --port 8000
+cargo run --release -- --me 0@3000 --participants 0,1,2,3 --storage-dir /tmp/log/0
 ```
 
-The production environment utilizes Commonware's tokio runtime, which provides:
+**Windows**
+```bash
+cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir \data\\romer_log\\0
+```
 
-File System Storage: Data is persistently stored on disk using a write-ahead log journal with automatic compaction. The storage system implements atomic commits and provides crash recovery capabilities. Storage operations are optimized for production workloads with configurable sync intervals.
+## Participant 1
 
-Real Clock Time: The node uses actual system time for block production and consensus. This ensures proper coordination with other network participants across geographic regions. Network timeouts and consensus intervals operate on real wall-clock time.
+```bash
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 1@3001 --participants 0,1,2,3 --storage-dir /tmp/log/1
+```
 
-Network Stack: The tokio runtime implements full TCP networking with connection pooling, backpressure handling, and automatic reconnection. Network messages are handled asynchronously with configurable buffers to prevent memory exhaustion.
+```bash
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 1@127.0.0.1:3001 --participants 0,1,2,3 --storage-dir \data\\romer_log\\1
+```
 
+# Participant 2
+
+```bash
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@3002 --participants 0,1,2,3 --storage-dir /tmp/log/2
+```
+
+```bash
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 2@127.0.0.1:3002 --participants 0,1,2,3 --storage-dir \data\\romer_log\\2
+```
+
+# Participant 3
+
+```bash
+cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me 3@3003 --participants 0,1,2,3 --storage-dir /tmp/log/3
+```

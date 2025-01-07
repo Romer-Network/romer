@@ -10,9 +10,9 @@ use tokio::net::TcpStream;
 use tokio::time::timeout;
 use tracing::{error, info, warn};
 
-pub use crate::node::location_validator::analysis::*;
-pub use crate::node::location_validator::measurements::*;
-pub use crate::node::location_validator::types::*;
+pub use crate::validation::location_validator::analysis::*;
+pub use crate::validation::location_validator::measurements::*;
+pub use crate::validation::location_validator::types::*;
 
 const SPEED_OF_LIGHT_KMS: f64 = 299792.458; // km/s
 const FIBER_OVERHEAD: f64 = 1.4; // Typical fiber route overhead factor
@@ -32,12 +32,6 @@ impl LocationValidator {
                 "80.81.192.3".parse().unwrap(),
                 50.1109,
                 8.6821,
-            ),
-            ReferencePoint::new(
-                "Trollip",
-                "27.33.41.4".parse().unwrap(),
-                -28.0167,
-                153.4000,
             ),
         ];
 

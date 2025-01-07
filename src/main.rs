@@ -1,146 +1,188 @@
-mod cmd;
-mod config;
-mod identity;
+mod application;
+mod gui;
 mod node;
+mod validation;
 
-use clap::Parser;
-use std::process;
-use tracing::{error, info, warn};
+use node::cmd::cli;
+use commonware_consensus::simplex::{self, Engine, Prover};
+use commonware_cryptography::{Ed25519, Scheme, Sha256};
+use commonware_p2p::authenticated::{self, Network};
+use commonware_runtime::{
+    tokio::{self, Executor},
+    Runner, Spawner,
+};
+use commonware_storage::journal::{self, Journal};
+use commonware_utils::{hex, union};
+use governor::Quota;
+use prometheus_client::registry::Registry;
+use std::sync::{Arc, Mutex};
+use std::{
+    net::{IpAddr, Ipv4Addr, SocketAddr},
+    num::NonZeroU32,
+};
+use std::{str::FromStr, time::Duration};
 
-use crate::cmd::cli::NodeCliArgs;
-use crate::identity::keymanager::NodeKeyManager;
-use crate::node::hardware_validator::{HardwareDetector, VirtualizationType};
-use crate::node::location_validator::LocationValidator;
+/// Unique namespace to avoid message replay attacks.
+const APPLICATION_NAMESPACE: &[u8] = b"ROMER";
 
-/// Verifies that the node is running on physical hardware, not in a virtual environment.
-/// This is crucial for the security of the network as virtual machines could be used
-/// to fake geographic distribution.
-fn verify_hardware_requirements() -> Result<(), String> {
-    match HardwareDetector::detect_virtualization() {
-        Ok(virtualization_type) => match virtualization_type {
-            VirtualizationType::Physical => {
-                info!("Running on physical hardware - verification passed");
-                Ok(())
-            }
-            VirtualizationType::Virtual(tech) => {
-                error!("Node detected running in virtual environment: {}", tech);
-                Err(format!(
-                    "Node is not allowed to run in virtual environment: {}",
-                    tech
-                ))
-            }
-        },
-        Err(e) => {
-            error!("Failed to detect virtualization environment: {}", e);
-            Err(format!("Hardware verification failed: {}", e))
+fn main() {
+    
+    let (node_id, socket_addr, matches) = node::cmd::cli::setup_clap_command();
+
+    // Create GUI
+    let gui = gui::Gui::new();
+
+    let signer = Ed25519::from_seed(node_id.parse::<u64>().expect("Invalid node ID"));
+    tracing::info!(key = hex(&signer.public_key()), "loaded signer");
+
+    // Configure my port
+    let port = socket_addr.port();
+    tracing::info!(port, "loaded port");
+
+    // Configure allowed peers
+    let mut validators = Vec::new();
+    let participants = matches
+        .get_many::<u64>("participants")
+        .expect("Please provide allowed keys")
+        .copied();
+    if participants.len() == 0 {
+        panic!("Please provide at least one participant");
+    }
+    for peer in participants {
+        let verifier = Ed25519::from_seed(peer).public_key();
+        tracing::info!(key = hex(&verifier), "registered authorized key",);
+        validators.push(verifier);
+    }
+
+    // Configure bootstrappers (if provided)
+    let bootstrappers = matches.get_many::<String>("bootstrappers");
+    let mut bootstrapper_identities = Vec::new();
+    if let Some(bootstrappers) = bootstrappers {
+        for bootstrapper in bootstrappers {
+            let parts = bootstrapper.split('@').collect::<Vec<&str>>();
+            let bootstrapper_key = parts[0]
+                .parse::<u64>()
+                .expect("Bootstrapper key not well-formed");
+            let verifier = Ed25519::from_seed(bootstrapper_key).public_key();
+            let bootstrapper_address =
+                SocketAddr::from_str(parts[1]).expect("Bootstrapper address not well-formed");
+            bootstrapper_identities.push((verifier, bootstrapper_address));
         }
     }
-}
 
-/// Verifies the physical location of the node using network latency measurements.
-/// Returns Ok if the measured location matches the claimed location within acceptable bounds.
-async fn verify_physical_location() -> Result<(), String> {
-    let location_verifier = LocationValidator::new();
+    // Configure storage directory
+    let storage_directory = matches
+        .get_one::<String>("storage-dir")
+        .expect("Please provide storage directory");
 
-    // Gold Coast coordinates
-    let lat = -28.0167;
-    let lon = 153.4000;
-
-    // Perform location validation
-    let validation_result = location_verifier
-        .validate_location(lat, lon)
-        .await
-        .map_err(|e| format!("Location validation error: {}", e))?;
-
-    // Detailed analysis of the validation result
-    if validation_result.is_valid {
-        // Location verified successfully
-        info!(
-            "Location verification passed 
-            - Confidence: {:.2}%",
-            validation_result.confidence * 100.0
-        );
-
-        // Log any minor inconsistencies
-        if !validation_result.inconsistencies.is_empty() {
-            warn!("Minor location inconsistencies detected:");
-            for issue in &validation_result.inconsistencies {
-                warn!("- {}", issue);
-            }
-        }
-
-        Ok(())
-    } else {
-        // Location verification failed
-        error!(
-            "Location verification failed 
-            - Confidence: {:.2}%
-            - Detected inconsistencies:",
-            validation_result.confidence * 100.0
-        );
-
-        // Detailed logging of inconsistencies
-        for issue in &validation_result.inconsistencies {
-            error!("- {}", issue);
-        }
-
-        // Return a specific error with confidence level
-        Err(format!(
-            "Location verification failed with {:.2}% confidence. {} inconsistencies detected.",
-            validation_result.confidence * 100.0,
-            validation_result.inconsistencies.len()
-        ))
-    }
-}
-
-#[tokio::main]
-async fn main() {
-    // Initialize logging with a reasonable default level
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
-        .with_target(true)
-        .init();
-
-    let romer_ascii = r#"
-    ██████╗  ██████╗ ███╗   ███╗███████╗██████╗ 
-    ██╔══██╗██╔═══██╗████╗ ████║██╔════╝██╔══██╗
-    ██████╔╝██║   ██║██╔████╔██║█████╗  ██████╔╝
-    ██╔══██╗██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗
-    ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
-    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
-    "#;
-    println!("{}", romer_ascii);
-    info!("Starting Rømer Chain Node");
-
-    // Parse command line arguments
-    let args = NodeCliArgs::parse();
-
-    info!("Verifying hardware requirements...");
-    if let Err(e) = verify_hardware_requirements() {
-        error!("Hardware verification failed: {}", e);
-        process::exit(1);
-    }
-    info!("Hardware verification passed");
-
-    info!("Initializing node identity...");
-    let signer = match NodeKeyManager::new().and_then(|km| km.initialize()) {
-        Ok(signer) => {
-            info!("Node identity initialized successfully");
-            signer
-        }
-        Err(e) => {
-            error!("Failed to initialize key manager: {}", e);
-            process::exit(1);
-        }
+    // Initialize runtime
+    let runtime_cfg = tokio::Config {
+        storage_directory: storage_directory.into(),
+        ..Default::default()
     };
+    let (executor, runtime) = Executor::init(runtime_cfg.clone());
 
-    // Step 3: Verify physical location
-    info!("Verifying physical location...");
-    if let Err(e) = verify_physical_location().await {
-        error!("Location verification failed: {}", e);
-        process::exit(1);
-    }
-    info!("Location verification passed");
+    // Configure network
+    let p2p_cfg = authenticated::Config::aggressive(
+        signer.clone(),
+        &union(APPLICATION_NAMESPACE, b"_P2P"),
+        Arc::new(Mutex::new(Registry::default())),
+        SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port),
+        bootstrapper_identities.clone(),
+        1024 * 1024, // 1MB
+    );
 
-    info!("Node initialization complete");
+    // Start runtime
+    executor.start(async move {
+        let (mut network, mut oracle) = Network::new(runtime.clone(), p2p_cfg);
+
+        // Provide authorized peers
+        //
+        // In a real-world scenario, this would be updated as new peer sets are created (like when
+        // the composition of a validator set changes).
+        oracle.register(0, validators.clone()).await;
+
+        // Register consensus channels
+        //
+        // If you want to maximize the number of views per second, increase the rate limit
+        // for this channel.
+        let (voter_sender, voter_receiver) = network.register(
+            0,
+            Quota::per_second(NonZeroU32::new(10).unwrap()),
+            256, // 256 messages in flight
+            Some(3),
+        );
+        let (resolver_sender, resolver_receiver) = network.register(
+            1,
+            Quota::per_second(NonZeroU32::new(10).unwrap()),
+            256, // 256 messages in flight
+            Some(3),
+        );
+
+        // Initialize storage
+        let journal = Journal::init(
+            runtime.clone(),
+            journal::Config {
+                registry: Arc::new(Mutex::new(Registry::default())),
+                partition: String::from("log"),
+            },
+        )
+        .await
+        .expect("Failed to initialize journal");
+
+        // Initialize application
+        let namespace = union(APPLICATION_NAMESPACE, b"_CONSENSUS");
+        let hasher = Sha256::default();
+        let prover: Prover<Ed25519, Sha256> = Prover::new(&namespace);
+        let (application, supervisor, mailbox) = application::Application::new(
+            runtime.clone(),
+            application::Config {
+                prover,
+                hasher: hasher.clone(),
+                mailbox_size: 1024,
+                participants: validators.clone(),
+            },
+        );
+
+        // Initialize consensus
+        let engine = Engine::new(
+            runtime.clone(),
+            journal,
+            simplex::Config {
+                crypto: signer.clone(),
+                hasher,
+                automaton: mailbox.clone(),
+                relay: mailbox.clone(),
+                committer: mailbox,
+                supervisor,
+                registry: Arc::new(Mutex::new(Registry::default())),
+                namespace,
+                mailbox_size: 1024,
+                replay_concurrency: 1,
+                leader_timeout: Duration::from_secs(1),
+                notarization_timeout: Duration::from_secs(2),
+                nullify_retry: Duration::from_secs(10),
+                fetch_timeout: Duration::from_secs(1),
+                activity_timeout: 10,
+                max_fetch_count: 32,
+                max_fetch_size: 1024 * 512,
+                fetch_concurrent: 2,
+                fetch_rate_per_peer: Quota::per_second(NonZeroU32::new(1).unwrap()),
+            },
+        );
+
+        // Start consensus
+        runtime.spawn("application", application.run());
+        runtime.spawn("network", network.run());
+        runtime.spawn(
+            "engine",
+            engine.run(
+                (voter_sender, voter_receiver),
+                (resolver_sender, resolver_receiver),
+            ),
+        );
+
+        // Block on GUI
+        gui.run(runtime).await;
+    });
 }

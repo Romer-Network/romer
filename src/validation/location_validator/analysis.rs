@@ -3,7 +3,7 @@ use geo::{HaversineDistance, Point};
 use std::{net::IpAddr, time::Instant};
 use tracing::{debug, warn};
 
-use crate::node::location_validator::types::{
+use crate::validation::location_validator::types::{
     LatencyMeasurement, LocationValidation, ReferencePoint,
 };
 

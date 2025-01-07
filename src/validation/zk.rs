@@ -1,7 +1,8 @@
+/* 
 use halo2_proofs::{
     arithmetic::Field,
     circuit::{Chip, Layouter, SimpleFloorPlanner, Value},
-    plonk::{Circuit, ConstraintSystem, Error, Instance},
+    plonk::{Advice, Circuit, Column, ConstraintSystem, Error, Instance},
     poly::Rotation,
 };
 use pasta_curves::pallas;
@@ -148,3 +149,5 @@ pub fn verify_validation_proof(proof: &[u8]) -> Result<bool, Error> {
     // Proof verification implementation
     todo!()
 }
+
+*/
