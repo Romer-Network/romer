@@ -1,4 +1,5 @@
 use crate::validation::proof_generator::ProofGenerator;
+use commonware_runtime::Spawner; 
 
 use super::{
     ingress::{Mailbox, Message},
@@ -17,23 +18,31 @@ use anyhow::Context;
 const GENESIS: &[u8] = b"commonware is neat";
 
 /// Application actor.
-pub struct Application<R: Rng, C: Scheme, H: Hasher> {
+pub struct Application<R: Rng + Spawner, C: Scheme, H: Hasher> {
     runtime: R,
     prover: Prover<C, H>,
     hasher: H,
     mailbox: mpsc::Receiver<Message>,
 }
 
-impl<R: Rng, C: Scheme, H: Hasher> Application<R, C, H> {
+impl<R: Rng + Spawner, C: Scheme, H: Hasher> Application<R, C, H> {
     /// Create a new application actor.
     pub fn new(runtime: R, config: Config<C, H>) -> (Self, Supervisor, Mailbox) {
         
-        let _proof_generator =
-            ProofGenerator::builder()
-                .validate_hardware()
-                .with_context(|| {
-                    "Failed to validate hardware requirements - node must run on physical hardware"
-                });
+        let _proof_generator = ProofGenerator::builder()
+            .validate_hardware()
+            .context("Failed to validate hardware requirements")
+            .expect("Hardware validation must pass");
+
+        // Spawn the async location validation
+        runtime.spawn("location_validator", async move {
+            if let Some(location) = config.validator_location {
+                _proof_generator
+                    .validate_location(location.to_point())
+                    .await
+                    .expect("Location validation must pass");
+            }
+        });
 
         let (sender, mailbox) = mpsc::channel(config.mailbox_size);
         (

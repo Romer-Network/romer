@@ -1,25 +1,38 @@
-use crate::types::ValidatorLocation;
-use crate::validation::{
-    hardware_validator::{HardwareDetector, VirtualizationType},
-    location_validator::LocationValidator,
-};
 use anyhow::{Context, Result};
 use geo::Point;
+use crate::validation::{
+    hardware_validator::{HardwareDetector, VirtualizationType},
+    latency_validator::{LatencyValidator, LatencyConfig},
+};
+use std::net::IpAddr;
+
+// Default reference point constants for Frankfurt IX
+const DEFAULT_REF_LAT: f64 = 50.1109;
+const DEFAULT_REF_LON: f64 = 8.6821;
+const DEFAULT_REF_IP: &str = "80.81.192.3";
 
 pub struct ProofGeneratorBuilder {
-    // Store validation results
+    // Validation state
     hardware_validation: Option<VirtualizationType>,
-    location_validation: Option<ValidatorLocation>,
-    // Store the validator instance for location checks
-    location_validator: LocationValidator,
+    location_validation: Option<Point<f64>>,
+    
+    // Reference point for validation
+    reference_point: Point<f64>,
+    reference_ip: IpAddr,
+    
+    // Latency validator instance
+    latency_validator: LatencyValidator,
 }
 
 impl ProofGeneratorBuilder {
     pub fn new() -> Self {
+        // Initialize with default Frankfurt reference point
         Self {
             hardware_validation: None,
             location_validation: None,
-            location_validator: LocationValidator::new(),
+            reference_point: Point::new(DEFAULT_REF_LON, DEFAULT_REF_LAT),
+            reference_ip: DEFAULT_REF_IP.parse().unwrap(),
+            latency_validator: LatencyValidator::new(LatencyConfig::default()),
         }
     }
 
@@ -33,43 +46,47 @@ impl ProofGeneratorBuilder {
                 self.hardware_validation = Some(virt_type);
                 Ok(self)
             }
-            VirtualizationType::Virtual(platform) => Err(anyhow::anyhow!(
-                "Node must run on physical hardware, detected virtualization platform: {}",
-                platform
-            )),
+            VirtualizationType::Virtual(platform) => {
+                Err(anyhow::anyhow!(
+                    "Node must run on physical hardware, detected virtualization platform: {}",
+                    platform
+                ))
+            }
         }
     }
 
-    /// Validates the claimed validator location by performing network measurements
-    /// to verify physical presence at the specified coordinates.
-    pub async fn validate_location(mut self, location: ValidatorLocation) -> Result<Self> {
-        // Perform network-based location validation
-        let validation_result = self
-            .location_validator
-            .validate_location(location.latitude(), location.longitude())
+    /// Validates the claimed location using latency measurements
+    pub async fn validate_location(mut self, location: Point<f64>) -> Result<Self> {
+        // Perform latency validation against reference point
+        let validation_result = self.latency_validator
+            .validate_latency(
+                location,
+                self.reference_point,
+                self.reference_ip
+            )
             .await
-            .map_err(|e| anyhow::anyhow!(e))
-            .context("Failed to perform location validation measurements")?;
+            .context("Failed to validate location using latency measurements")?;
 
-        // Check if validation succeeded based on confidence threshold
         if validation_result.is_valid {
-            // Store the validated location
             self.location_validation = Some(location);
             Ok(self)
         } else {
-            // Provide detailed error information if validation fails
-            let error_details = validation_result.inconsistencies.join("\n  - ");
             Err(anyhow::anyhow!(
-                "Location validation failed (confidence: {:.2})\nInconsistencies:\n  - {}",
-                validation_result.confidence,
-                error_details
+                "Location validation failed: {}", 
+                validation_result.details
             ))
         }
     }
 
-    /// Checks if all required validations have been completed
+    /// Optionally override the default reference point
+    pub fn with_reference(mut self, point: Point<f64>, ip: IpAddr) -> Self {
+        self.reference_point = point;
+        self.reference_ip = ip;
+        self
+    }
+
+    /// Checks if all required validations are complete
     fn validations_complete(&self) -> bool {
-        // Both hardware and location validations must be complete
         self.hardware_validation.is_some() && self.location_validation.is_some()
     }
 
@@ -88,11 +105,10 @@ impl ProofGeneratorBuilder {
     }
 }
 
-/// ProofGenerator represents a fully validated node that can generate
-/// proofs of its validity for the network.
+/// Represents a fully validated node that can generate proofs of its validity
 pub struct ProofGenerator {
     hardware_validation: VirtualizationType,
-    location_validation: ValidatorLocation,
+    location_validation: Point<f64>,
 }
 
 impl ProofGenerator {
@@ -101,7 +117,7 @@ impl ProofGenerator {
     }
 
     /// Returns the validated location of this node
-    pub fn location(&self) -> &ValidatorLocation {
+    pub fn location(&self) -> &Point<f64> {
         &self.location_validation
     }
 }
