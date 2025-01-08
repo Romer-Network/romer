@@ -1,0 +1,14 @@
+[package]
+name = "romer-common"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "romer_common"
+path = "src/lib.rs"
+
+[dependencies]
+serde.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
