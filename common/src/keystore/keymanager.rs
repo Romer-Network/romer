@@ -1,152 +1,242 @@
-use anyhow::{Context, Result};
-use std::fs;
-use std::path::PathBuf;
-use tracing::info;
-
-use commonware_cryptography::{Ed25519, PrivateKey, Scheme};
+use chrono::{DateTime, Duration, Utc};
 use rand::rngs::OsRng;
+use serde_json;
+use std::fs;
+use std::path::{Path, PathBuf};
 
-// Import the hardware detector for OS detection
-use crate::validation::hardware_validator::{HardwareDetector, OperatingSystem};
+use crate::types::keymanager::{
+    KeyManagerError, KeyManagerResult, SessionKeyData, SignatureScheme,
+};
+use crate::utils::hardware_validator::{HardwareDetector, OperatingSystem};
+use commonware_cryptography::{Bls12381, Ed25519, PrivateKey, PublicKey, Scheme, Signature};
 
-/// Manages node key generation, storage, and retrieval across different platforms
-pub struct NodeKeyManager {
-    /// Path where the node's private key is stored
-    key_dir: PathBuf,
-
-    /// Detected operating system to enable platform-specific handling
+/// Manages cryptographic keys for the system, supporting both permanent and session keys.
+/// Handles secure storage, session management, and key operations while maintaining
+/// separation between storage format and cryptographic operations.
+pub struct KeyManager {
+    /// Base directory for key storage
+    base_dir: PathBuf,
+    /// Directory for permanent keys
+    permanent_dir: PathBuf,
+    /// Directory for session keys
+    session_dir: PathBuf,
+    /// Detected operating system
     os: OperatingSystem,
 }
 
-impl NodeKeyManager {
-    /// Creates a new NodeKeyManager, detecting the appropriate key storage location
-    /// based on the current operating system
-    pub fn new() -> Result<Self> {
-        // Detect the current operating system
+impl KeyManager {
+    /// Creates a new KeyManager instance, initializing the necessary directory structure
+    /// based on the detected operating system.
+    pub fn new() -> KeyManagerResult<Self> {
         let os = HardwareDetector::detect_os();
+        let base_dir = Self::determine_base_dir(&os)?;
+        let permanent_dir = base_dir.join("permanent");
+        let session_dir = base_dir.join("sessions");
 
-        // Determine the appropriate key storage directory based on OS
-        let key_dir = match os {
-            OperatingSystem::Windows => {
-                // Windows-specific path using USERPROFILE environment variable
-                let user_profile = std::env::var("USERPROFILE")
-                    .context("Could not find Windows user profile directory")?;
-                PathBuf::from(user_profile).join(".romer")
-            }
-            OperatingSystem::MacOS | OperatingSystem::Linux => {
-                let home_dir = dirs::home_dir().context("Could not find user home directory")?;
-
-                info!("Home directory path: {:?}", home_dir);
-                let key_dir = home_dir.join(".romer");
-                info!("Constructed key directory path: {:?}", key_dir);
-
-                fs::create_dir_all(&key_dir)
-                    .with_context(|| format!("Failed to create directory at {:?}", key_dir))?;
-
-                info!("Successfully created/verified .romer directory");
-                key_dir
-            }
-            OperatingSystem::Unknown => {
-                // Fallback to current directory for unknown systems
-                let current_dir = std::env::current_dir()?;
-                info!("Using current directory for key storage: {:?}", current_dir);
-                current_dir.join(".romer")
-            }
-        };
-
-        // Ensure the directory exists (additional check)
-        fs::create_dir_all(&key_dir)?;
+        // Ensure our directory structure exists
+        fs::create_dir_all(&permanent_dir)
+            .map_err(|e| KeyManagerError::StorageError(e.to_string()))?;
+        fs::create_dir_all(&session_dir)
+            .map_err(|e| KeyManagerError::StorageError(e.to_string()))?;
 
         Ok(Self {
-            key_dir,
-            os, // Store the detected OS for potential future use
+            base_dir,
+            permanent_dir,
+            session_dir,
+            os,
         })
     }
 
-    /// Initializes the node key, either loading an existing key or generating a new one
-    pub fn initialize(&self, node_id: &str) -> Result<Ed25519> {
-        info!("Initializing node key manager for {:?}", self.os);
+    /// Initializes a new key for the specified signature scheme.
+    /// Returns the public key bytes of the generated key.
+    pub fn initialize(&self, scheme: SignatureScheme) -> KeyManagerResult<Vec<u8>> {
+        match scheme {
+            SignatureScheme::Ed25519 => {
+                let signer = Ed25519::new(&mut OsRng);
+                self.save_permanent_key(scheme, &signer.private_key().to_vec())?;
+                Ok(signer.public_key().to_vec())
+            }
+            SignatureScheme::Bls12381 => {
+                let signer = Bls12381::new(&mut OsRng);
+                self.save_permanent_key(scheme, &signer.private_key().to_vec())?;
+                Ok(signer.public_key().to_vec())
+            }
+        }
+    }
 
-        // Check for existing key and handle key generation in one flow
-        let signer = match self.check_existing_key(node_id)? {
-            Some(existing_key) => {
-                info!("Loaded existing validator key for node {}", node_id);
-                existing_key
-            }
-            None => {
-                info!("No existing key found for node {}, generating new validator key", node_id);
-                self.generate_key(node_id)?
-            }
+    /// Creates a new session key signed by the specified permanent BLS key.
+    /// The session key includes an expiration time and a specified purpose.
+    pub fn create_session_key(
+        &self,
+        permanent_key_bytes: &[u8],
+        namespace: &str,
+        duration_hours: i64,
+        purpose: &str,
+    ) -> KeyManagerResult<SessionKeyData> {
+        // Convert the permanent key bytes into a PrivateKey type
+        let private_key = PrivateKey::from(permanent_key_bytes.to_vec());
+
+        // Create the permanent key signer
+        let mut permanent_key = <Bls12381 as Scheme>::from(private_key)
+            .ok_or_else(|| KeyManagerError::InvalidKeyFormat("Invalid permanent key".into()))?;
+
+        // Create a new session key
+        let mut session_key = Bls12381::new(&mut OsRng);
+        let session_key_bytes = session_key.private_key();
+
+        let created_at = Utc::now();
+        let expires_at = created_at + Duration::hours(duration_hours);
+
+        // Create the message to sign, including all session key metadata
+        let message = format!(
+            "{}:{}:{}",
+            hex::encode(session_key.public_key()),
+            expires_at.timestamp(),
+            purpose
+        );
+
+        // Sign using the provided namespace
+        let namespace_bytes = namespace.as_bytes();
+        let parent_signature = permanent_key.sign(namespace_bytes, message.as_bytes());
+
+        let session_data = SessionKeyData {
+            key_bytes: session_key_bytes.to_vec(),
+            created_at,
+            expires_at,
+            parent_public_key: permanent_key.public_key().to_vec(),
+            parent_signature: parent_signature.to_vec(),
+            purpose: purpose.to_string(),
+            namespace: namespace.to_string(),
         };
 
-        // Log key information for debugging and verification
-        info!("Validator key ready for node {}", node_id);
-        info!("Public key: {}", hex::encode(signer.public_key()));
-        info!("Key stored at: {:?}", self.key_path(node_id));
+        self.save_session_key(&session_data)?;
 
-        Ok(signer)
+        Ok(session_data)
     }
 
-    /// Generates a new cryptographic key and saves it to the key file
-    pub fn generate_key(&self, node_id: &str) -> Result<Ed25519> {
-        // Generate a new cryptographic key using the operating system's random number generator
-        let signer = Ed25519::new(&mut OsRng);
-
-        // Save the generated key to the specified path
-        self.save_key(node_id, &signer)?;
-
-        Ok(signer)
-    }
-
-    fn save_key(&self, node_id: &str, signer: &Ed25519) -> Result<()> {
-        let private_key_bytes = signer.private_key();
-        let key_path = self.key_path(node_id);
-
-        if let Some(parent_dir) = key_path.parent() {
-            fs::create_dir_all(parent_dir)
-                .with_context(|| format!("Failed to create directory at {:?}", parent_dir))?;
+    /// Verifies a session key's validity
+    pub fn verify_session_key(&self, session_data: &SessionKeyData) -> KeyManagerResult<bool> {
+        // Check expiration first
+        if Utc::now() > session_data.expires_at {
+            return Err(KeyManagerError::SessionExpired);
         }
 
-        fs::write(&key_path, private_key_bytes)
-            .with_context(|| format!("Failed to write key file at {:?}", key_path))?;
+        // Convert the raw bytes into a PrivateKey type first
+        let session_private_key = PrivateKey::from(session_data.key_bytes.clone());
 
-        info!("Successfully wrote key for node {} to path: {:?}", node_id, key_path);
-        Ok(())
-    }
+        // Create a key instance from the session key bytes using the Scheme trait
+        let session_key = <Bls12381 as Scheme>::from(session_private_key)
+            .ok_or_else(|| KeyManagerError::InvalidKeyFormat("Invalid session key".into()))?;
 
-    /// Checks for an existing key file and attempts to load it
-    pub fn check_existing_key(&self, node_id: &str) -> Result<Option<Ed25519>> {
-        let key_path = self.key_path(node_id);
-        if !key_path.exists() {
-            return Ok(None);
+        // Create the verification message
+        let message = format!(
+            "{}:{}:{}",
+            hex::encode(session_key.public_key().to_vec()),
+            session_data.expires_at.timestamp(),
+            session_data.purpose
+        );
+
+        // For verification, we don't need to construct a full signer - we can use the static verify method
+        let namespace_bytes = session_data.namespace.as_bytes();
+
+        // Use the static verify method from the Scheme trait
+        if !Bls12381::verify(
+            namespace_bytes,
+            message.as_bytes(),
+            &PublicKey::from(session_data.parent_public_key.clone()),
+            &Signature::from(session_data.parent_signature.clone()),
+        ) {
+            return Err(KeyManagerError::InvalidSessionSignature);
         }
 
-        let key_bytes = fs::read(&key_path)
-            .with_context(|| format!("Failed to read key file at {:?}", key_path))?;
+        Ok(true)
+    }
 
-        if key_bytes.is_empty() {
-            return Err(anyhow::anyhow!("Empty key file"));
+    /// Loads a permanent key of the specified scheme.
+    /// Returns the key bytes which can be used to reconstruct the cryptographic type.
+    pub fn load_permanent_key(&self, scheme: SignatureScheme) -> KeyManagerResult<Vec<u8>> {
+        let path = self.get_permanent_key_path(scheme);
+        if !path.exists() {
+            return Err(KeyManagerError::KeyNotFound(format!(
+                "No key found for scheme {:?}",
+                scheme
+            )));
         }
 
-        let private_key = PrivateKey::try_from(key_bytes).context("Invalid key format")?;
-
-        <Ed25519 as Scheme>::from(private_key)
-            .ok_or_else(|| anyhow::anyhow!("Failed to reconstruct key"))
-            .map(Some)
+        fs::read(&path).map_err(|e| KeyManagerError::IoError(e))
     }
 
-    /// Retrieves the key path for the given node ID
-    fn key_path(&self, node_id: &str) -> PathBuf {
-        self.key_dir.join(format!("node_{}.key", node_id))
+    /// Loads a session key by its identifier.
+    pub fn load_session_key(&self, session_id: &str) -> KeyManagerResult<SessionKeyData> {
+        let path = self.session_dir.join(format!("{}.json", session_id));
+        if !path.exists() {
+            return Err(KeyManagerError::KeyNotFound(format!(
+                "Session key not found: {}",
+                session_id
+            )));
+        }
+
+        let content = fs::read_to_string(&path).map_err(|e| KeyManagerError::IoError(e))?;
+
+        serde_json::from_str(&content)
+            .map_err(|e| KeyManagerError::SerializationError(e.to_string()))
     }
 
-    /// Retrieves detailed signer information for logging or display
-    pub fn get_signer_info(&self, node_id: &str, signer: &Ed25519) -> (String, PathBuf) {
-        (hex::encode(signer.public_key()), self.key_path(node_id))
+    // Private helper methods
+
+    /// Determines the appropriate base directory for key storage based on the operating system
+    fn determine_base_dir(os: &OperatingSystem) -> KeyManagerResult<PathBuf> {
+        let base = match os {
+            OperatingSystem::Windows => {
+                PathBuf::from(std::env::var("USERPROFILE").map_err(|_| {
+                    KeyManagerError::InitializationError(
+                        "Could not find Windows user profile".into(),
+                    )
+                })?)
+            }
+            OperatingSystem::MacOS | OperatingSystem::Linux => {
+                dirs::home_dir().ok_or_else(|| {
+                    KeyManagerError::InitializationError("Could not find home directory".into())
+                })?
+            }
+            OperatingSystem::Unknown => std::env::current_dir().map_err(|_| {
+                KeyManagerError::InitializationError("Could not determine current directory".into())
+            })?,
+        };
+
+        Ok(base.join(".romer").join("keys"))
     }
 
-    /// Returns the detected operating system
-    pub fn get_os(&self) -> &OperatingSystem {
-        &self.os
+    /// Gets the path where a permanent key of the specified scheme should be stored
+    fn get_permanent_key_path(&self, scheme: SignatureScheme) -> PathBuf {
+        self.permanent_dir.join(format!("{:?}.key", scheme))
+    }
+
+    /// Saves a permanent key to disk
+    fn save_permanent_key(&self, scheme: SignatureScheme, key: &[u8]) -> KeyManagerResult<()> {
+        let path = self.get_permanent_key_path(scheme);
+        fs::write(&path, key).map_err(|e| KeyManagerError::IoError(e))
+    }
+
+    /// Saves session key data to disk
+    fn save_session_key(&self, session_data: &SessionKeyData) -> KeyManagerResult<()> {
+        // First, we need to convert the raw bytes into a PrivateKey type
+        // This wraps our raw bytes in the proper type expected by the Scheme trait
+        let session_private_key = PrivateKey::from(session_data.key_bytes.clone());
+
+        // Now we can create a Bls12381 instance using the Scheme trait's from method
+        // This converts the PrivateKey into a full BLS signer instance
+        let session_key = <Bls12381 as Scheme>::from(session_private_key)
+            .ok_or_else(|| KeyManagerError::InvalidKeyFormat("Invalid session key".into()))?;
+
+        // Get the public key for the filename. The public_key() method returns PublicKey,
+        // which we can convert to bytes using as_ref()
+        let session_id = hex::encode(session_key.public_key().as_ref());
+        let path = self.session_dir.join(format!("{}.json", session_id));
+
+        let content = serde_json::to_string(session_data)
+            .map_err(|e| KeyManagerError::SerializationError(e.to_string()))?;
+
+        fs::write(&path, content).map_err(|e| KeyManagerError::IoError(e))
     }
 }
