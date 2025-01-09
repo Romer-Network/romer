@@ -1,0 +1,13 @@
+[package]
+name = "romer-client"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Rømer Chain client implementation"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
+romer-common = { path = "../common" }

@@ -1,0 +1,19 @@
+[package]
+name = "romer-sequencer"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "romer-sequencer"
+path = "src/main.rs"
+
+[dependencies]
+romer-common = { path = "../common" }
+fefix = { version = "0.7.0", features = ["fix44"] }
+
+# Workspace dependencies
+tokio.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true

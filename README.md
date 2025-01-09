@@ -1,101 +1,106 @@
-# RØMER Chain
+# Rømer Chain
 
-RØMER Chain is a novel blockchain platform that implements Proof of Physics consensus through physical validator requirements and geographic validation. The system validates nodes through hardware attestation and network latency measurements against known reference points.
+Rømer Chain reimagines blockchain infrastructure by putting market makers at the center of network operations. Through our unique Proof of Physics consensus mechanism and native FIX protocol support, we create natural regional advantages that protect local market makers while ensuring true physical decentralization.
 
-## Core Features
+## Project Overview
 
-- **Physical Hardware Validation**: Ensures validators run on real hardware, not cloud instances
-- **Geographic Validation**: Validates node locations through speed-of-light network latency measurements
-- **Proof of Physics**: Novel consensus mechanism combining physical and network validations
-- **Regional Protection**: Creates natural geographic advantages for local market makers
+This repository contains the implementation of Rømer Chain, consisting of two main components:
 
-## Prerequisites
+- **Validator Node**: Built on Commonware primitives, our validator implementation combines blockchain consensus with market making operations.
+- **Sequencer**: A high-performance FIX protocol gateway that enables seamless integration with existing trading infrastructure.
 
-- Rust toolchain (latest stable version)
-- Physical hardware (not a virtual machine)
-- Network connectivity to DE-CIX Frankfurt (for latency validation)
-- Storage space for the blockchain data
+## Architecture
 
-## Building from Source
+Rømer Chain is built as a Rust workspace with three main crates:
 
+- `validator`: The core validator node implementation
+- `sequencer`: FIX protocol integration and order sequencing
+- `common`: Shared utilities and types
+
+## Development Prerequisites
+
+- Rust toolchain (stable channel)
+- Protocol Buffers compiler
+
+### Setting Up Development Environment
+
+1. Install Rust using rustup:
 ```bash
-# Clone the repository
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+2. Install additional dependencies:
+
+On Ubuntu/Debian:
+```bash
+sudo apt update
+sudo apt install build-essential cmake protobuf-compiler
+```
+
+On macOS:
+```bash
+brew install cmake protobuf
+```
+
+3. Clone the repository:
+```bash
 git clone https://github.com/romer-network/romer.git
 cd romer
-
-# Build with optimizations
-cargo build --release
 ```
 
-## Running a Validator Node
-
-RØMER requires at least 3 validator nodes to reach consensus. Each node requires specific geographic coordinates and must pass hardware and latency validations.
-
-### Configuration Parameters
-
-- `--me`: Your node identifier and network address (format: `id@ip:port`)
-- `--participants`: Comma-separated list of participant IDs
-- `--storage-dir`: Directory for blockchain data storage
-- `--latitude`: Node's geographic latitude
-- `--longitude`: Node's geographic longitude
-- `--bootstrappers`: Address of bootstrap node (required for non-bootstrap nodes)
-
-### Example Network Setup
-
-Below are example commands to run a 4-node test network. Each command should be run in a separate terminal.
-
-#### Bootstrap Node (Node 0)
-
+4. Build all components:
 ```bash
-# Unix/macOS
-cargo run --release -- \
-  --me 0@127.0.0.1:3000 \
-  --participants 0,1,2,3 \
-  --storage-dir ./data/log/0 \
-  --latitude=-28.0167 \
-  --longitude=153.4000
-
-# Windows
-cargo run --release -- --me 0@127.0.0.1:3000 --participants 0,1,2,3 --storage-dir data\\romer_log\\0 --latitude=-28.0167 --longitude=153.4000
+cargo build
 ```
 
-#### Additional Nodes (1-3)
+## Crate Structure
 
-For each additional node, adjust the node ID, port, and storage directory:
+### validator
+The validator crate implements our Proof of Physics consensus mechanism and market making primitives. It handles:
+- Network participation and block production
+- Geographic validation
+- Market making operations
+- Hardware attestation
 
-```bash
-# Unix/macOS
-cargo run --release -- \
-  --bootstrappers 0@127.0.0.1:3000 \
-  --me NODE_ID@127.0.0.1:PORT \
-  --participants 0,1,2,3 \
-  --storage-dir ./data/log/NODE_ID \
-  --latitude=-28.0167 \
-  --longitude=153.4000
+### sequencer
+The sequencer crate provides FIX protocol support including:
+- FIX message parsing and validation
+- Order sequencing
+- Market data distribution
+- Session management
 
-# Windows
-cargo run --release -- --bootstrappers 0@127.0.0.1:3000 --me NODE_ID@127.0.0.1:PORT --participants 0,1,2,3 --storage-dir data\\romer_log\\NODE_ID --latitude=-28.0167 --longitude=153.4000
-```
-
-Replace NODE_ID with 1, 2, or 3, and PORT with 3001, 3002, or 3003 respectively.
-
-## Validation Process
-
-When a node starts, it performs two key validations:
-
-1. **Hardware Validation**: Verifies the node is running on physical hardware
-2. **Latency Validation**: Measures network latency to DE-CIX Frankfurt (80.81.192.3) and validates it against speed-of-light constraints based on the node's claimed location
-
-The node will only join the network if both validations pass.
-
-## Development Status
-
-RØMER Chain is currently in active development. Key features like zero-knowledge proofs for hardware attestation and more sophisticated geographic validation are under development.
-
-## License
-
-Apache 
+### common
+Shared functionality between validator and sequencer:
+- Cryptographic primitives
+- Network types
+- Configuration management
+- Common utilities
 
 ## Contributing
 
-We welcome contributions to RØMER Chain. Please read our contributing guidelines before submitting pull requests.
+We welcome contributions that align with our goal of building professional market making infrastructure. Please review our [contribution guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+### Development Workflow
+
+1. Create a feature branch from `main`
+2. Implement changes with appropriate tests
+3. Ensure all tests pass and code is formatted
+4. Submit a pull request with detailed description
+
+### Code Style
+
+We follow standard Rust formatting conventions. Before submitting code:
+
+```bash
+cargo fmt
+cargo clippy
+```
+
+## License
+
+Apache 2.0
+
+## Contact
+
+For development questions: [GitHub Issues](https://github.com/romer-network/romer/issues)
+For market maker inquiries: @Hariseldon23 on Telegram
