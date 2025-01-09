@@ -6,50 +6,21 @@
 
 Before we can handle account registration, our network needs fundamental data structures for tracking organizations and tokens. We implement these using Commonware's storage capabilities, ensuring consistent and efficient data management across the network.
 
-Currently we need to store ROMER token and ROMER organisation in commonware_storage::metadata
+### TODO
+[ ] Validator - Create Genesis Config for ROMER token and ROMER org
+[ ] Create an easy interface when performing CRUD on Token and ORG
+[ ] Initialize Genesis State in commonware_storage::metadata fro ROMER token and ROMER org
 
 ## Story 2: Market Maker Registration Client
-
-As a market maker  
-I want to register my organization through a terminal interface  
-So that I can prepare for trading operations  
 
 ### Background
 
 Market makers need a straightforward way to register their organizations and establish their network identity. We'll create this using ratatui for a clean terminal user interface that guides them through the registration process.
 
-### Technical Implementation
-
-The story involves creating a ratatui-based client interface in our client crate:
-
-Registration Interface Requirements:
-- Organization name input
-- Organization type selection
-- SenderCompID input (with uniqueness verification)
-- BLS key pair generation
-- Registration confirmation display
-
-Layout Components:
-```rust
-pub struct RegistrationForm {
-    // Form fields
-    pub name_input: Input,
-    pub sender_comp_id_input: Input,
-    pub org_type_select: Select,
-    // Form state
-    pub current_field: usize,
-    pub error_message: Option<String>,
-    pub success_message: Option<String>,
-}
-```
-
-### Success Criteria
-
-- Clean, intuitive terminal interface implemented
-- Real-time SenderCompID uniqueness verification
-- Secure BLS key generation and storage
-- Clear error handling and user feedback
-- Successful organization registration in network storage
+### TODO:
+[ ] Organisation and Token should be pulled in from config
+[ ] When registering, we need to bring in Keystore to create the BLS signature for the User
+[ ] Sequencer needs to be able to have a session and enable the Market Maker to create a session
 
 ## Story 3: Stablecoin Issuer Registration Client
 
@@ -64,19 +35,6 @@ Stablecoin issuers require similar registration capabilities to market makers, b
 ### Technical Implementation
 
 Extends the registration interface to include token definition:
-
-Token Definition Interface:
-```rust
-pub struct TokenDefinitionForm {
-    // Token details
-    pub name_input: Input,
-    pub symbol_input: Input,
-    pub decimals_input: Input,
-    // Form state
-    pub current_field: usize,
-    pub validation_errors: Vec<String>,
-}
-```
 
 Registration Flow:
 1. Organization registration (similar to market maker)
