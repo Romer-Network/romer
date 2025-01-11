@@ -1,4 +1,6 @@
 // Expose our type system
+pub mod keystore;
+pub mod utils;
 pub mod types;
 pub mod error;
 
