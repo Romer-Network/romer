@@ -1,4 +1,4 @@
-# crates/validator/Cargo.toml
+# /validator/Cargo.toml
 [package]
 name = "romer-validator"
 version.workspace = true

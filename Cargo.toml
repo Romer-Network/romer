@@ -3,7 +3,8 @@ members = [
     "validator",
     "sequencer",
     "common",
-    "client"  
+    "client",
+    "vm"  
 ]
 resolver = "2"
 

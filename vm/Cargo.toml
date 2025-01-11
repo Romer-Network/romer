@@ -1,0 +1,47 @@
+[package]
+name = "romer-vm"
+version = "0.1.0"
+edition = "2021"
+description = "Romer Chain Move VM execution engine optimized for trading operations"
+
+[dependencies]
+# Core Move VM dependencies from Sui
+move-binary-format = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-bytecode-verifier = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-core-types = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-vm-runtime = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-vm-types = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+
+# Additional Move tooling needed for our environment
+move-command-line-common = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-compiler = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+move-symbol-pool = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.39.4" }
+
+# Internal crate dependencies
+romer-common = { path = "../common" }
+
+# External dependencies
+tokio = { version = "1.28", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+
+# Cryptographic operations
+blake2 = "0.10"
+sha3 = "0.10"
+
+[dev-dependencies]
+proptest = "1.2"
+test-case = "3.1"
+mockall = "0.11"
+tempfile = "3.8"
+
+[[example]]
+name = "run_vm"
+path = "examples/run_vm.rs"
+
+[features]
+default = []
+testing = ["move-vm-runtime/testing"]
