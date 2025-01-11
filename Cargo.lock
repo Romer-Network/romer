@@ -1162,7 +1162,7 @@ dependencies = [
  "strum_macros 0.22.0",
  "thiserror",
  "tokio-util",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -3380,13 +3380,18 @@ dependencies = [
 name = "romer-sequencer"
 version = "0.1.0"
 dependencies = [
+ "bytes",
+ "chrono",
  "clap",
+ "dashmap",
  "fefix",
  "romer-common",
  "serde",
+ "thiserror",
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "uuid 1.11.1",
 ]
 
 [[package]]
@@ -4619,6 +4624,12 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 dependencies = [
  "getrandom 0.2.15",
 ]
+
+[[package]]
+name = "uuid"
+version = "1.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b913a3b5fe84142e269d63cc62b64319ccaf89b748fc31fe025177f767a756c4"
 
 [[package]]
 name = "valuable"

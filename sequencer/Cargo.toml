@@ -10,10 +10,15 @@ path = "src/main.rs"
 [dependencies]
 romer-common = { path = "../common" }
 fefix = { version = "0.7.0", features = ["fix44"] }
+uuid = "1.11.1"
+dashmap = "5.5.3"
 
 # Workspace dependencies
 tokio.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
 clap.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 serde.workspace = true
+bytes.workspace = true

@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use geo::Point;
-use crate::validation::{
+use crate::common::utils::{
     hardware_validator::{HardwareDetector, VirtualizationType},
     latency_validator::{LatencyValidator, LatencyConfig},
 };

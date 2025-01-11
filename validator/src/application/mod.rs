@@ -1,7 +1,7 @@
 //! This crate contains all logic typically implemented by an application developer.
 //! This includes things like how to produce/verify blocks and how to identify which
 //! participants are active at a given view.
-
+/* 
 use commonware_consensus::simplex::Prover;
 use commonware_cryptography::{Hasher, PublicKey, Scheme};
 use crate::types::ValidatorLocation;
@@ -31,3 +31,4 @@ pub struct Config<C: Scheme, H: Hasher> {
     /// or environment variables
     pub validator_location: Option<ValidatorLocation>,
 }
+    */

@@ -1,8 +1,9 @@
-mod application;
+/* mod application;
 mod gui;
 mod node;
 mod validation;
 mod types;
+
 
 use commonware_consensus::simplex::{self, Engine, Prover};
 use commonware_cryptography::{Ed25519, Scheme, Sha256};
@@ -16,7 +17,7 @@ use commonware_utils::{hex, union};
 use governor::Quota;
 use node::cmd::cli;
 use prometheus_client::registry::Registry;
-use validation::hardware_validator::HardwareDetector;
+use common::utils::hardware_validator::HardwareDetector;
 use std::sync::{Arc, Mutex};
 use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},
@@ -176,4 +177,10 @@ fn main() {
         // Block on GUI
         gui.run(runtime).await;
     });
+}
+
+*/
+
+fn main() {
+    println!("Hello World");
 }

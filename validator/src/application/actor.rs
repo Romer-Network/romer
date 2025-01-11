@@ -1,4 +1,4 @@
-use crate::validation::proof_generator::ProofGenerator;
+/* use crate::validation::proof_generator::ProofGenerator;
 use commonware_runtime::Spawner; 
 
 use super::{
@@ -114,3 +114,4 @@ impl<R: Rng + Spawner, C: Scheme, H: Hasher> Application<R, C, H> {
         }
     }
 }
+*/
