@@ -15,11 +15,11 @@ use commonware_cryptography::{Bls12381, Ed25519, PrivateKey, PublicKey, Scheme, 
 /// separation between storage format and cryptographic operations.
 pub struct KeyManager {
     /// Base directory for key storage
-    base_dir: PathBuf,
+    pub base_dir: PathBuf,
     /// Directory for permanent keys
-    permanent_dir: PathBuf,
+    pub permanent_dir: PathBuf,
     /// Directory for session keys
-    session_dir: PathBuf,
+    pub session_dir: PathBuf,
     /// Detected operating system
     os: OperatingSystem,
 }

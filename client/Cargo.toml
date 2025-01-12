@@ -6,3 +6,7 @@ authors.workspace = true
 description = "Rømer Chain client implementation"
 
 [dependencies]
+romer-common = { path = "../common"}
+commonware-cryptography.workspace = true
+commonware-utils.workspace = true
+termion = "4.0.3"
