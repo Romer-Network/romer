@@ -1,158 +1,151 @@
-mod app;
-mod handlers;
+use std::io::{self, Write};
 
-use anyhow::Result;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{
-    backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
-    Terminal,
-};
-use std::io;
+// Represents which menu we're currently displaying
+enum CurrentMenu {
+    Main,
+    KeyManager,
+    Fix,
+    FixSequencer,
+    FixSession,
+    FixTrading,
+    FixSettlement,
+    Move,
+}
 
-use crate::app::{App, Screen};
-
-fn main() -> Result<()> {
-    // Initialize terminal in raw mode and create alternate screen buffer
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+fn main() {
+    let mut current_menu = CurrentMenu::Main;
     
-    // Set up the terminal backend for ratatui
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    // Create our application state
-    let mut app = App::new();
-    
-    // Main event loop
     loop {
-        // Draw the terminal user interface
-        terminal.draw(|frame| {
-            // Create the main layout with space for content and help text
-            let size = frame.size();
-            let main_chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(3),  // Main content area
-                    Constraint::Length(3), // Help text area
-                ])
-                .split(size);
-
-            // Render different screens based on application state
-            match app.screen {
-                Screen::Welcome => {
-                    // Create welcome screen items
-                    let items = vec![
-                        ListItem::new("Welcome to Rømer Chain Registration"),
-                        ListItem::new(""),
-                        ListItem::new("Select organization type:"),
-                        ListItem::new("[M] Market Maker"),
-                        ListItem::new("[S] Stablecoin Issuer"),
-                    ];
-
-                    // Create and render the welcome screen list
-                    let list = List::new(items)
-                        .block(Block::default()
-                            .title("Registration")
-                            .borders(Borders::ALL)
-                            .border_style(Style::default().fg(Color::Green)));
-
-                    frame.render_widget(list, main_chunks[0]);
+        match current_menu {
+            CurrentMenu::Main => {
+                println!("\nMain Menu:");
+                println!("1. KeyManager");
+                println!("2. FIX");
+                println!("3. Move");
+                println!("4. Exit");
+                
+                match get_user_input().as_str() {
+                    "1" => current_menu = CurrentMenu::KeyManager,
+                    "2" => current_menu = CurrentMenu::Fix,
+                    "3" => current_menu = CurrentMenu::Move,
+                    "4" => break,
+                    _ => println!("Invalid option, please try again"),
                 }
-                Screen::Registration => {
-                    // Create layout for registration form fields
-                    let input_chunks = Layout::default()
-                        .direction(Direction::Vertical)
-                        .constraints([
-                            Constraint::Length(3),  // Organization name field
-                            Constraint::Length(3),  // Sender Comp ID field
-                            Constraint::Length(3),  // Success message area
-                            Constraint::Min(0),     // Remaining space
-                        ])
-                        .split(main_chunks[0]);
-
-                    // Organization name input field
-                    let name_style = if app.selected_field == 0 {
-                        Style::default().fg(Color::Green)
-                    } else {
-                        Style::default()
-                    };
-
-                    let name_input = Paragraph::new(Line::from(vec![
-                        Span::raw("Organization Name: "),
-                        Span::styled(&app.organization_name, name_style),
-                        Span::raw(if app.selected_field == 0 { " ▋" } else { "" }),
-                    ]))
-                    .block(Block::default().borders(Borders::ALL));
-
-                    // Sender Comp ID input field
-                    let id_style = if app.selected_field == 1 {
-                        Style::default().fg(Color::Green)
-                    } else {
-                        Style::default()
-                    };
-
-                    let id_input = Paragraph::new(Line::from(vec![
-                        Span::raw("Sender Comp ID: "),
-                        Span::styled(&app.sender_comp_id, id_style),
-                        Span::raw(if app.selected_field == 1 { " ▋" } else { "" }),
-                    ]))
-                    .block(Block::default().borders(Borders::ALL));
-
-                    // Render input fields
-                    frame.render_widget(name_input, input_chunks[0]);
-                    frame.render_widget(id_input, input_chunks[1]);
-
-                    // Show success message if registration is complete
-                    if app.show_success {
-                        let success_msg = Paragraph::new("Registration successful!")
-                            .style(Style::default().fg(Color::Green));
-                        frame.render_widget(success_msg, input_chunks[2]);
-                    }
+            },
+            
+            CurrentMenu::KeyManager => {
+                println!("\nKey Manager Menu:");
+                println!("1. Check Existing Keys");
+                println!("2. Generate KeyPair");
+                println!("3. Sign a Message");
+                println!("4. Create a Session Key");
+                println!("5. Back to Main Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Check Existing Keys selected - functionality coming soon!"),
+                    "2" => println!("Generate KeyPair selected - functionality coming soon!"),
+                    "3" => println!("Sign a Message selected - functionality coming soon!"),
+                    "4" => println!("Create a Session Key selected - functionality coming soon!"),
+                    "5" => current_menu = CurrentMenu::Main,
+                    _ => println!("Invalid option, please try again"),
                 }
-            }
-
-            // Render help text at the bottom
-            let help = Paragraph::new(app.get_help_text())
-                .style(Style::default().fg(Color::Gray));
-            frame.render_widget(help, main_chunks[1]);
-
-            // Show debug information in development
-            #[cfg(debug_assertions)]
-            {
-                let debug_text = Paragraph::new(app.debug_state())
-                    .style(Style::default().fg(Color::DarkGray));
-                frame.render_widget(debug_text, main_chunks[1]);
-            }
-        })?;
-
-        // Handle keyboard input
-        if let Event::Key(key) = event::read()? {
-            // Only process key press events to avoid duplicate input
-            if key.kind == KeyEventKind::Press {
-                if handlers::handle_key(&mut app, key.code) {
-                    break;
+            },
+            
+            CurrentMenu::Fix => {
+                println!("\nFIX Menu:");
+                println!("1. Sequencer");
+                println!("2. Session Management");
+                println!("3. Trading");
+                println!("4. Settlement");
+                println!("5. Back to Main Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => current_menu = CurrentMenu::FixSequencer,
+                    "2" => current_menu = CurrentMenu::FixSession,
+                    "3" => current_menu = CurrentMenu::FixTrading,
+                    "4" => current_menu = CurrentMenu::FixSettlement,
+                    "5" => current_menu = CurrentMenu::Main,
+                    _ => println!("Invalid option, please try again"),
                 }
-            }
+            },
+            
+            CurrentMenu::FixSequencer => {
+                println!("\nSequencer Menu:");
+                println!("1. Start Sequencer");
+                println!("2. Simulate Block");
+                println!("3. Back to FIX Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Start Sequencer selected - functionality coming soon!"),
+                    "2" => println!("Simulate Block selected - functionality coming soon!"),
+                    "3" => current_menu = CurrentMenu::Fix,
+                    _ => println!("Invalid option, please try again"),
+                }
+            },
+            
+            CurrentMenu::FixSession => {
+                println!("\nSession Management Menu:");
+                println!("1. Logon");
+                println!("2. Logout");
+                println!("3. Heartbeat");
+                println!("4. Back to FIX Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Logon selected - functionality coming soon!"),
+                    "2" => println!("Logout selected - functionality coming soon!"),
+                    "3" => println!("Heartbeat selected - functionality coming soon!"),
+                    "4" => current_menu = CurrentMenu::Fix,
+                    _ => println!("Invalid option, please try again"),
+                }
+            },
+            
+            CurrentMenu::FixTrading => {
+                println!("\nTrading Menu:");
+                println!("1. Order");
+                println!("2. Back to FIX Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Order selected - functionality coming soon!"),
+                    "2" => current_menu = CurrentMenu::Fix,
+                    _ => println!("Invalid option, please try again"),
+                }
+            },
+            
+            CurrentMenu::FixSettlement => {
+                println!("\nSettlement Menu:");
+                println!("1. Settle");
+                println!("2. Back to FIX Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Settle selected - functionality coming soon!"),
+                    "2" => current_menu = CurrentMenu::Fix,
+                    _ => println!("Invalid option, please try again"),
+                }
+            },
+            
+            CurrentMenu::Move => {
+                println!("\nMove Menu:");
+                println!("1. Compile Move Code");
+                println!("2. Back to Main Menu");
+                
+                match get_user_input().as_str() {
+                    "1" => println!("Compile Move Code selected - functionality coming soon!"),
+                    "2" => current_menu = CurrentMenu::Main,
+                    _ => println!("Invalid option, please try again"),
+                }
+            },
         }
     }
+    
+    println!("Goodbye!");
+}
 
-    // Restore terminal to original state
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
-
-    Ok(())
+// Helper function to get user input
+fn get_user_input() -> String {
+    print!("> ");
+    io::stdout().flush().unwrap();
+    
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    input.trim().to_string()
 }
