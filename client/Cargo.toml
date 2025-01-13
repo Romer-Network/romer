@@ -11,3 +11,5 @@ commonware-cryptography.workspace = true
 commonware-utils.workspace = true
 rand.workspace = true
 uuid.workspace = true
+crossterm.workspace = true
+tracing.workspace = true

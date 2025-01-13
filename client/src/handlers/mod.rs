@@ -8,6 +8,8 @@ pub trait Handler {
 // Declare the submodules
 pub mod keymanager;
 pub mod fix;
+pub mod sequencer;
+
 
 // Re-export the handlers from submodules for easier access
 pub use keymanager::{
@@ -22,4 +24,8 @@ pub use fix::{
     LogonHandler,
     LogoutHandler,
     HeartbeatHandler,
+};
+
+pub use sequencer::{
+    StartSequencerHandler,
 };

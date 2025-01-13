@@ -3342,8 +3342,10 @@ version = "0.1.0"
 dependencies = [
  "commonware-cryptography",
  "commonware-utils 0.0.4",
+ "crossterm 0.28.1",
  "rand 0.8.5",
  "romer-common",
+ "tracing",
  "uuid 1.11.1",
 ]
 
