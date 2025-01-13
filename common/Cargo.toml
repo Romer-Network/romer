@@ -19,4 +19,5 @@ rand.workspace = true
 dirs.workspace = true
 thiserror.workspace = true
 chrono.workspace = true
+uuid.workspace = true
 fefix.workspace = true

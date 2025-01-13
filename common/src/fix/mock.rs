@@ -1,4 +1,4 @@
-use romer_common::types::fix::{FixConfig, MessageType, ValidatedMessage, utils};
+use crate::types::fix::{FixConfig, MessageType, ValidatedMessage, utils};
 use rand::Rng;
 use chrono::Utc;
 use uuid::Uuid;

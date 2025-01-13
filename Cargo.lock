@@ -1932,7 +1932,6 @@ checksum = "c0ff37bd590ca25063e35af745c343cb7a0271906fb7b37e4813e8f79f00268d"
 dependencies = [
  "bitflags 2.7.0",
  "libc",
- "redox_syscall 0.5.8",
 ]
 
 [[package]]
@@ -2506,12 +2505,6 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
-
-[[package]]
-name = "numtoa"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6aa2c4e539b869820a2b82e1aef6ff40aa85e65decdd5185e83fb4b1249cd00f"
 
 [[package]]
 name = "object"
@@ -3263,12 +3256,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "redox_termios"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20145670ba436b55d91fc92d25e71160fbfbdd57831631c8d7d36377a476f1cb"
-
-[[package]]
 name = "redox_users"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3355,8 +3342,9 @@ version = "0.1.0"
 dependencies = [
  "commonware-cryptography",
  "commonware-utils 0.0.4",
+ "rand 0.8.5",
  "romer-common",
- "termion",
+ "uuid 1.11.1",
 ]
 
 [[package]]
@@ -3375,6 +3363,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tracing",
+ "uuid 1.11.1",
 ]
 
 [[package]]
@@ -4109,18 +4098,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
 dependencies = [
  "winapi-util",
-]
-
-[[package]]
-name = "termion"
-version = "4.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eaa98560e51a2cf4f0bb884d8b2098a9ea11ecf3b7078e9c68242c74cc923a7"
-dependencies = [
- "libc",
- "libredox",
- "numtoa",
- "redox_termios",
 ]
 
 [[package]]

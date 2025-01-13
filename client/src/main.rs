@@ -1,6 +1,8 @@
 mod handlers;
 
-use handlers::{CheckKeysHandler, CreateSessionKeyHandler, GenerateKeypairHandler, Handler, SignMessageHandler};
+use handlers::{
+    CheckKeysHandler, CreateSessionKeyHandler, GenerateKeypairHandler, Handler, LogonHandler, SignMessageHandler
+};
 use std::io::{self, Write};
 
 // Represents which menu we're currently displaying
@@ -122,7 +124,14 @@ fn main() {
                 println!("4. Back to FIX Menu");
 
                 match get_user_input().as_str() {
-                    "1" => println!("Logon selected - functionality coming soon!"),
+                    "1" => match LogonHandler::new() {
+                        Ok(handler) => {
+                            if let Err(e) = handler.handle() {
+                                println!("Error handling logon: {}", e);
+                            }
+                        }
+                        Err(e) => println!("Error creating logon handler: {}", e),
+                    },
                     "2" => println!("Logout selected - functionality coming soon!"),
                     "3" => println!("Heartbeat selected - functionality coming soon!"),
                     "4" => current_menu = CurrentMenu::Fix,
