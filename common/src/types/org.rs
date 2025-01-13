@@ -1,12 +1,20 @@
+use serde::{Deserialize, Serialize};
+
 /// Represents the different types of organizations in the RØMER network
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum OrganizationType {
     MarketMaker,
-    StablecoinIssuer,
+    BrokerDealer,
+    Bank,
+    AssetManager,
+    InfraProvider,
+    ServiceProvider,
+    PrimeBroker,
+    Custodian,
 }
 
 /// Represents an organization participating in the RØMER network
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Organization {
     /// Unique identifier for the organization
     pub id: String,

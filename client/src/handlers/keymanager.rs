@@ -40,7 +40,7 @@ impl GenerateKeypairHandler {
 }
 
 impl Handler for GenerateKeypairHandler {
-    fn handle(&self) -> io::Result<()> {
+    fn handle(&mut self) -> io::Result<()> {
         let scheme = self.get_key_type()?;
 
         match self.key_manager.initialize(scheme) {
@@ -124,7 +124,7 @@ impl CheckKeysHandler {
 }
 
 impl Handler for CheckKeysHandler {
-    fn handle(&self) -> io::Result<()> {
+    fn handle(&mut self) -> io::Result<()> {
         println!("\nKey Storage Locations:");
         println!("Base Directory: {}", self.key_manager.base_dir.display());
         println!("Permanent Keys: {}", self.key_manager.permanent_dir.display());
@@ -213,7 +213,7 @@ impl SignMessageHandler {
 }
 
 impl Handler for SignMessageHandler {
-    fn handle(&self) -> io::Result<()> {
+    fn handle(&mut self) -> io::Result<()> {
         let scheme = self.get_key_type()?;
         let key_bytes = self.select_key(scheme)?;
         let message = self.get_message()?;
@@ -339,7 +339,7 @@ impl CreateSessionKeyHandler {
 }
 
 impl Handler for CreateSessionKeyHandler {
-    fn handle(&self) -> io::Result<()> {
+    fn handle(&mut self) -> io::Result<()> {
         let parent_key_bytes = self.load_parent_key()?;
         let namespace = self.get_namespace()?;
         let duration = self.get_duration()?;

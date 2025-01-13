@@ -9,8 +9,13 @@ description = "Rømer Chain client implementation"
 romer-common = { path = "../common"}
 commonware-cryptography.workspace = true
 commonware-utils.workspace = true
+commonware-storage.workspace = true
+commonware-runtime.workspace = true
 rand.workspace = true
 uuid.workspace = true
 crossterm.workspace = true
 tracing.workspace = true
 tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+prometheus-client.workspace = true

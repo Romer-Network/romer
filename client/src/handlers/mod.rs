@@ -2,12 +2,11 @@
 use std::io;
 
 pub trait Handler {
-    fn handle(&self) -> io::Result<()>;
+    fn handle(&mut self) -> io::Result<()>;
 }
 
 // Declare the submodules
 pub mod keymanager;
-pub mod fix;
 pub mod sequencer;
 
 
@@ -20,12 +19,9 @@ pub use keymanager::{
 };
 
 // FIX-related handler exports will go here as they are implemented
-pub use fix::{
+pub use sequencer::{
     LogonHandler,
     LogoutHandler,
     HeartbeatHandler,
-};
-
-pub use sequencer::{
-    StartSequencerHandler,
+    RegisterSenderCompIdHandler,
 };

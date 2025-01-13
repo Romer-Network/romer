@@ -6,8 +6,7 @@ use crossterm::{
     ExecutableCommand,
 };
 use handlers::{
-    CheckKeysHandler, CreateSessionKeyHandler, GenerateKeypairHandler, Handler, HeartbeatHandler,
-    LogonHandler, LogoutHandler, SignMessageHandler, StartSequencerHandler,
+    CheckKeysHandler, CreateSessionKeyHandler, GenerateKeypairHandler, Handler, HeartbeatHandler, LogonHandler, LogoutHandler, RegisterSenderCompIdHandler, SignMessageHandler
 };
 use std::io::{self, stdout, Write};
 
@@ -15,9 +14,8 @@ use std::io::{self, stdout, Write};
 enum CurrentMenu {
     Main,
     KeyManager,
-    Fix,
-    FixSequencer,
-    FixSession,
+    Sequencer,
+    SequencerSession,
     FixTrading,
     FixSettlement,
     Move,
@@ -81,8 +79,8 @@ fn main() -> io::Result<()> {
             CurrentMenu::Main => {
                 println!("\nMain Menu:");
                 println!("1. KeyManager");
-                println!("2. FIX");
-                println!("3. Move");
+                println!("2. Sequencer");
+                println!("3. Move VM");
                 println!("4. Exit");
                 println!("\nPress ESC at any time to return to the previous menu");
 
@@ -93,7 +91,7 @@ fn main() -> io::Result<()> {
                             clear_screen()?;
                         }
                         "2" => {
-                            current_menu = CurrentMenu::Fix;
+                            current_menu = CurrentMenu::Sequencer;
                             clear_screen()?;
                         }
                         "3" => {
@@ -119,7 +117,7 @@ fn main() -> io::Result<()> {
                 match get_user_input()? {
                     Some(input) => match input.as_str() {
                         "1" => match CheckKeysHandler::new() {
-                            Ok(handler) => {
+                            Ok(mut handler) => {
                                 if let Err(e) = handler.handle() {
                                     println!("Error checking keys: {}", e);
                                 }
@@ -130,7 +128,7 @@ fn main() -> io::Result<()> {
                             Err(e) => println!("Error creating key manager: {}", e),
                         },
                         "2" => match GenerateKeypairHandler::new() {
-                            Ok(handler) => {
+                            Ok(mut handler) => {
                                 if let Err(e) = handler.handle() {
                                     println!("Error generating keypair: {}", e);
                                 }
@@ -141,7 +139,7 @@ fn main() -> io::Result<()> {
                             Err(e) => println!("Error creating key manager: {}", e),
                         },
                         "3" => match SignMessageHandler::new() {
-                            Ok(handler) => {
+                            Ok(mut handler) => {
                                 if let Err(e) = handler.handle() {
                                     println!("Error signing message: {}", e);
                                 }
@@ -152,7 +150,7 @@ fn main() -> io::Result<()> {
                             Err(e) => println!("Error creating key manager: {}", e),
                         },
                         "4" => match CreateSessionKeyHandler::new() {
-                            Ok(handler) => {
+                            Ok(mut handler) => {
                                 if let Err(e) = handler.handle() {
                                     println!("Error creating session key: {}", e);
                                 }
@@ -175,34 +173,29 @@ fn main() -> io::Result<()> {
                 }
             }
 
-            CurrentMenu::Fix => {
-                println!("\nFIX Menu:");
-                println!("1. Sequencer");
-                println!("2. Session Management");
-                println!("3. Trading");
-                println!("4. Settlement");
-                println!("5. Back to Main Menu");
+            CurrentMenu::Sequencer => {
+                println!("\nSequencer Menu:");
+                println!("1. Session Management");
+                println!("2. Trading");
+                println!("3. Settlement");
+                println!("4. Back to Main Menu");
                 println!("\nPress ESC at any time to return to the previous menu");
 
                 match get_user_input()? {
                     Some(input) => match input.as_str() {
                         "1" => {
-                            current_menu = CurrentMenu::FixSequencer;
+                            current_menu = CurrentMenu::SequencerSession;
                             clear_screen()?;
                         }
                         "2" => {
-                            current_menu = CurrentMenu::FixSession;
-                            clear_screen()?;
-                        }
-                        "3" => {
                             current_menu = CurrentMenu::FixTrading;
                             clear_screen()?;
                         }
-                        "4" => {
+                        "3" => {
                             current_menu = CurrentMenu::FixSettlement;
                             clear_screen()?;
                         }
-                        "5" => {
+                        "4" => {
                             current_menu = CurrentMenu::Main;
                             clear_screen()?;
                         }
@@ -215,65 +208,35 @@ fn main() -> io::Result<()> {
                 }
             }
 
-            CurrentMenu::FixSequencer => {
-                println!("\nSequencer Menu:");
-                println!("1. Start Sequencer");
-                println!("2. Simulate Block");
-                println!("3. Back to FIX Menu");
-                println!("\nPress ESC at any time to return to the previous menu");
-
-                match get_user_input()? {
-                    Some(input) => match input.as_str() {
-                        "1" => match StartSequencerHandler::new() {
-                            Ok(handler) => {
-                                // Start the sequencer and handle any errors
-                                if let Err(e) = handler.handle() {
-                                    println!("Error starting sequencer: {}", e);
-                                }
-                                // Wait for user acknowledgment before clearing screen
-                                println!("\nPress Enter to continue...");
-                                get_user_input()?;
-                                clear_screen()?;
-                            }
-                            Err(e) => {
-                                // Handle any initialization errors
-                                println!("Error creating sequencer handler: {}", e);
-                                println!("\nPress Enter to continue...");
-                                get_user_input()?;
-                                clear_screen()?;
-                            }
-                        },
-                        "2" => {
-                            println!("Simulate Block selected - functionality coming soon!");
-                            println!("\nPress Enter to continue...");
-                            get_user_input()?;
-                            clear_screen()?;
-                        }
-                        "3" => {
-                            current_menu = CurrentMenu::Fix;
-                            clear_screen()?;
-                        }
-                        _ => println!("Invalid option, please try again"),
-                    },
-                    None => {
-                        current_menu = CurrentMenu::Fix;
-                        clear_screen()?;
-                    }
-                }
-            }
-
-            CurrentMenu::FixSession => {
+            CurrentMenu::SequencerSession => {
                 println!("\nSession Management Menu:");
-                println!("1. Logon");
-                println!("2. Logout");
-                println!("3. Heartbeat");
-                println!("4. Back to FIX Menu");
+                println!("1. Register SenderCompId");
+                println!("2. Logon");
+                println!("3. Logout");
+                println!("4. Heartbeat");
+                println!("5. Back to FIX Menu");
                 println!("\nPress ESC at any time to return to the previous menu");
 
                 match get_user_input()? {
                     Some(input) => match input.as_str() {
-                        "1" => match LogonHandler::new() {
-                            Ok(handler) => {
+                        "1" => {
+                            // Create runtime for async operations
+                            let runtime = tokio::runtime::Runtime::new()?;
+
+                            match runtime.block_on(RegisterSenderCompIdHandler::new()) {
+                                Ok(mut handler) => {
+                                    if let Err(e) = handler.handle() {
+                                        println!("Error registering SenderCompID: {}", e);
+                                    }
+                                    println!("\nPress Enter to continue...");
+                                    get_user_input()?;
+                                    clear_screen()?;
+                                }
+                                Err(e) => println!("Error creating registration handler: {}", e),
+                            }
+                        }
+                        "2" => match LogonHandler::new() {
+                            Ok(mut handler) => {
                                 if let Err(e) = handler.handle() {
                                     println!("Error handling logon: {}", e);
                                 }
@@ -283,8 +246,8 @@ fn main() -> io::Result<()> {
                             }
                             Err(e) => println!("Error creating logon handler: {}", e),
                         },
-                        "2" => {
-                            let handler = LogoutHandler::new();
+                        "3" => {
+                            let mut handler = LogoutHandler::new();
                             if let Err(e) = handler.handle() {
                                 println!("Error handling logout: {}", e);
                             }
@@ -292,8 +255,8 @@ fn main() -> io::Result<()> {
                             get_user_input()?;
                             clear_screen()?;
                         }
-                        "3" => {
-                            let handler = HeartbeatHandler::new();
+                        "4" => {
+                            let mut handler = HeartbeatHandler::new();
                             if let Err(e) = handler.handle() {
                                 println!("Error handling heartbeat: {}", e);
                             }
@@ -301,14 +264,14 @@ fn main() -> io::Result<()> {
                             get_user_input()?;
                             clear_screen()?;
                         }
-                        "4" => {
-                            current_menu = CurrentMenu::Fix;
+                        "5" => {
+                            current_menu = CurrentMenu::Sequencer;
                             clear_screen()?;
                         }
                         _ => println!("Invalid option, please try again"),
                     },
                     None => {
-                        current_menu = CurrentMenu::Fix;
+                        current_menu = CurrentMenu::Sequencer;
                         clear_screen()?;
                     }
                 }
@@ -329,13 +292,13 @@ fn main() -> io::Result<()> {
                             clear_screen()?;
                         }
                         "2" => {
-                            current_menu = CurrentMenu::Fix;
+                            current_menu = CurrentMenu::Sequencer;
                             clear_screen()?;
                         }
                         _ => println!("Invalid option, please try again"),
                     },
                     None => {
-                        current_menu = CurrentMenu::Fix;
+                        current_menu = CurrentMenu::Sequencer;
                         clear_screen()?;
                     }
                 }
@@ -356,13 +319,13 @@ fn main() -> io::Result<()> {
                             clear_screen()?;
                         }
                         "2" => {
-                            current_menu = CurrentMenu::Fix;
+                            current_menu = CurrentMenu::Sequencer;
                             clear_screen()?;
                         }
                         _ => println!("Invalid option, please try again"),
                     },
                     None => {
-                        current_menu = CurrentMenu::Fix;
+                        current_menu = CurrentMenu::Sequencer;
                         clear_screen()?;
                     }
                 }
@@ -370,7 +333,7 @@ fn main() -> io::Result<()> {
 
             CurrentMenu::Move => {
                 println!("\nMove Menu:");
-                println!("1. Compile Move Code");
+                println!("1. Create ");
                 println!("2. Back to Main Menu");
                 println!("\nPress ESC at any time to return to the previous menu");
 
