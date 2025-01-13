@@ -3345,6 +3345,7 @@ dependencies = [
  "crossterm 0.28.1",
  "rand 0.8.5",
  "romer-common",
+ "tokio",
  "tracing",
  "uuid 1.11.1",
 ]

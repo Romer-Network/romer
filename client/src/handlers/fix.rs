@@ -1,7 +1,10 @@
 use crate::handlers::Handler;
 use rand::Rng;
 use romer_common::types::fix::{utils, FixConfig, MessageType, ValidatedMessage};
-use std::io::{self, Write};
+use std::{
+    io::{self, Write}
+};
+use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::TcpStream};
 use uuid::Uuid;
 
 // The FIX message generator handles creating properly formatted FIX messages
@@ -117,6 +120,22 @@ impl LogonHandler {
         Ok(Self {
             mock_generator: MockGenerator::default(),
         })
+    }
+
+    // New method to send message and get response
+    async fn send_message(&self, message: &ValidatedMessage) -> io::Result<String> {
+        // Connect to the local sequencer
+        let mut stream = TcpStream::connect("127.0.0.1:9878").await?;
+
+        // Send the raw message
+        stream.write_all(&message.raw_data).await?;
+
+        // Read the response
+        let mut buffer = [0u8; 1024];
+        let n = stream.read(&mut buffer).await?;
+
+        // Convert response to string
+        Ok(String::from_utf8_lossy(&buffer[..n]).to_string())
     }
 
     // Gets FIX session configuration from user input
@@ -240,10 +259,27 @@ impl LogonHandler {
 
 impl Handler for LogonHandler {
     fn handle(&self) -> io::Result<()> {
+        // Get config and create message like before
         let config = self.get_session_config()?;
         let generator = MockGenerator::new(config);
         let logon = generator.create_logon();
-        self.display_message(&logon);
+
+        // Display the message we're about to send
+        self.display_message(&logon)?;
+
+        // Create runtime for async operations
+        let runtime = tokio::runtime::Runtime::new()?;
+
+        // Send message and display response
+        println!("\nSending message to sequencer...");
+        match runtime.block_on(self.send_message(&logon)) {
+            Ok(response) => {
+                println!("\nReceived response from sequencer:");
+                println!("{}", response);
+            }
+            Err(e) => println!("Error communicating with sequencer: {}", e),
+        }
+
         Ok(())
     }
 }

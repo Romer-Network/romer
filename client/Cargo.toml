@@ -13,3 +13,4 @@ rand.workspace = true
 uuid.workspace = true
 crossterm.workspace = true
 tracing.workspace = true
+tokio.workspace = true
