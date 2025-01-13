@@ -9,6 +9,7 @@ use crate::types::keymanager::{
 };
 use crate::utils::hardware_validator::{HardwareDetector, OperatingSystem};
 use commonware_cryptography::{Bls12381, Ed25519, PrivateKey, PublicKey, Scheme, Signature};
+use commonware_utils::hex;
 
 /// Manages cryptographic keys for the system, supporting both permanent and session keys.
 /// Handles secure storage, session management, and key operations while maintaining
@@ -90,14 +91,14 @@ impl KeyManager {
         // Create the message to sign, including all session key metadata
         let message = format!(
             "{}:{}:{}",
-            hex::encode(session_key.public_key()),
+            hex(session_key.public_key().as_ref()),
             expires_at.timestamp(),
             purpose
         );
 
         // Sign using the provided namespace
         let namespace_bytes = namespace.as_bytes();
-        let parent_signature = permanent_key.sign(namespace_bytes, message.as_bytes());
+        let parent_signature = permanent_key.sign(Some(namespace_bytes), message.as_bytes());
 
         let session_data = SessionKeyData {
             key_bytes: session_key_bytes.to_vec(),
@@ -131,7 +132,7 @@ impl KeyManager {
         // Create the verification message
         let message = format!(
             "{}:{}:{}",
-            hex::encode(session_key.public_key().to_vec()),
+            hex(session_key.public_key().as_ref()),
             session_data.expires_at.timestamp(),
             session_data.purpose
         );
@@ -141,7 +142,7 @@ impl KeyManager {
 
         // Use the static verify method from the Scheme trait
         if !Bls12381::verify(
-            namespace_bytes,
+            Some(namespace_bytes),
             message.as_bytes(),
             &PublicKey::from(session_data.parent_public_key.clone()),
             &Signature::from(session_data.parent_signature.clone()),
@@ -231,7 +232,7 @@ impl KeyManager {
 
         // Get the public key for the filename. The public_key() method returns PublicKey,
         // which we can convert to bytes using as_ref()
-        let session_id = hex::encode(session_key.public_key().as_ref());
+        let session_id = hex(session_key.public_key().as_ref());
         let path = self.session_dir.join(format!("{}.json", session_id));
 
         let content = serde_json::to_string(session_data)

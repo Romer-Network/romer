@@ -1,7 +1,8 @@
 // src/fix/types.rs
 
 use fefix::prelude::*;
-use fefix::tagvalue::{Config, Dictionary};
+use fefix::tagvalue::{Config, Message};
+use fefix::Dictionary;
 use thiserror::Error;
 
 /// Represents the core message types we support in FIX 4.2
@@ -42,11 +43,11 @@ impl MessageType {
 /// Core configuration for our FIX decoder/encoder
 pub struct FixConfig {
     /// The FIX dictionary configuration
-    dictionary: Dictionary,
+    pub dictionary: Dictionary,
     /// Maximum message size we'll accept
-    max_message_size: usize,
+    pub max_message_size: usize,
     /// Required FIX version (4.2)
-    required_version: String,
+    pub required_version: String,
 }
 
 impl Default for FixConfig {
@@ -61,11 +62,11 @@ impl Default for FixConfig {
 
 /// Represents a validated FIX message ready for processing
 #[derive(Debug)]
-pub struct ValidatedMessage {
+pub struct ValidatedMessage<'a, T = Vec<u8>>  {
     /// The type of message
     pub msg_type: MessageType,
     /// The raw FIX message for processing
-    pub message: fefix::tagvalue::Message,
+    pub message: Message<'a, T>,
     /// Sender's comp ID
     pub sender_comp_id: String,
     /// Target comp ID
@@ -92,8 +93,8 @@ pub enum FixError {
     #[error("Message too large")]
     MessageTooLarge,
     
-    #[error("Parsing error: {0}")]
-    ParseError(#[from] fefix::Error),
+    #[error("Parsing error")]
+    ParseError,
 }
 
 /// Result type for FIX operations

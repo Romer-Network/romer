@@ -235,7 +235,7 @@ impl SignMessageHandler {
                 })?;
 
                 // Sign the message
-                Ok(signer.sign(&[], message.as_bytes()).to_vec())
+                Ok(signer.sign(Some(&[]), message.as_bytes()).to_vec())
             }
             SignatureScheme::Bls12381 => {
                 // Create a BLS signer from the private key bytes
@@ -244,7 +244,7 @@ impl SignMessageHandler {
                     .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Invalid BLS key"))?;
 
                 // Sign the message
-                Ok(signer.sign(&[], message.as_bytes()).to_vec())
+                Ok(signer.sign(Some(&[]), message.as_bytes()).to_vec())
             }
         }
     }

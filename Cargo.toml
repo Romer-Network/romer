@@ -1,3 +1,4 @@
+# Workspace configuration for Rømer Chain
 [workspace]
 members = [
     "validator",
@@ -8,41 +9,85 @@ members = [
 ]
 resolver = "2"
 
-[workspace.dependencies]
-commonware-p2p = "=0.0.25"
-commonware-cryptography = "=0.0.14"
-commonware-consensus = "=0.0.3"
-commonware-storage = "=0.0.6"
-commonware-runtime = "=0.0.11"
-commonware-utils = "=0.0.3"
-hex = "0.4"
-tokio = { version = "1.40", features = ["full"] }
-clap = { version = "4.4", features = ["derive"] }
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["fmt", "json"] }
-prometheus-client = "0.22"
-serde = { version = "1.0", features = ["derive"] }
-bincode = "1.3"
-governor = "0.6"
-bytes = "1.5"
-warp = "0.3"
-rand = "0.8"
-toml = "0.7"
-thiserror = "1.0.63"
-futures = "0.3"
-windows-acl = "0.3"
-whoami = "1.4"
-dirs = "4.0"
-geo = "0.26"
-anyhow = "1.0.75"
-surge-ping = "0.8.0"
-chrono = { version = "0.4", features = ["serde"] }
-ratatui = "0.27.0"
-crossterm = "0.28.1"
-serde_json = "1.0.122"
-
+# Package metadata applied to all workspace members
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
 authors = ["Justin Trollip <jtrollip@protonmail.com>"]
 description = "Rømer Chain implementation"
+repository = "https://github.com/Romer-Network/romer"
+documentation = "https://romer.network"
+license = "Apache-2.0"
+rust-version = "1.70"  
+
+# Dependency groups for better organization and maintenance
+[workspace.dependencies]
+# Core blockchain dependencies - pinned to exact versions for stability
+commonware-p2p = "=0.0.26"
+commonware-cryptography = "=0.0.15"
+commonware-consensus = "=0.0.4"
+commonware-storage = "=0.0.7"
+commonware-runtime = "=0.0.12"
+commonware-utils = "=0.0.4"
+
+# Networking dependencies
+tokio = { version = "=1.40.0", features = ["full"] }
+warp = "=0.3.6"
+surge-ping = "=0.8.0"
+
+# Serialization and data handling
+serde = { version = "=1.0.197", features = ["derive"] }
+serde_json = "=1.0.122"
+bincode = "=1.3.3"
+toml = "=0.7.8"
+bytes = "=1.7.1"
+
+# CLI and interface dependencies
+clap = { version = "=4.4.18", features = ["derive"] }
+ratatui = "=0.27.0"
+crossterm = "=0.28.1"
+
+# Logging and metrics
+tracing = "=0.1.40"
+tracing-subscriber = { version = "=0.3.18", features = ["fmt", "json"] }
+prometheus-client = "=0.22.3"
+
+# Error handling
+thiserror = "=1.0.63"
+anyhow = "=1.0.75"
+
+# Utilities
+chrono = { version = "=0.4.34", features = ["serde"] }
+rand = "=0.8.5"
+uuid = { version = "=1.11.1", features = ["v4"] }
+futures = "=0.3.30"
+dashmap = "=5.5.3"
+governor = "=0.6.3"
+geo = "=0.26.0"
+dirs = "=4.0.0"
+fefix = { version = "=0.7.0", features = ["fix42"] }
+
+# Feature flags shared across workspace
+[workspace.features]
+default = ["standard"]
+standard = []
+testing = ["mock-network", "test-utilities"]
+mock-network = []
+test-utilities = []
+metrics = ["prometheus"]
+prometheus = []
+
+# Development tool configurations
+[workspace.metadata]
+# Configuration for automated documentation generation
+rustdoc = { options = ["--cfg", "docsrs"] }
+# Configuration for common development tools
+clippy = { deny = ["warnings"] }
+# Deny certain unsafe patterns across the workspace
+deny = { unsafe-code = true }
+
+# Testing configuration shared across workspace
+[workspace.metadata.test]
+test-threads = 8
+doc = true
+harness = true
