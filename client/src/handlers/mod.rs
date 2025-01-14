@@ -3,7 +3,7 @@ use std::io;
 use romer_common::error::{RomerResult, ClientError};
 
 pub trait Handler {
-    fn handle(&mut self) -> RomerResult<()>;
+    fn handle(&mut self) -> Result<(), String>;
 }
 
 // Declare the submodules

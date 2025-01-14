@@ -1,7 +1,14 @@
+use commonware_storage::journal;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::types::keymanager::KeyManagerError;
+use crate::storage::journal::Partition;
+use crate::storage::journal::Section;
+
+use crate::{
+    storage::journal::{JournalEntry, RomerJournal},
+    types::keymanager::KeyManagerError,
+};
 
 #[derive(Debug, Error, Clone, Serialize, Deserialize)]
 pub enum OrganizationError {
@@ -61,6 +68,10 @@ pub enum OrganizationType {
     Custodian,
 }
 
+pub struct OrganizationManager {
+    organization: Organization,
+    journal: RomerJournal,
+}
 /// Represents an organization participating in the RØMER network
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Organization {
@@ -166,5 +177,36 @@ impl Organization {
         }
 
         Ok(())
+    }
+
+    pub async fn write_to_journal(&self) -> RegistrationResult<()> {
+        self.validate()?;
+
+        let mut journal = RomerJournal::new(Partition::SYSTEM, Section::ORGANIZATION)
+            .await
+            .map_err(|e| RegistrationError::Storage(e.to_string()))?;
+
+        let entry = JournalEntry::OrganizationRegistered(self.clone());
+        let bytes = serde_json::to_vec(&entry).expect("Issue with the Bytes");
+
+        journal
+            .journal
+            .append(1, bytes.into())
+            .await
+            .map_err(|e| RegistrationError::Storage(e.to_string()))?;
+
+        journal
+            .journal
+            .sync(1)
+            .await
+            .map_err(|e| RegistrationError::Storage(e.to_string()))?;
+
+        Ok(())
+    }
+
+    pub async fn get_all_organizations(&self) -> Result<Vec<Organization>, String> {
+        let mut organizations = Vec::new();
+
+        Ok(organizations)
     }
 }

@@ -9,18 +9,36 @@ use uuid::Uuid;
 use crate::types::org::{Organization, OrganizationType};
 
 #[derive(Serialize, Deserialize)]
-enum JournalEntry {
+pub enum JournalEntry {
     OrganizationRegistered(Organization),
     OrganizationUpdated(Organization),
     OrganizationDeactivated(String),
 }
 
+pub enum Partition {
+    SYSTEM,
+    TRADING,
+}
+
+pub enum Section {
+    ORGANIZATION
+}
 pub struct RomerJournal {
-    journal: Journal<tokio::Blob, tokio::Context>,
+    /// The core journal instance for storage and retrieval
+    pub journal: Journal<tokio::Blob, tokio::Context>,
+    
+    /// The partition identifier for this journal
+    pub partition: Partition,
+
+    /// The section or subsystem within the partition
+    pub section: Section,
 }
 
 impl RomerJournal {
-    pub async fn new() -> Result<Self, String> {
+    pub async fn new(
+        partition: Partition,
+        section: Section
+    ) -> Result<Self, String> {
         let runtime_cfg = tokio::Config {
             storage_directory: "devnet-storage".into(),
             ..Default::default()
@@ -38,22 +56,11 @@ impl RomerJournal {
         .await
         .map_err(|e| e.to_string())?;
 
-        Ok(Self { journal })
+        Ok(Self { 
+            journal,
+            partition,
+            section,
+         })
     }
 
-    pub async fn write_organization(&mut self, org: Organization) -> Result<(), String> {
-        let entry = JournalEntry::OrganizationRegistered(org);
-        let bytes = serde_json::to_vec(&entry).map_err(|e| e.to_string())?;
-
-        self.journal
-            .append(1, bytes.into())
-            .await
-            .map_err(|e| e.to_string())?;
-        self.journal.sync(1).await.map_err(|e| e.to_string())?;
-
-        Ok(())
-    }
-
-    async fn get_all_organizations(&self)  {
-    }
 }

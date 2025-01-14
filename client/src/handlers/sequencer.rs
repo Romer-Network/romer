@@ -163,19 +163,22 @@ impl LogonHandler {
 }
 
 impl Handler for LogonHandler {
-    fn handle(&mut self) -> RomerResult<()> {
-        // Get config and create message like before
-        let config = self.get_session_config()?;
+    fn handle(&mut self) -> Result<(), String> {
+        // Convert io::Error to String using map_err
+        let config = self.get_session_config()
+            .map_err(|e| format!("Failed to get session config: {}", e))?;
+            
         let generator = FixMockGenerator::new(config);
         let logon = generator.mock_logon();
 
-        // Display the message we're about to send
-        self.display_message(&logon)?;
+        // Convert io::Error to String for display_message
+        self.display_message(&logon)
+            .map_err(|e| format!("Failed to display message: {}", e))?;
 
-        // Create runtime for async operations
-        let runtime = tokio::runtime::Runtime::new()?;
+        // Convert runtime creation error to String
+        let runtime = tokio::runtime::Runtime::new()
+            .map_err(|e| format!("Failed to create runtime: {}", e))?;
 
-        // Send message and display response
         println!("\nSending message to sequencer...");
         match runtime.block_on(self.send_message(&logon)) {
             Ok(response) => {
@@ -275,7 +278,7 @@ impl LogoutHandler {
 }
 
 impl Handler for LogoutHandler {
-    fn handle(&mut self) -> RomerResult<()> {
+    fn handle(&mut self) -> Result<(), String> {
         
         let logout = self.mock_generator.mock_logout();
         self.display_message(&logout);
@@ -379,7 +382,7 @@ impl HeartbeatHandler {
 }
 
 impl Handler for HeartbeatHandler {
-    fn handle(&mut self) -> RomerResult<()> {
+    fn handle(&mut self) -> Result<(), String> {
         let heartbeat = self.mock_generator.mock_heartbeat();
         self.display_message(&heartbeat);
         Ok(())

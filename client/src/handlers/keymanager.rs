@@ -43,16 +43,19 @@ impl GenerateKeypairHandler {
 }
 
 impl Handler for GenerateKeypairHandler {
-    fn handle(&mut self) -> RomerResult<()> {
-        let scheme = self.get_key_type()?;
+    fn handle(&mut self) -> Result<(), String> {
+        // Convert any errors from get_key_type into String
+        let scheme = self.get_key_type()
+            .map_err(|e| format!("Failed to get key type: {}", e))?;
 
+        // Handle the initialization result by converting directly to String
         match self.key_manager.initialize(scheme) {
             Ok(public_key) => {
                 println!("Key generated successfully!");
                 println!("Public key: {}", hex(&public_key));
                 Ok(())
             }
-            Err(e) => Err(ClientError::Config(e.to_string()).into()),
+            Err(e) => Err(format!("Failed to initialize key: {}", e))
         }
     }
 }
@@ -127,14 +130,18 @@ impl CheckKeysHandler {
 }
 
 impl Handler for CheckKeysHandler {
-    fn handle(&mut self) -> RomerResult<()> {
+    fn handle(&mut self) -> Result<(), String> {
         println!("\nKey Storage Locations:");
         println!("Base Directory: {}", self.key_manager.base_dir.display());
         println!("Permanent Keys: {}", self.key_manager.permanent_dir.display());
         println!("Session Keys: {}", self.key_manager.session_dir.display());
 
-        self.check_permanent_keys()?;
-        self.check_session_keys()?;
+        // Convert io::Error to String with descriptive context
+        self.check_permanent_keys()
+            .map_err(|e| format!("Failed to check permanent keys: {}", e))?;
+            
+        self.check_session_keys()
+            .map_err(|e| format!("Failed to check session keys: {}", e))?;
 
         Ok(())
     }
@@ -216,11 +223,18 @@ impl SignMessageHandler {
 }
 
 impl Handler for SignMessageHandler {
-    fn handle(&mut self) -> RomerResult<()> {
-        let scheme = self.get_key_type()?;
-        let key_bytes = self.select_key(scheme)?;
-        let message = self.get_message()?;
+    fn handle(&mut self) -> Result<(), String> {
+        // Convert io::Error to String for each operation with meaningful context
+        let scheme = self.get_key_type()
+            .map_err(|e| format!("Failed to get key type: {}", e))?;
+            
+        let key_bytes = self.select_key(scheme)
+            .map_err(|e| format!("Failed to select key: {}", e))?;
+            
+        let message = self.get_message()
+            .map_err(|e| format!("Failed to get message: {}", e))?;
 
+        // Handle the sign_message result with descriptive error message
         match self.sign_message(scheme, key_bytes, &message) {
             Ok(signature) => {
                 println!("\nMessage signed successfully!");
@@ -228,8 +242,10 @@ impl Handler for SignMessageHandler {
                 Ok(())
             }
             Err(e) => {
-                println!("Error signing message: {}", e);
-                Err(RomerError::Client(ClientError::Io(e)))
+                // Convert the IO error directly to a String with context
+                let error_msg = format!("Error signing message: {}", e);
+                println!("{}", error_msg);
+                Err(error_msg)
             }
         }
     }
@@ -342,23 +358,38 @@ impl CreateSessionKeyHandler {
 }
 
 impl Handler for CreateSessionKeyHandler {
-    fn handle(&mut self) -> RomerResult<()> {
-        let parent_key_bytes = self.load_parent_key()?;
-        let namespace = self.get_namespace()?;
-        let duration = self.get_duration()?;
-        let purpose = self.get_purpose()?;
+    fn handle(&mut self) -> Result<(), String> {
+        // Convert each IO operation's error to a String with descriptive context
+        let parent_key_bytes = self.load_parent_key()
+            .map_err(|e| format!("Failed to load parent key: {}", e))?;
+            
+        let namespace = self.get_namespace()
+            .map_err(|e| format!("Failed to get namespace: {}", e))?;
+            
+        let duration = self.get_duration()
+            .map_err(|e| format!("Failed to get duration: {}", e))?;
+            
+        let purpose = self.get_purpose()
+            .map_err(|e| format!("Failed to get purpose: {}", e))?;
 
-        if !self.confirm_creation(&namespace, duration, &purpose)? {
+        // Handle confirmation separately with its own error context
+        if !self.confirm_creation(&namespace, duration, &purpose)
+            .map_err(|e| format!("Failed during creation confirmation: {}", e))? 
+        {
             println!("Session key creation cancelled.");
             return Ok(());
         }
 
+        // Handle the session key creation result with detailed error information
         match self.key_manager.create_session_key(&parent_key_bytes, &namespace, duration, &purpose) {
             Ok(session_data) => {
                 self.display_session_key(&session_data);
                 Ok(())
             }
-            Err(e) => Err(e.into()),
+            Err(e) => {
+                // Convert the error to a string with context about what failed
+                Err(format!("Failed to create session key: {}", e))
+            }
         }
     }
 }
