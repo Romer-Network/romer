@@ -2,6 +2,7 @@ use commonware_cryptography::{Bls12381, Ed25519, PrivateKey, Scheme};
 use commonware_utils::hex;
 use romer_common::keystore::keymanager::KeyManager;
 use romer_common::types::keymanager::{SessionKeyData, SignatureScheme};
+use romer_common::error::{RomerResult, ClientError, RomerError};
 use std::fs;
 use std::io::{self, Write};
 use crate::handlers::Handler;
@@ -12,21 +13,23 @@ pub struct GenerateKeypairHandler {
 }
 
 impl GenerateKeypairHandler {
-    pub fn new() -> Result<Self, io::Error> {
+    pub fn new() -> RomerResult<Self> {
         let key_manager = KeyManager::new()
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+            .map_err(|e| ClientError::Config(e.to_string()))?;
         Ok(Self { key_manager })
     }
 
-    fn get_key_type(&self) -> io::Result<SignatureScheme> {
+    fn get_key_type(&self) -> RomerResult<SignatureScheme> {
         println!("\nSelect key type:");
         println!("1. Ed25519");
         println!("2. BLS12381");
         print!("> ");
-        io::stdout().flush()?;
+        io::stdout().flush()
+            .map_err(|e|ClientError::Io(e))?;
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
+        io::stdin().read_line(&mut input)
+            .map_err(|e| ClientError::Io(e))?;
 
         match input.trim() {
             "1" => Ok(SignatureScheme::Ed25519),
@@ -40,7 +43,7 @@ impl GenerateKeypairHandler {
 }
 
 impl Handler for GenerateKeypairHandler {
-    fn handle(&mut self) -> io::Result<()> {
+    fn handle(&mut self) -> RomerResult<()> {
         let scheme = self.get_key_type()?;
 
         match self.key_manager.initialize(scheme) {
@@ -49,7 +52,7 @@ impl Handler for GenerateKeypairHandler {
                 println!("Public key: {}", hex(&public_key));
                 Ok(())
             }
-            Err(e) => Err(io::Error::new(io::ErrorKind::Other, e.to_string())),
+            Err(e) => Err(ClientError::Config(e.to_string()).into()),
         }
     }
 }
@@ -124,7 +127,7 @@ impl CheckKeysHandler {
 }
 
 impl Handler for CheckKeysHandler {
-    fn handle(&mut self) -> io::Result<()> {
+    fn handle(&mut self) -> RomerResult<()> {
         println!("\nKey Storage Locations:");
         println!("Base Directory: {}", self.key_manager.base_dir.display());
         println!("Permanent Keys: {}", self.key_manager.permanent_dir.display());
@@ -213,7 +216,7 @@ impl SignMessageHandler {
 }
 
 impl Handler for SignMessageHandler {
-    fn handle(&mut self) -> io::Result<()> {
+    fn handle(&mut self) -> RomerResult<()> {
         let scheme = self.get_key_type()?;
         let key_bytes = self.select_key(scheme)?;
         let message = self.get_message()?;
@@ -226,7 +229,7 @@ impl Handler for SignMessageHandler {
             }
             Err(e) => {
                 println!("Error signing message: {}", e);
-                Err(e)
+                Err(RomerError::Client(ClientError::Io(e)))
             }
         }
     }
@@ -339,7 +342,7 @@ impl CreateSessionKeyHandler {
 }
 
 impl Handler for CreateSessionKeyHandler {
-    fn handle(&mut self) -> io::Result<()> {
+    fn handle(&mut self) -> RomerResult<()> {
         let parent_key_bytes = self.load_parent_key()?;
         let namespace = self.get_namespace()?;
         let duration = self.get_duration()?;
@@ -355,7 +358,7 @@ impl Handler for CreateSessionKeyHandler {
                 self.display_session_key(&session_data);
                 Ok(())
             }
-            Err(e) => Err(io::Error::new(io::ErrorKind::Other, e.to_string())),
+            Err(e) => Err(e.into()),
         }
     }
 }

@@ -19,6 +19,7 @@ enum CurrentMenu {
     FixTrading,
     FixSettlement,
     Move,
+    StateMenu,
 }
 
 // Helper function to clear the screen and reset cursor position
@@ -81,7 +82,8 @@ fn main() -> io::Result<()> {
                 println!("1. KeyManager");
                 println!("2. Sequencer");
                 println!("3. Move VM");
-                println!("4. Exit");
+                println!("4. State");
+                println!("5. Exit");
                 println!("\nPress ESC at any time to return to the previous menu");
 
                 match get_user_input()? {
@@ -98,7 +100,11 @@ fn main() -> io::Result<()> {
                             current_menu = CurrentMenu::Move;
                             clear_screen()?;
                         }
-                        "4" => break,
+                        "4" => {
+                            current_menu = CurrentMenu::StateMenu;
+                            clear_screen()?;
+                        }
+                        "5" => break,
                         _ => println!("Invalid option, please try again"),
                     },
                     None => continue, // ESC pressed, stay in current menu
@@ -346,6 +352,39 @@ fn main() -> io::Result<()> {
                             clear_screen()?;
                         }
                         "2" => {
+                            current_menu = CurrentMenu::Main;
+                            clear_screen()?;
+                        }
+                        _ => println!("Invalid option, please try again"),
+                    },
+                    None => {
+                        current_menu = CurrentMenu::Main;
+                        clear_screen()?;
+                    }
+                }
+            }
+
+            CurrentMenu::StateMenu => {
+                println!("\nState Menu:");
+                println!("1. List Organizations");
+                println!("2. List Tokens");
+                println!("3. Back to Last Menu");
+
+                match get_user_input()? {
+                    Some(input) => match input.as_str() {
+                        "1" => {
+                            println!("List Organizations");
+                            println!("\nPress Enter to continue...");
+                            get_user_input()?;
+                            clear_screen()?;
+                        }
+                        "2" => {
+                            println!("List Token");
+                            println!("\nPress Enter to continue...");
+                            get_user_input()?;
+                            clear_screen()?;
+                        }
+                        "3" => {
                             current_menu = CurrentMenu::Main;
                             clear_screen()?;
                         }

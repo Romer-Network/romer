@@ -35,7 +35,7 @@ impl Default for FixConfig {
         Self {
             fix_version: "4.2".to_string(),
             sender_comp_id: "SENDER".to_string(),
-            target_comp_id: "TARGET".to_string(),
+            target_comp_id: "Rømer".to_string(),
         }
     }
 }

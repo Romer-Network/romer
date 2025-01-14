@@ -1,7 +1,7 @@
-use commonware_storage::journal::{self, Journal};
 use commonware_runtime::tokio::{self, Blob, Context};
+use commonware_storage::journal::{self, Journal};
 use prometheus_client::registry::Registry;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
 use std::sync::{Arc, Mutex};
 use uuid::Uuid;
@@ -25,14 +25,14 @@ impl RomerJournal {
             storage_directory: "devnet-storage".into(),
             ..Default::default()
         };
-        
+
         let (executor, runtime) = tokio::Executor::init(runtime_cfg);
-        
+
         let journal = Journal::init(
-            runtime,  
+            runtime,
             journal::Config {
                 registry: Arc::new(Mutex::new(Registry::default())),
-                partition: String::from("organizations"),
+                partition: String::from("system"),
             },
         )
         .await
@@ -44,10 +44,16 @@ impl RomerJournal {
     pub async fn write_organization(&mut self, org: Organization) -> Result<(), String> {
         let entry = JournalEntry::OrganizationRegistered(org);
         let bytes = serde_json::to_vec(&entry).map_err(|e| e.to_string())?;
-        
-        self.journal.append(1, bytes.into()).await.map_err(|e| e.to_string())?;
+
+        self.journal
+            .append(1, bytes.into())
+            .await
+            .map_err(|e| e.to_string())?;
         self.journal.sync(1).await.map_err(|e| e.to_string())?;
-        
+
         Ok(())
+    }
+
+    async fn get_all_organizations(&self)  {
     }
 }

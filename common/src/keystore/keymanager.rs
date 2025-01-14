@@ -1,4 +1,5 @@
 use chrono::{DateTime, Duration, Utc};
+use fefix::session::backends;
 use rand::rngs::OsRng;
 use serde_json;
 use std::fs;
@@ -181,6 +182,23 @@ impl KeyManager {
 
         serde_json::from_str(&content)
             .map_err(|e| KeyManagerError::SerializationError(e.to_string()))
+    }
+
+    /// Gets the BLS public key bytes if one exists. This is typically used during
+    /// organization registration to establish the organization's blockchain identity.
+    pub fn get_bls_public_key(&self) -> KeyManagerResult<Vec<u8>> {
+        // First load the raw private key bytes
+        let private_key_bytes = self.load_permanent_key(SignatureScheme::Bls12381)?;
+
+        // Convert the bytes into a PrivateKey type that the BLS scheme can use
+        let private_key = PrivateKey::from(private_key_bytes);
+
+        // Create a BLS signer instance from the private key
+        let signer = <Bls12381 as Scheme>::from(private_key)
+            .ok_or_else(|| KeyManagerError::InvalidKeyFormat("Invalid BLS key format".into()))?;
+
+        // Extract and return the public key bytes
+        Ok(signer.public_key().to_vec())
     }
 
     // Private helper methods

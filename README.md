@@ -106,8 +106,4 @@ For development questions: [GitHub Issues](https://github.com/romer-network/rome
 For market maker inquiries: @Hariseldon23 on Telegram
 
 
-# TODO:
-Setup Commonware-storage::metadata for TargetCompId
-
-Allow anyone to create a SenderCompID and then associate that with their Public Key, this should be stored in metada for now
 
